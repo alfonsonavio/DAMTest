@@ -1,0 +1,1599 @@
+[
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "La informática ________",
+    "options": [
+      "Permite el procesamiento automático de los datos",
+      "Puede trabajar sin datos de entrada",
+      "Tienes sus orígenes en las teorías de la información",
+      "Tiene sus orígenes en las válvulas de vacío"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Un lenguaje de programación puede ser ________",
+    "options": [
+      "De alto nivel",
+      "De bajo nivel",
+      "De nivel intermedio",
+      "Todas las respuestas son correctas"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Una máquina de procesamiento dispone de ________",
+    "options": [
+      "Entrada",
+      "Unidad de procesamiento",
+      "Salida",
+      "Todas las respuestas son correctas"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "El lenguaje máquina ________",
+    "options": [
+      "Es de alto nivel",
+      "Es independiente del hardware",
+      "Es de bajo nivel",
+      "Es de nivel intermedio"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "El software ________",
+    "options": [
+      "Representa a los elementos lógicos del sistema",
+      "Incluye a los programas informáticos",
+      "Necesita de una unidad de procesamiento para poder ejecutarse",
+      "Todas las respuestas son correctas"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "El lenguaje ensamblador ________",
+    "options": [
+      "Se considera de alto nivel",
+      "Es más complicado de comprender que el lenguaje máquina",
+      "No depende del hardware",
+      "Requiere ser traducido a lenguaje máquina"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Un lenguaje de alto nivel ________",
+    "options": [
+      "Introduce mayor nivel de complejidad al programador",
+      "Es ejecutable directamente por el procesador",
+      "Se asemeja al lenguaje humano",
+      "Se asemeja al lenguaje máquina"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Los lenguajes pueden ser ________",
+    "options": [
+      "Compilados",
+      "Interpretados",
+      "Compilados e interpretados",
+      "Todas las respuestas son correctas"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Un algoritmo ________",
+    "options": [
+      "Tiene que ser ambiguo",
+      "Puede ser definido sin entrar en detalles",
+      "Tiene que ser determinista",
+      "Puede genera resultados diferentes tras diferentes ejecuciones"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "¿Qué características debe tener un algoritmo?",
+    "options": [
+      "Debe ser infinito.",
+      "No debe depender del lenguaje de programación.",
+      "Debe ser indeterminado.",
+      "No dará los mismos resultados siempre bajo las mismas entradas."
+    ],
+    "correctOptionIndex": 1
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "¿Qué significa que un algoritmo sea determinista?",
+    "options": [
+      "Que si ejecuto ese algoritmo dos veces voy a obtener el mismo resultado.",
+      "Que puede haber diferencias entre ejecuciones de un mismo algoritmo.",
+      "Que tiene todas sus variables bien determinadas.",
+      "Que tiene todas sus variables bien declaradas."
+    ],
+    "correctOptionIndex": 0
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "¿Qué etapa del ciclo de vida del software corresponde aproximadamente a un 80% del mismo?",
+    "options": [
+      "Implementación",
+      "Diseño",
+      "Mantenimiento",
+      "Pruebas"
+    ],
+    "correctOptionIndex": 2
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Java es un lenguaje de programación:",
+    "options": [
+      "Multiplataforma.",
+      "Que solo puede utilizarse en Windows.",
+      "Capaz de ejecutar código en ensamblador.",
+      "El lenguaje de programación Java no existe."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Indica cuál de las siguientes no es una parte de un proyecto de NetBeans:",
+    "options": [
+      "Pestañas de archivos abiertos.",
+      "Visualizador de código Java.",
+      "Visualizador de mensajes de las clases.",
+      "Visualizador de información de las clases."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "El orden correcto de las fases del ciclo de vida del software es:",
+    "options": [
+      "Requisitos, Pruebas, Implementación, Diseño y Mantenimiento.",
+      "Requisitos, Diseño, Implementación, Mantenimiento y Verificación.",
+      "Implementación, Requisitos, Diseño, Verificación y Mantenimiento.",
+      "Requisitos, Diseño, Implementación, Verificación y Mantenimiento."
+    ],
+    "correctOptionIndex": 3
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Un algoritmo:",
+    "options": [
+      "Es una secuencia de instrucciones bien implementadas y ordenadas que resuelven una tarea en concreto.",
+      "Es una secuencia de instrucciones que resuelven una tarea, dando igual su orden.",
+      "Es lo mismo que un programa.",
+      "Es una secuencia de instrucciones que puede resolver cualquier problema siempre que estén en el orden correcto."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Cuál de los siguientes no es un lenguaje de programación:",
+    "options": [
+      "Java.",
+      "C#.",
+      "C.",
+      "C+."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Cuál de los siguientes no es un paradigma de programación:",
+    "options": [
+      "Programación orientada a acciones.",
+      "Programación orientada a objetos.",
+      "Programación estructural.",
+      "Programación orientada a eventos."
+    ],
+    "correctOptionIndex": 0
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 1,
+    "text": "Para crear un proyecto en NetBeans:",
+    "options": [
+      "Deberemos pulsar Archivo -> Nuevo proyecto.",
+      "Deberemos pulsar Archivo -> Nuevo proyecto y elegir Java.",
+      "Deberemos pulsar Archivo -> Nuevo proyecto, elegir Java y la ubicación del proyecto.",
+      "Deberemos pulsar Edición -> Nuevo proyecto, elegir Java y la ubicación del proyecto."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "¿Cuál de las siguientes declaraciones de variables no es correcta?:",
+    "options": [
+      "int numero = 9.3;",
+      "String palabra = “Ha llovido en la calle”;",
+      "char letra = ‘9’;",
+      "String palabra2 = “perro”;"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "¿Cuál de los siguientes identificadores puedo utilizar para nombrar una variable?:",
+    "options": [
+      "transient",
+      "1numero",
+      "edad_persona",
+      "while"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "Para leer una variable por teclado necesito una variable de tipo:",
+    "options": [
+      "String",
+      "Scanner",
+      "int",
+      "boolean"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "Los castings:",
+    "options": [
+      "Pueden hacerse entre cualquier tipo de dato.",
+      "Entre un int y un char puedo hacer uno, ya que en un char puedo guardar ‘2’.",
+      "Pueden hacerse entre tipos de datos compatibles, pero nos arriesgamos a perder información.",
+      "Están totalmente prohibidos, ya que solo se pueden realizar operaciones entre datos del mismo tipo."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "La palabra reservada final:",
+    "options": [
+      "Se utiliza para hacer constantes a las variables, pero solo se puede utilizar en datos de tipo numérico.",
+      "Se utiliza para hacer constantes a las variables, pudiendo utilizarla en cualquier tipo de dato y pudiendo cambiar su valor una única vez.",
+      "Se utiliza para hacer constantes a las variables y debe colocarse después del tipo de la variable.",
+      "Se utiliza para hacer constantes a las variables, pudiendo utilizarla en cualquier tipo de dato y debiendo colocarla antes del tipo de la variable."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "La expresión dato1 *= dato2 es equivalente a:",
+    "options": [
+      "dato1 = dato1 * dato2",
+      "dato2 = dato1 * dato2",
+      "dato1 = dato1 + dato2",
+      "dato2 = dato1 + dato2"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "El operador lógico AND:",
+    "options": [
+      "Devolverá verdadero solo si los dos datos son verdaderos.",
+      "No siempre devuelve falso si el segundo dato es falso.",
+      "Devuelve siempre verdadero.",
+      "Devuelve lo contrario que devolvería el operador OR."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "El operador lógico OR:",
+    "options": [
+      "Devolverá lo contrario que devolvería en el mismo caso el operador AND.",
+      "Devolverá verdadero siempre que el primer dato sea falso.",
+      "Devolverá siempre falso, tengan el valor que tengan las variables.",
+      "Devolverá siempre verdadero si uno de los datos es verdadero."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "¿Cuál de los siguientes no es un operador relacional?",
+    "options": [
+      ">",
+      ">>",
+      "<",
+      "<="
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "¿Cuál de los siguientes no es un tipo de dato válido para representar un dato entero en Java?",
+    "options": [
+      "int",
+      "long",
+      "short",
+      "bit"
+    ],
+    "correctOptionIndex": 3
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "Para representar el peso de un coche con precisión podría utilizar:",
+    "options": [
+      "Un número entero.",
+      "Un número real.",
+      "Una cadena de caracteres.",
+      "Un booleano."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "Los datos de tipo booleano:",
+    "options": [
+      "Permiten representar los valores de verdadero y falso.",
+      "Representan los números pares.",
+      "Representan cadenas con caracteres y letras.",
+      "Permiten representar los valores de verdadero, falso, puede ser."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "Cuál de los siguientes no es un tipo de dato que vamos a poder utilizar en nuestros programas:",
+    "options": [
+      "Números enteros.",
+      "Números impares.",
+      "Booleanos.",
+      "Cadenas de caracteres."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "¿Cuál de las siguientes declaraciones de variables no es correcta?:",
+    "options": [
+      "int numero = 9.3;.",
+      "String palabra = “Ha llovido en la calle”;.",
+      "char letra = ‘9’;.",
+      "String palabra2 = “perro”;."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "La expresión dato1 *= dato2 es equivalente a:",
+    "options": [
+      "dato1 = dato1 * dato2.",
+      "dato2 = dato1 * dato2.",
+      "dato1 = dato1 + dato2.",
+      "dato2 = dato1 + dato2."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "El operador lógico AND:",
+    "options": [
+      "Devolverá verdadero sólo si los dos datos son verdaderos.",
+      "Devolverá siempre falso si el segundo dato es falso.",
+      "Devuelve siempre verdadero.",
+      "Devuelve lo contrario que devolvería el operador OR."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "El operador lógico OR:",
+    "options": [
+      "Devolverá lo contrario que devolvería en el mismo caso el operador AND.",
+      "Devolverá verdadero siempre que el primer dato sea falso.",
+      "Devolverá siempre falso, tengan el valor que tengan las variables.",
+      "Devolverá siempre verdadero si uno de los datos es verdadero."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "¿Cuál de los siguientes no es un operador relacional?:",
+    "options": [
+      ">.",
+      ">>.",
+      "<.",
+      "<=."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "¿Cuál de los siguientes no es un tipo de dato válido para representar un dato entero en Java?:",
+    "options": [
+      "int.",
+      "long.",
+      "short.",
+      "bit."
+    ],
+    "correctOptionIndex": 3
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "El tipo de dato entero más grande es:",
+    "options": [
+      "byte",
+      "short",
+      "int",
+      "long"
+    ],
+    "correctOptionIndex": 3
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 2,
+    "text": "Cuando escribes a = b + c;...",
+    "options": [
+      "En a se introducirá el valor de b más el valor de c.",
+      "Las variables b y c se quedarán vacías",
+      "En a b y c se introducirá el valor de b más el valor de c",
+      "En b y c se insertará el valor apropiado para que su suma sea igual al valor de a"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "La instrucción break es mejor utilizarla en la sentencia:",
+    "options": [
+      "if-else",
+      "switch",
+      "while",
+      "for"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "Podemos utilizar varias condiciones unidas con AND y OR en:",
+    "options": [
+      "Solo en los if que no tengan else y en todos los bucles.",
+      "Solamente en el bucle while.",
+      "Tanto en los if-else como en todos los bucles.",
+      "Tanto en los if-else, swtich, como en todos los bucles."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "Indica la afirmación correcta:",
+    "options": [
+      "Para poder crear un bloque de código, es indispensable delimitarlo entre llaves, haciendo que funcione como si se tratase de una única instrucción.",
+      "Para finalizar en Java cualquier instrucción tenemos que poner punto y coma.",
+      "Podemos hacer con un bucle for lo mismo que con un bucle do-while.",
+      "Todas las afirmaciones son correctas."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "Sobre el bucle for:",
+    "options": [
+      "Se utilizará cuando sepamos el número de iteraciones que vamos a realizar.",
+      "Se utilizará cuando no sepamos el número de iteraciones que vamos a utilizar.",
+      "Es obligatorio declarar la variable contador en la cabecera del for.",
+      "Todas las afirmaciones son correctas."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "Sobre la sentencia switch:",
+    "options": [
+      "En Java es obligatorio poner el caso default.",
+      "Podremos utilizar condiciones múltiples en su cabecera.",
+      "Es equivalente a una serie de if-else anidados pero solo con la condición == en todas sus condiciones.",
+      "Hace exactamente el mismo trabajo que la instrucción if-else."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "Los delimitadores de bloque en Java son:",
+    "options": [
+      "Llaves ( { } ).",
+      "Tabulaciones.",
+      "Guiones ( - ).",
+      "Punto y coma ( ; )."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "Sobre la instrucción if:",
+    "options": [
+      "Todos los if tienen que tener obligatoriamente un else y todos los else tienen que tener obligatoriamente un if.",
+      "Puede haber if sin else, pero los else tienen que tener obligatoriamente un if.",
+      "Un if puede tener más de un else.",
+      "Ninguna de las afirmaciones es correctas."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "Sobre la instrucción while:",
+    "options": [
+      "Es equivalente a la instrucción switch.",
+      "No puede contener condiciones múltiples, para eso deberemos usar obligatoriamente la instrucción do-while.",
+      "Es el único caso en Java donde los delimitadores de su bloque son tabuladores.",
+      "Puede ejecutarse 0 o muchas veces."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "¿Cuál de los siguientes operadores no puede usarse en la condición de una instrucción condicional o repetitiva?",
+    "options": [
+      "=",
+      "!=",
+      "<=",
+      ">="
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "El operador lógico OR:",
+    "options": [
+      "Devolverá verdadero solo si todas las condiciones implicadas son verdaderas.",
+      "Devolverá falso solo si una de las condiciones implicadas es falsa",
+      "Devolverá verdadero si al menos una de las condiciones implicadas es verdadera.",
+      "Devolverá falso si al menos una de las condiciones implicadas es falsa."
+    ],
+    "correctOptionIndex": 2
+  },
+  
+  {
+    "subjectId": "programacion",
+    "topicId": 3,
+    "text": "La instrucción break la podemos utilizar en la sentencia:",
+    "options": [
+      "if-else.",
+      "switch.",
+      "while.",
+      "for."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "La programación modular",
+    "options": [
+      "Está en desuso",
+      "Mejora la reutilización",
+      "Es poco recomendable",
+      "Es incompatible con los lenguajes de programación modernos"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "Señala la opción correcta:",
+    "options": [
+      "Un subprograma es lo mismo que una función",
+      "Un procedimiento es lo mismo que una función",
+      "La función devuelve siempre un valor",
+      "Los procedimientos siempre devuelven un valor"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "Un procedimiento",
+    "options": [
+      "Puede tener únicamente un parámetro de entrada",
+      "Puede tener muchos parámetros de entrada",
+      "Carece de parámetros de salida",
+      "Solo puede tener un parámetro de salida"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "Una variable local (declarada dentro de una función) puede usarse",
+    "options": [
+      "En cualquier lugar del código",
+      "Solo en la función donde se ha declarado",
+      "Solo dentro del main",
+      "Ninguna opción es correcta"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "La visibilidad de las variables",
+    "options": [
+      "También se aplica con la programación modular",
+      "Deja de tener sentido con la utilización de procedimientos",
+      "Es igual en todas las funciones",
+      "Ninguna de las demás son correctas"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "Señala la opción correcta:",
+    "options": [
+      "Las variables locales son declaradas dentro de un método, constructor o bloque, y tienen un alcance limitado a ese bloque.",
+      "Las variables globales son declaradas dentro de un método, constructor o bloque, y tienen un alcance limitado a ese bloque.",
+      "Las variables locales son accesibles desde cualquier punto del programa y se pueden usar desde cualquier módulo o subprograma, ya que son declaradas desde el programa principal.",
+      "Las variables globales sólo existen en un ámbito determinado del programa, por ejemplo en un subprograma o en un bloque de sentencias."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "Las variables globales",
+    "options": [
+      "Solo son accedidas por las funciones",
+      "Solo son accedidas por los procedimientos",
+      "Son altamente recomendables",
+      "Dificultan el diseño del código"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "Las funciones",
+    "options": [
+      "Se pueden utilizar como parte de expresiones",
+      "Carecen de salida de datos",
+      "Son menos potentes que los procedimientos",
+      "Solo reciben parámetros enteros"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "¿Qué tipo de paso de parámetros se utiliza en Java cuando se pasa un objeto como argumento a un método?",
+    "options": [
+      "Por valor",
+      "Por referencia",
+      "Por copia",
+      "Por asignación"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 4,
+    "text": "Los procedimientos",
+    "options": [
+      "Carecen de sentencias en su interior",
+      "Solo pueden declarar variables",
+      "Permiten reutilizar código",
+      "Están limitados por los lenguajes de programación"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "La recursividad",
+    "options": [
+      "Es aquella cuyo nombre permite la sobrecarga y además realiza alguna comprobación mediante if",
+      "Es aquella que se invoca desde dentro de su propio bloque de instrucciones",
+      "Es aquella cuyo bloque de instrucciones utiliza alguna sentencia if (lo que llamamos caso base)",
+      "Es aquella que genera un bucle infinito"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "En la recursividad, el caso base",
+    "options": [
+      "Permite continuar con el proceso recursivo",
+      "Es opcional",
+      "Siempre es único",
+      "Permite parar el proceso recursivo"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "El proceso de recursión",
+    "options": [
+      "Siempre posee un único nivel",
+      "Permite parar el flujo de ejecución",
+      "Puede incluir diferentes niveles",
+      "Ninguna de las anteriores"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "Al utilizar la recursividad",
+    "options": [
+      "Siempre se produce un bucle infinito",
+      "Se puede omitir el caso base",
+      "Siempre se mejora el rendimiento",
+      "Se puede producir un desbordamiento de pila"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "Las soluciones recursivas",
+    "options": [
+      "Suelen utilizar estructuras iterativas",
+      "Suelen ser más elegantes",
+      "Siempre son más sencillas que las iterativas",
+      "Nunca producen errores"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "Desde el punto de vista de la eficiencia",
+    "options": [
+      "Las soluciones recursivas pueden ser muy ineficientes",
+      "Las soluciones recursivas siempre son más eficientes que las iterativas",
+      "Las soluciones recursivas carecen de este criterio",
+      "Ninguna de las anteriores"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "Para el desarrollo de soluciones recursivas",
+    "options": [
+      "Se pueden realizar independientemente del lenguaje de programación",
+      "Cada lenguaje de programación puede requerir unas características determinadas",
+      "Solo es necesario detectar el caso base",
+      "Solo es necesario detectar el caso general"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "El cálculo del factorial",
+    "options": [
+      "Es una función siempre iterativa",
+      "Es una función siempre recursiva",
+      "Es una función que solo puede calcularse con recursividad",
+      "Es una función que se puede resolver con recursividad de una forma más sencilla"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "El desbordamiento de pila",
+    "options": [
+      "Es un error típico de las soluciones recursivas",
+      "Es un error típico de las soluciones iterativas",
+      "Están relacionadas con el caso de recursión",
+      "Es independiente del tipo de recursión"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "La recursividad",
+    "options": [
+      "Es incompatible con la iteración",
+      "Solo se puede utilizar con funciones",
+      "Se puede utilizar con funciones y procedimientos",
+      "Solo se puede utilizar con procedimientos"
+    ],
+    "correctOptionIndex": 2
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "¿Cuándo decimos que se produce el error de stack overflow?",
+    "options": [
+      "Cuando realizamos demasiadas llamadas a un método recursivamente.",
+      "Cuando igualamos tipos de datos incompatibles",
+      "Cuando accedemos a una posición de un array que no existe.",
+      "No es un error, es una página muy conocida de internet."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 5,
+    "text": "¿Dónde se realizan múltiples llamadas de una función o un procedimiento sobre sí mismo?",
+    "options": [
+      "En el proceso de recursión.",
+      "Dentro del caso base.",
+      "Dentro de lo que se conoce como resolución final.",
+      "En un procedimiento pero no en una función."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Cuál de las siguientes declaraciones nos permitirá almacenar más de 50 números reales?",
+    "options": [
+      "int[] array = new int[52];",
+      "int[] array = new int[50];",
+      "double[] array = new int[51];",
+      "double[] array = new double[54];"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Qué orden de eficiencia tiene la búsqueda lineal?",
+    "options": [
+      "O(n)",
+      "O(n²)",
+      "O(1)",
+      "O(n * log n)"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Cuál es el máximo de dimensiones con las que podemos crear un array multidimensional?",
+    "options": [
+      "2",
+      "5",
+      "10",
+      "Las que necesitemos."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Cuántos bucles for necesito para recorrer una matriz?",
+    "options": [
+      "Solo 1, ya que una matriz es como un array.",
+      "Necesitaremos 2, uno para recorrer las filas y otro para recorrer las columnas, en ese orden.",
+      "Necesitaremos 2, uno para recorrer las columnas y otro para recorrer las filas, en ese orden.",
+      "Necesitaremos 3, uno para recorrer las filas, otro para recorrer las columnas y otro para operar con los elementos."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Qué orden de eficiencia tiene la búsqueda binaria?",
+    "options": [
+      "O(n)",
+      "O(n²)",
+      "O(1)",
+      "O(log n)"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿De qué tipo de datos se pueden declarar matrices?",
+    "options": [
+      "Solo de datos de tipo numérico, enteros y reales, no tiene sentido declarar una matriz de otro tipo de datos.",
+      "Solo de datos de tipo primitivo.",
+      "De cualquier tipo de dato, tanto primitivos como objetos.",
+      "Solo de objetos."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Qué orden de eficiencia tiene la ordenación por el método de la burbuja?",
+    "options": [
+      "O(n)",
+      "O(n²)",
+      "O(1)",
+      "O(n * log n)"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Qué operador se utiliza para acceder a un elemento de una posición concreta en un array?",
+    "options": [
+      "[ ]",
+      "( )",
+      "{ }",
+      "“ ”"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Qué función devuelve el tamaño de un String?",
+    "options": [
+      "size()",
+      "long()",
+      "length()",
+      "lenght()"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Cómo puedo saber si dos String son iguales?",
+    "options": [
+      "Con la función equals.",
+      "Utilizando el operador ==.",
+      "A y b son correctas.",
+      "A y b son incorrectas."
+    ],
+    "correctOptionIndex": 0
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "Los tres métodos básicos para ordenar un array son:",
+    "options": [
+      "Burbuja, inserción, inducción.",
+      "Burbuja, deducción, inserción.",
+      "Burbuja, inserción, selección.",
+      "Burbuja, selección, ordenación."
+    ],
+    "correctOptionIndex": 2
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 6,
+    "text": "¿Cuál es la declaración correcta?",
+    "options": [
+      "int array [10] = new int[];",
+      "int [] array = new int[10];",
+      "int [] array = new [10] int;",
+      "int array [] = new int (10);"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "POO significa:",
+    "options": [
+      "Programación De Objetos.",
+      "Programación de Distintos Objetos.",
+      "Programando Diferentes Objetos.",
+      "Programación Dirigida a Objetos."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "En la programación dirigida a objetos el programa está compuesto por:",
+    "options": [
+      "Objetos.",
+      "Variables primitivas.",
+      "Objetos primitivos.",
+      "Variables constantes."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "¿Cuántos atributos podemos definir en una clase?",
+    "options": [
+      "Todos los que necesitemos, independientemente del tipo de ellos.",
+      "Solo 3 por tipo.",
+      "Todos los que necesitemos, pero no podrán ser otros objetos.",
+      "Podremos definir todos los que queramos de tipos primitivos, pero solo 3 podrán ser de otros objetos."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "Una clase se compone de:",
+    "options": [
+      "Atributos y métodos.",
+      "Atributos constantes y métodos.",
+      "Atributos y objetos.",
+      "Bucles y métodos."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "¿La relación cuyo predicado es: “tiene-un” o “parte-de” es del tipo?",
+    "options": [
+      "Herencia",
+      "Dependencia",
+      "Generalización",
+      "Asociación"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "¿Para qué utilizamos Doxygen?",
+    "options": [
+      "Para colorear el código de nuestro programa y poder entenderlo mejor.",
+      "Es el encargado de compilar nuestros programas.",
+      "Es el encargado de mostrar en qué línea está los errores cuando estos ocurren.",
+      "Para documentar nuestro código."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "La programación dirigida a objetos mejora:",
+    "options": [
+      "La programación orientada a eventos.",
+      "La programación estructural.",
+      "La programación estructurada.",
+      "La técnica de divide y vencerás."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "¿Cuál es la diferencia entre variable y objeto?",
+    "options": [
+      "Son exactamente lo mismo.",
+      "Las variables instancian una clase y los objetos son de tipo primitivo.",
+      "Las variables son de tipo primitivo y los objetos instancian una clase.",
+      "Las variables siempre han de ser constantes y los objetos pueden ser tanto de tipo primitivo como instanciar una clase."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "¿Cómo debemos nombrar una clase?",
+    "options": [
+      "Todos los elementos que vayamos a usar, dando igual cuáles sean, se deben nombrar en minúscula obligatoriamente.",
+      "Deben empezar por un número obligatoriamente.",
+      "Se nombran igual que las variables, pero, como norma no obligatoria, deberían de empezar por una letra mayúscula.",
+      "Con todas las letras en mayúscula."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "¿En cuantos tipos podemos clasificar las relaciones entre clases?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "correctOptionIndex": 2
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 7,
+    "text": "Los principios de la programación orientada a objetos son:",
+    "options": [
+      "Abstracción, Encapsulamiento, Herencia, Polimorfismo",
+      "Abstracción, Encapsulamiento, Herencia, Ocultación de información.",
+      "Abstracción, Encapsulamiento, Modularización, Herencia",
+      "Abstracción, Modularización, Herencia, Polimorfismo"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "¿Cuántos parámetros puede tener una función?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "Todos los que necesitemos."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "¿Cuántos valores puede devolver una función?",
+    "options": [
+      "0",
+      "1",
+      "2",
+      "3"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "¿Cuál de las siguientes etiquetas no pertenece a Doxygen en Java?",
+    "options": [
+      "see",
+      "return",
+      "struct",
+      "param"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "¿Dónde se tienen que almacenar los programas para poder ejecutarse?",
+    "options": [
+      "En ningún sitio, los programas simplemente se ejecutan.",
+      "En el disco duro.",
+      "En memoria RAM.",
+      "En la tarjeta gráfica para que se puedan mostrar por pantalla."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "Según la notación CamelCase, ¿cómo se han de nombrar los métodos?",
+    "options": [
+      "Todo en minúscula.",
+      "Todo en mayúscula.",
+      "La primera letra en mayúscula y las demás en minúscula de todas las palabras.",
+      "La primera palabra en minúscula y las demás con la primera letra en mayúscula y las demás en minúscula."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "¿Cómo gestiona Java el paso por valor y por referencia?",
+    "options": [
+      "Siempre utiliza paso por valor.",
+      "Con las variables utiliza paso por valor y con los objetos paso por referencia.",
+      "Con las variables utiliza paso por referencia y con los objetos paso por valor.",
+      "Siempre utiliza paso por referencia."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "Cuando estamos haciendo un método, ¿podemos llamar a otro método dentro de él?",
+    "options": [
+      "Si, pero solo cuando se trata de funciones, ya que al devolver un valor nos permiten llamar a otro método.",
+      "Si, podemos llamar a todos los métodos que necesitemos en la realización de otro método.",
+      "No.",
+      "Si, pero solo cuando estamos haciendo el método toString de una clase."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "En Doxygen @param sirve para:",
+    "options": [
+      "Documentar el autor de una clase.",
+      "Documentar un parámetro de un método.",
+      "Documentar el dato que devuelve un método.",
+      "Documentar qué hace un método."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "¿Qué se guarda en la zona de memoria de un objeto?",
+    "options": [
+      "Las variables y el código.",
+      "Las variables, el código y las llamadas.",
+      "Las variables, las llamadas, el código y los datos globales.",
+      "Las variables, el código y los datos globales."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 8,
+    "text": "Indica la frase incorrecta:",
+    "options": [
+      "Al programar, organizamos el código en torno a objetos, que son representaciones de cosas del mundo real",
+      "Los cambios efectuados a un objeto afectan a las funciones definidas en la clase.",
+      "Java es un lenguaje multiplataforma.",
+      "Los datos junto a las funciones son parte interna de los objetos."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "Los objetos se comunican entre sí mediante:",
+    "options": [
+      "Mensajes.",
+      "Señales de humo.",
+      "Código binario.",
+      "Mensajes cifrados en hexadecimal."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "Para mostrar la información de un objeto por pantalla:",
+    "options": [
+      "Puedo utilizar los métodos get o escribir su método toString para mostrarlo directamente.",
+      "Si no se escribe el método toString no se puede mostrar la información del objeto.",
+      "Solo se podrá mostrar su información mediante los métodos get.",
+      "No se puede mostrar la información de un objeto por pantalla."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "Desde un método estático puedo llamar:",
+    "options": [
+      "A un método de un objeto.",
+      "A otros métodos estáticos.",
+      "Los métodos estáticos no permiten llamar a otros métodos.",
+      "Tanto a otros métodos estáticos como a métodos de objetos."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "¿Cuál es el método que permite modificar el valor de un atributo de una clase?",
+    "options": [
+      "Método set.",
+      "Método get.",
+      "Constructor con parámetros.",
+      "Método toString."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "El constructor de copia:",
+    "options": [
+      "Permite inicializar las variables de un objeto a un valor por defecto.",
+      "Permite inicializar las variables de un objeto a un valor pasado por parámetro.",
+      "Permite inicializar las variables de un objeto al mismo valor que las de otro objeto de su mismo tipo.",
+      "Es un híbrido entre el constructor por defecto y el constructor de copia."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "¿Si defino en una clase dos constructores con parámetros, puedo definir además un constructor de copia?",
+    "options": [
+      "Si, no hay problema.",
+      "No, ya que no se pueden definir más de un constructor con parámetros.",
+      "Si, siempre y cuando se defina también el constructor por defecto.",
+      "Si, siempre y cuando el constructor de copia no se llame igual que los constructores con parámetros."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "Los paquetes sirven para:",
+    "options": [
+      "Ordenar nuestro código en “carpetas” que contengan clases con la misma funcionalidad.",
+      "Su única funcionalidad es la de almacenar imágenes.",
+      "Los paquetes no suelen utilizarse, ya que contribuyen a que él código resultante sea mucho más complejo.",
+      "Una clase solo podrá heredar de otra siempre que estén en el mismo paquete."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "Para crear una biblioteca en NetBeans:",
+    "options": [
+      "Hay que instalarle el plugin MasterOfLibraries.",
+      "Cada vez que compilemos nuestro proyecto, si NetBeans detecta que hay un paquete, creará automáticamente una biblioteca.",
+      "Las bibliotecas no se pueden crean en NetBeans, necesitamos hacerlo en consola.",
+      "Hay que crear un nuevo proyecto del tipo Java Class Library."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "¿Cuál de los siguientes no es un pilar de la programación dirigida a objetos?",
+    "options": [
+      "Herencia.",
+      "Encapsulación.",
+      "Ámbito de visibilidad.",
+      "Polimorfismo."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "Los métodos get y set:",
+    "options": [
+      "Son obligatorios en todas las clases que hagamos.",
+      "No son obligatorios, pero son recomendables si queremos acceder y modificar los atributos.",
+      "Hay que hacerlos solo cuando hacemos el constructor con parámetros.",
+      "Los métodos get son obligatorios, pero son los métodos set no."
+    ],
+    "correctOptionIndex": 1
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "¿Qué palabra clave se utiliza para referirse a la instancia actual de una clase en Java?",
+    "options": [
+      "self",
+      "this",
+      "current",
+      "me"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "¿Cuál de los siguientes modificadores de acceso proporciona el nivel más restrictivo de acceso en Java?",
+    "options": [
+      "public",
+      "protected",
+      "default",
+      "private"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "¿Cuál es el propósito principal de la sobrecarga de métodos en Java?",
+    "options": [
+      "Ocultar la implementación de un método",
+      "Crear múltiples versiones de un método con diferentes parámetros",
+      "Heredar métodos de una superclase",
+      "Implementar polimorfismo en tiempo de ejecución"
+    ],
+    "correctOptionIndex": 1
+  },
+    {
+    "subjectId": "programacion",
+    "topicId": 9,
+    "text": "La extensión de las bibliotecas de Java es:",
+    "options": [
+      ".jar",
+      ".java",
+      ".rar",
+      ".class"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "¿Qué tipo de herencia se usa en Java?",
+    "options": [
+      "Herencia simple.",
+      "Herencia múltiple.",
+      "Composición.",
+      "Agregación."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "Al heredar de otra clase, ¿puedo acceder a su parte privada?",
+    "options": [
+      "Si.",
+      "No.",
+      "Si, siempre que se indique al compilador.",
+      "Si, siempre que tengamos un método puente para realizar el acceso correctamente."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "¿Qué palabra reservada usamos en Java para indicar la herencia?",
+    "options": [
+      "Herency.",
+      "Extends.",
+      "Implements.",
+      "Se usa el operador dos puntos ( : ) ."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "¿Cuándo debemos poner super en los constructores?",
+    "options": [
+      "Después de inicializar todas las variables.",
+      "En la primera línea de forma obligatoria.",
+      "En la primera línea obligatoriamente en constructores con parámetros, en los demás al final.",
+      "Los constructores se heredan tal cual, así que no es necesario."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "¿Se puede heredar de una clase que a su vez hereda de otra?",
+    "options": [
+      "Si, sin ningún problema.",
+      "No, en Java no está permitida la herencia múltiple.",
+      "Si, siempre y cuando la clase de más abajo no defina ningún atributo.",
+      "Java no permite la herencia de ningún tipo."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "¿Qué notación se usa para indicar que se ha sobreescrito un método?",
+    "options": [
+      "Ninguna, se sobreescribe y ya funciona.",
+      "@overrided",
+      "@sobreescrito",
+      "@override"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "La herencia múltiple:",
+    "options": [
+      "Está presente en todos los lenguajes orientados a objetos.",
+      "Es peligrosa por posibles ambigüedades, por eso Java no la usa.",
+      "Es un caso único, ya que solo la usa el lenguaje Python.",
+      "No existe la herencia múltiple, pero si la herencia doble."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "En Java, todas las clases heredan de:",
+    "options": [
+      "Object.",
+      "String.",
+      "En Java una clase no hereda a no ser que se indique con extends.",
+      "Integer."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "La clase de la que se hereda se denomina:",
+    "options": [
+      "Clase hermana.",
+      "Clase abuelo.",
+      "Clase padre.",
+      "Clase hija."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "En Java, el polimorfismo ______",
+    "options": [
+      "se puede clasificar en tres grandes clases",
+      "estático puede emplear cualquier tipo de datos compatible.",
+      "dinámico, define el tipo de datos antes de ser utilizado.",
+      "Implica tener objetos con una raíz común, que hereden de la misma clase padre."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "¿Qué tipo de herencia se usa en Java?",
+    "options": [
+      "Herencia simple.",
+      "Herencia múltiple.",
+      "Composición.",
+      "Agregación."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "¿Cómo se llama la clase que hereda de otra?",
+    "options": [
+      "Clase padre",
+      "Subclase.",
+      "Super Clase.",
+      "Clase abstracta"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "programacion",
+    "topicId": 10,
+    "text": "Si A hereda de B y B a su vez hereda de C, esto es:",
+    "options": [
+      "Herencia simple.",
+      "Herencia mixta.",
+      "Herencia múltiple.",
+      "Súper Herencia."
+    ],
+    "correctOptionIndex": 0
+  }
+]

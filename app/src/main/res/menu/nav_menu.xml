@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_db"
+            android:title="Base de Datos" />
+        <item
+            android:id="@+id/nav_digitalizacion"
+            android:title="Digitalización Aplicada" />
+        <item
+            android:id="@+id/nav_entornos"
+            android:title="Entornos de Desarrollo" />
+        <item
+            android:id="@+id/nav_ipe"
+            android:title="Itinerario Personal (IPE)" />
+        <item
+            android:id="@+id/nav_marcas"
+            android:title="Lenguaje de Marcas" />
+        <item
+            android:id="@+id/nav_programacion"
+            android:title="Programación" />
+        <item
+            android:id="@+id/nav_sistemas"
+            android:title="Sistemas Informáticos" />
+        <item
+            android:id="@+id/nav_sostenibilidad"
+            android:title="Sostenibilidad" />
+    </group>
+</menu>

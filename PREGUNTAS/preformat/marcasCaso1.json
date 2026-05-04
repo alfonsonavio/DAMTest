@@ -1,0 +1,68 @@
+[
+    {
+        "subjectId": "marcas",
+        "topicId": "caso_1",
+        "text": "¿Cómo podemos cambiar la curvatura del borde de los elementos article?",
+        "optionA": "Cambiando el valor de la propiedad border-radius en la regla CSS dearticle",
+        "optionB": "Agregando una nueva propiedad curve a la regla CSS de article.",
+        "optionC": "Usando la propiedad border para definir una curvatura en píxeles: article{border: 10px curved;}",
+        "optionD": "Definiendo un nuevo atributo HTML curvature en las etiquetas <article>:<article curvature=\"10px\">",
+        "correctOptionIndex": 0,
+        "contextText": "Dispnemos de un código fuente en HTML y CSS que describe una página webestructurada con las siguientes secciones principales:• header: Contiene el título principal del sitio y un breve mensaje debienvenida.• nav: Incluye una barra de navegación con enlaces organizados comouna lista desordenada.• main: Contiene el contenido principal de la página, dividido en:o section: Una sección principal que agrupa varios artículosindependientes.o article: Bloques de contenido autocontenidos, cada uno con unencabezado, una imagen y un párrafo.o aside: Un bloque lateral con enlaces útiles organizados en unalista.• footer: Un pie de página que incluye un mensaje de derechosreservados.El diseño utiliza CSS para variar fuentes, colores y el diseño mediante float yclear.Por ejemplo, los elementos section y aside están colocados uno al lado delotro usando flotación, y los article tienen bordes con curvatura y fondoblanco"
+    },
+    {
+        "subjectId": "marcas",
+        "topicId": "caso_1",
+        "text": "¿Cómo podemos cambiar el color de fondo del header?",
+        "optionA": "Usando una propiedad de HTML para definir un atributo bgcolordirectamente en la etiqueta header",
+        "optionB": "Cambiando el valor de la propiedad background-color en la regla CSS deheader",
+        "optionC": "Agregando un atributo personalizado llamado header-color en el HTML yestilizando con CSS.",
+        "optionD": "Utilizando la propiedad color en lugar de background-color en la regla CSSde header.",
+        "correctOptionIndex": 1,
+        "contextText": "Dispnemos de un código fuente en HTML y CSS que describe una página webestructurada con las siguientes secciones principales:• header: Contiene el título principal del sitio y un breve mensaje debienvenida.• nav: Incluye una barra de navegación con enlaces organizados comouna lista desordenada.• main: Contiene el contenido principal de la página, dividido en:o section: Una sección principal que agrupa varios artículosindependientes.o article: Bloques de contenido autocontenidos, cada uno con unencabezado, una imagen y un párrafo.o aside: Un bloque lateral con enlaces útiles organizados en unalista.• footer: Un pie de página que incluye un mensaje de derechosreservados.El diseño utiliza CSS para variar fuentes, colores y el diseño mediante float yclear.Por ejemplo, los elementos section y aside están colocados uno al lado delotro usando flotación, y los article tienen bordes con curvatura y fondoblanco"
+    },
+    {
+        "subjectId": "marcas",
+        "topicId": "caso_1",
+        "text": "¿Cómo podemos eliminar los puntos de la lista en el elemento nav ul?",
+        "optionA": "Eliminando los elementos <li> del HTML.",
+        "optionB": "Aplicando un atributo hide-points directamente a la etiqueta <ul>",
+        "optionC": "Cambiando la propiedad display de ul a inline en el CSS.",
+        "optionD": "Usando la propiedad list-style con el valor none en la regla CSS de nav ul.",
+        "correctOptionIndex": 3,
+        "contextText": "Dispnemos de un código fuente en HTML y CSS que describe una página webestructurada con las siguientes secciones principales:• header: Contiene el título principal del sitio y un breve mensaje debienvenida.• nav: Incluye una barra de navegación con enlaces organizados comouna lista desordenada.• main: Contiene el contenido principal de la página, dividido en:o section: Una sección principal que agrupa varios artículosindependientes.o article: Bloques de contenido autocontenidos, cada uno con unencabezado, una imagen y un párrafo.o aside: Un bloque lateral con enlaces útiles organizados en unalista.• footer: Un pie de página que incluye un mensaje de derechosreservados.El diseño utiliza CSS para variar fuentes, colores y el diseño mediante float yclear.Por ejemplo, los elementos section y aside están colocados uno al lado delotro usando flotación, y los article tienen bordes con curvatura y fondoblanco"
+    },
+    {
+        "subjectId": "marcas",
+        "topicId": "caso_1",
+        "text": "¿Qué etiqueta HTML es la más adecuada para definir el encabezadoprincipal del sitio web?",
+        "optionA": "La etiqueta <h1>, ya que siempre se utiliza como encabezado principal sinimportar su contexto.",
+        "optionB": "La etiqueta <header>, ya que es específica para encabezados de seccioneso páginas completas.",
+        "optionC": "La etiqueta <nav>, ya que define la barra de navegación y puede incluirencabezados.",
+        "optionD": "La etiqueta <div>, ya que es genérica y puede usarse para cualquier tipode contenido.",
+        "correctOptionIndex": 1,
+        "contextText": "Dispnemos de un código fuente en HTML y CSS que describe una página webestructurada con las siguientes secciones principales:• header: Contiene el título principal del sitio y un breve mensaje debienvenida.• nav: Incluye una barra de navegación con enlaces organizados comouna lista desordenada.• main: Contiene el contenido principal de la página, dividido en:o section: Una sección principal que agrupa varios artículosindependientes.o article: Bloques de contenido autocontenidos, cada uno con unencabezado, una imagen y un párrafo.o aside: Un bloque lateral con enlaces útiles organizados en unalista.• footer: Un pie de página que incluye un mensaje de derechosreservados.El diseño utiliza CSS para variar fuentes, colores y el diseño mediante float yclear.Por ejemplo, los elementos section y aside están colocados uno al lado delotro usando flotación, y los article tienen bordes con curvatura y fondoblanco"
+    },
+    {
+        "subjectId": "marcas",
+        "topicId": "caso_1",
+        "text": "¿Qué etiqueta HTML es la más apropiada para agrupar el contenidoprincipal del sitio web?",
+        "optionA": "La etiqueta <main>, porque está destinada a contener el contenido másimportante de la página.",
+        "optionB": "La etiqueta <section>, porque puede agrupar contenido relacionado.",
+        "optionC": "La etiqueta <div>, porque se utiliza para crear contenedores genéricos.",
+        "optionD": "La etiqueta <article>, porque está diseñada para representar contenidoindependiente.",
+        "correctOptionIndex": 0,
+        "contextText": "Dispnemos de un código fuente en HTML y CSS que describe una página webestructurada con las siguientes secciones principales:• header: Contiene el título principal del sitio y un breve mensaje debienvenida.• nav: Incluye una barra de navegación con enlaces organizados comouna lista desordenada.• main: Contiene el contenido principal de la página, dividido en:o section: Una sección principal que agrupa varios artículosindependientes.o article: Bloques de contenido autocontenidos, cada uno con unencabezado, una imagen y un párrafo.o aside: Un bloque lateral con enlaces útiles organizados en unalista.• footer: Un pie de página que incluye un mensaje de derechosreservados.El diseño utiliza CSS para variar fuentes, colores y el diseño mediante float yclear.Por ejemplo, los elementos section y aside están colocados uno al lado delotro usando flotación, y los article tienen bordes con curvatura y fondoblanco"
+    },
+    {
+        "subjectId": "marcas",
+        "topicId": "caso_1",
+        "text": "¿Qué etiqueta HTML es adecuada para incluir un grupo de enlacesrelacionados, como los que pueden estar en el pie de página?",
+        "optionA": "La etiqueta <footer>, porque es específica para el contenido de pie depágina.",
+        "optionB": "La etiqueta <nav>, porque se utiliza para definir barras de navegación",
+        "optionC": "La etiqueta <ul>, porque puede usarse para agrupar enlaces en listasdesordenadas.",
+        "optionD": "La etiqueta <div>, porque se puede usar para agrupar cualquier contenido.",
+        "correctOptionIndex": 1,
+        "contextText": "Dispnemos de un código fuente en HTML y CSS que describe una página webestructurada con las siguientes secciones principales:• header: Contiene el título principal del sitio y un breve mensaje debienvenida.• nav: Incluye una barra de navegación con enlaces organizados comouna lista desordenada.• main: Contiene el contenido principal de la página, dividido en:o section: Una sección principal que agrupa varios artículosindependientes.o article: Bloques de contenido autocontenidos, cada uno con unencabezado, una imagen y un párrafo.o aside: Un bloque lateral con enlaces útiles organizados en unalista.• footer: Un pie de página que incluye un mensaje de derechosreservados.El diseño utiliza CSS para variar fuentes, colores y el diseño mediante float yclear.Por ejemplo, los elementos section y aside están colocados uno al lado delotro usando flotación, y los article tienen bordes con curvatura y fondoblanco"
+    }
+]

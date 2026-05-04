@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "835307125866",
+    "firebase_url": "https://damtests-5ec43-default-rtdb.firebaseio.com",
+    "project_id": "damtests-5ec43",
+    "storage_bucket": "damtests-5ec43.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835307125866:android:1e25a3d7af697b441fde13",
+        "android_client_info": {
+          "package_name": "com.navio.damtests"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLGB3-1ggfoOG_aoIti8V_7njZpRJUrT0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

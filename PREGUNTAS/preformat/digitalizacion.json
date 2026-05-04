@@ -1,0 +1,1202 @@
+[
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "¿Qué invento fue vital para la Primera Revolución Industrial?",
+    "options": [
+      "La electricidad",
+      "La máquina de vapor",
+      "Los primeros ordenadores",
+      "Las herramientas manuales"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "¿Qué descubrimiento fue vital para la Segunda Revolución Industrial?",
+    "options": [
+      "La electricidad",
+      "La máquina de vapor",
+      "Los primeros ordenadores",
+      "Las herramientas manuales"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "¿En qué revolución industrial se empieza a tener una economía más interconectada y orientada a los servicios?",
+    "options": [
+      "Primera Revolución Industrial",
+      "Segunda Revolución Industrial",
+      "Tercera Revolución Industrial",
+      "Cuarta Revolución Industrial"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "¿En qué revolución industrial apareció la producción en cadena?",
+    "options": [
+      "Primera Revolución Industrial",
+      "Segunda Revolución Industrial",
+      "Tercera Revolución Industrial",
+      "Cuarta Revolución Industrial"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "¿En qué revolución industrial se trabaja con big data?",
+    "options": [
+      "Primera Revolución Industrial",
+      "Segunda Revolución Industrial",
+      "Tercera Revolución Industrial",
+      "Cuarta Revolución Industrial"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "¿Qué significan las siglas THD?",
+    "options": [
+      "Tecnologías Habilitadoras Digitales",
+      "Técnicas Habilitadoras Digitales",
+      "Técnicas Humanizadoras Digitales",
+      "Tecnologías Humanizadoras Digitales"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "Los sistemas ciberfisicos",
+    "options": [
+      "Son sistemas integrados físicos",
+      "Son sistemas integrados virtuales",
+      "Son sistemas integrados que combinan componentes físicos y virtuales",
+      "Ninguna es correcta"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "¿Qué es la interoperabilidad?",
+    "options": [
+      "La capacidad de tener distintas opciones para elegir",
+      "La protección de la privacidad de la información",
+      "La integración de sistemas de diferentes proveedores y tecnologías",
+      "La capacidad de poder responder a ataques cibernéticos"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "¿Cuál no es una característica de las THD?",
+    "options": [
+      "Poca variabilidad",
+      "Fuerte inversión de capital",
+      "Ciclo de innovaciones ágiles",
+      "Alto nivel de investigación y desarrollo"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 1,
+    "text": "¿Qué característica distintiva permite identificar tendencias, patrones y oportunidades?",
+    "options": [
+      "Automatización",
+      "Personalización",
+      "Analítica avanzada",
+      "Conectividad"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Cuál es una característica de la evolución de la estructura organizativa en la era digital?",
+    "options": [
+      "Jerarquías rígidas y silos departamentales.",
+      "Flexibilidad, agilidad y colaboración.",
+      "Estancamiento y resistencia al cambio.",
+      "Centralización y burocracia."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Qué tecnología digital se utiliza para mejorar la eficiencia en la logística empresarial?",
+    "options": [
+      "Redes sociales y correo electrónico.",
+      "Fabricación inteligente y Internet de las cosas.",
+      "Sistemas de gestión de almacenes basados en la nube.",
+      "Procesadores de texto y hojas de cálculo."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Cómo contribuye la digitalización al departamento de recursos humanos?",
+    "options": [
+      "Incrementando la burocracia en la gestión del talento.",
+      "Utilizando análisis predictivo para la selección y retención de empleados.",
+      "Reduciendo la necesidad de formación continua.",
+      "Eliminando la necesidad de plataformas digitales."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Cuál es el objetivo principal de las Tecnologías de la Información (IT)?",
+    "options": [
+      "Controlar procesos físicos y operativos en entornos industriales.",
+      "Gestionar y manipular datos para facilitar la toma de decisiones.",
+      "Garantizar la operación segura y eficiente de los sistemas físicos.",
+      "Mejorar la eficiencia operativa y proporcionar información útil para la organización."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Cuál es una característica de las Tecnologías Operativas (OT)?",
+    "options": [
+      "Utiliza sistemas y aplicaciones de software para procesar y almacenar datos.",
+      "Se enfoca en la eficiencia, la productividad y la toma de decisiones basada en datos.",
+      "Utiliza dispositivos físicos como sensores y controladores para monitorear y controlar sistemas.",
+      "Utiliza redes de comunicación para transmitir datos entre dispositivos y usuarios."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Cuál es uno de los beneficios de la integración entre IT y OT en la digitalización empresarial?",
+    "options": [
+      "Aumento de la burocracia y rigidez en los procesos de producción.",
+      "Reducción de la flexibilidad y eficiencia en la cadena de valor.",
+      "Mejora de la calidad del producto y la seguridad operativa.",
+      "Disminución de la colaboración entre equipos de trabajo."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Qué tecnología habilitadora digital en el entorno IT facilita el almacenamiento escalable de datos y la ejecución de aplicaciones en servidores remotos?",
+    "options": [
+      "Big Data y analítica.",
+      "Seguridad cibernética.",
+      "Cloud computing.",
+      "Inteligencia Artificial (IA) y Machine Learning."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Qué función desempeña la Inteligencia Artificial (IA) y el Machine Learning en el entorno IT?",
+    "options": [
+      "Proteger los sistemas, redes y datos de amenazas cibernéticas.",
+      "Facilitar la recopilación, almacenamiento y análisis de grandes volúmenes de datos.",
+      "Automatizar tareas repetitivas y realizar análisis predictivo.",
+      "Identificar patrones, tendencias y oportunidades de negocio."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Qué implica el cambio organizativo y cultural durante la transformación digital de una empresa?",
+    "options": [
+      "Mantener una cultura estática y resistente al cambio.",
+      "Fomentar una cultura de innovación, colaboración y adaptabilidad.",
+      "Eliminar la necesidad de capacitación de los empleados.",
+      "Limitar la adopción de nuevas tecnologías."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 2,
+    "text": "¿Cuál es una acción importante en la etapa de formación y capacitación durante la transformación digital de una empresa?",
+    "options": [
+      "Reducción del presupuesto destinado a la formación.",
+      "Proporcionar formación y capacitación en competencias digitales.",
+      "Excluir a ciertos empleados de la formación.",
+      "Ignorar el progreso y los ajustes necesarios."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Cuál es una de las características más destacadas del 5G en comparación con las redes 4G?",
+    "options": [
+      "Mayor latencia",
+      "Menor velocidad de conexión",
+      "Mayor capacidad de conexión",
+      "Menor ancho de banda"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Qué beneficio ofrece el uso extensivo de la virtualización de redes en el 5G?",
+    "options": [
+      "Mayor latencia",
+      "Menor flexibilidad en la gestión de recursos de red",
+      "Mayor eficiencia en la gestión de recursos de red",
+      "Menor velocidad de conexión"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Qué modelo de servicio en la computación en la nube proporciona un entorno completo de desarrollo y ejecución para aplicaciones, incluyendo herramientas de desarrollo, bases de datos y servicios de despliegue?",
+    "options": [
+      "Infraestructura como Servicio (IaaS)",
+      "Plataforma como Servicio (PaaS)",
+      "Software como Servicio (SaaS)",
+      "Ninguna de las anteriores"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Cuál es uno de los beneficios principales de la computación en la nube que permite a las organizaciones adaptarse rápidamente a las demandas cambiantes del mercado, experimentar con nuevas ideas y proyectos, y aprovechar tecnologías emergentes sin grandes inversiones en infraestructura?",
+    "options": [
+      "Mayor complejidad en la gestión de recursos informáticos",
+      "Reducción de la seguridad",
+      "Escalabilidad y flexibilidad",
+      "Menor disponibilidad de recursos"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Cuál de las siguientes características NO es una de las \"3V\" asociadas con el Big Data?",
+    "options": [
+      "Volumen",
+      "Variedad",
+      "Validez",
+      "Velocidad"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Qué tecnologías de procesamiento distribuido se utilizan para el procesamiento eficiente de grandes conjuntos de datos en el contexto del Big Data?",
+    "options": [
+      "Hadoop y Apache Spark.",
+      "Bases de datos relacionales.",
+      "Sistemas de almacenamiento en la nube.",
+      "NoSQL."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Cuál de las siguientes capas del IoT se encarga de garantizar la disponibilidad, la seguridad y la eficiencia en la transmisión de datos a través de la red?",
+    "options": [
+      "Conectividad.",
+      "Capa de red.",
+      "Plataforma de gestión.",
+      "Aplicaciones y servicios."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Cuál de las siguientes amenazas se encuentra principalmente en entornos OT?",
+    "options": [
+      "Ataques de phishing.",
+      "Ataques de denegación de servicio (DDoS).",
+      "Ataques a Sistemas de Control Industrial (ICS).",
+      "Ingeniería social."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Cuál de las siguientes amenazas se encuentra principalmente en entornos IT?",
+    "options": [
+      "Ataques a Sistemas de Control Industrial (ICS).",
+      "Manipulación de datos y procesos.",
+      "Malware.",
+      "Ataques de ransomware industrial."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 3,
+    "text": "¿Cuál es una similitud entre la Tecnología de Libro Mayor Distribuido (DLT) y la tecnología Blockchain?",
+    "options": [
+      "Utilizan una cadena inmutable de bloques enlazados para almacenar información",
+      "Están diseñadas para operar en entornos centralizados",
+      "No proporcionan un registro transparente y auditable de las transacciones",
+      "No ofrecen un alto nivel de seguridad mediante criptografía avanzada"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Cuál de los siguientes no es uno de los pilares fundamentales de la Inteligencia Artificial (IA)?",
+    "options": [
+      "Lógica y razonamiento",
+      "Representación del conocimiento",
+      "Cálculo y matemáticas avanzadas",
+      "Percepción"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Qué técnica de aprendizaje implica entrenar a un modelo con ejemplos etiquetados?",
+    "options": [
+      "Aprendizaje supervisado",
+      "Aprendizaje no supervisado",
+      "Aprendizaje por refuerzo",
+      "Aprendizaje semi-supervisado"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Cuál de las siguientes tecnologías de Realidad Inmersiva permite a los usuarios sumergirse completamente en entornos digitales generados por computadora?",
+    "options": [
+      "Realidad Aumentada (AR)",
+      "Realidad Virtual (VR)",
+      "Realidad Mixta (MR)",
+      "Realidad Híbrida (HR)"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Qué tecnología de Realidad Inmersiva combina elementos del mundo real con elementos virtuales, superponiendo información digital en el entorno físico del usuario?",
+    "options": [
+      "Realidad Aumentada (AR)",
+      "Realidad Virtual (VR)",
+      "Realidad Mixta (MR)",
+      "Realidad Híbrida (HR)"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Cuál de las siguientes afirmaciones es verdadera acerca de los cobots?",
+    "options": [
+      "Los cobots están diseñados para trabajar de forma autónoma sin interacción con humanos.",
+      "Los cobots son robots industriales tradicionales confinados a jaulas de seguridad.",
+      "Los cobots están equipados con sensores avanzados y sistemas de seguridad para detectar la presencia de humanos y evitar colisiones o accidentes.",
+      "Los cobots no pueden ser reubicados ni reconfigurados."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Qué aspecto hace que los robots de Cobótica sean fáciles de programar y reconfigurar, permitiendo a los usuarios enseñarles nuevas tareas sin necesidad de conocimientos especializados en programación?",
+    "options": [
+      "Colaboración",
+      "Flexibilidad",
+      "Programación intuitiva",
+      "Eficiencia"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Qué permiten los gemelos digitales?",
+    "options": [
+      "Ejecutar simulaciones en el entorno virtual",
+      "Prever fallos antes que ocurran",
+      "Rastrear la historia de un producto",
+      "Todas son correctas"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Cuál de los siguientes procesos de impresión 3D utiliza un láser ultravioleta para solidificar resina líquida capa por capa?",
+    "options": [
+      "Fusión e deposición de material (FDM)",
+      "Estereolitografía (SLA)",
+      "Sinterización selectiva por láser (SLS)",
+      "Impresión 3D a chorro de tinta (Inkjet 3D)"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Qué tipo de material se utiliza comúnmente en el proceso de Sinterización Selectiva por Láser (SLS) en la impresión 3D?",
+    "options": [
+      "Resina líquida",
+      "Poliamida o metal en polvo",
+      "Material líquido que se solidifica mediante luz UV",
+      "Filamento de plástico que se derrite y se extruye capa por capa"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 4,
+    "text": "¿Qué aspecto es fundamental en el enfoque Building Information Modeling (BIM) para representar digitalmente todos los aspectos físicos y funcionales de un proyecto de construcción?",
+    "options": [
+      "Base de datos centralizada",
+      "Información interoperable",
+      "Modelado 3D",
+      "Análisis y simulación"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿Cuál no es un paso del análisis de datos en el deporte?",
+    "options": [
+      "Recopilación de datos",
+      "Procesamiento de datos",
+      "Eliminación de datos",
+      "Análisis de insight"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿Qué función desempeñan los sistemas de automatización en la gestión de proyectos de construcción?",
+    "options": [
+      "Generar horarios detallados",
+      "Monitorear el progreso en tiempo real",
+      "Almacenar y distribuir documentos",
+      "Todas las anteriores"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿Qué significa MDT?",
+    "options": [
+      "Modelo Digital Temporal",
+      "Modelo Digital de Terreno",
+      "Muestreo Digital Temporal",
+      "Muestreo Digital de Terreno"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿Qué tecnología de Realidad Inmersiva combina elementos del mundo real con elementos virtuales, superponiendo información digital en el entorno físico del usuario?",
+    "options": [
+      "Realidad Aumentada (AR)",
+      "Realidad Virtual (VR)",
+      "Realidad Mixta (MR)",
+      "Realidad Híbrida (HR)"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿Cuál es una función clave de las plataformas de comercio electrónico en el contexto del marketing digital?",
+    "options": [
+      "Analizar datos demográficos, geográficos y de comportamiento del consumidor.",
+      "Ofrecer catálogos de productos, carritos de compra y opciones de pago seguras.",
+      "Optimizar motores de búsqueda y crear contenido relevante.",
+      "Segmentar el mercado objetivo en segmentos más pequeños y específicos."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿Mediante que THD podemos segmentar el mercado en marketing?",
+    "options": [
+      "Gemelos digitales",
+      "Inteligencia artificial",
+      "Big data",
+      "BIM"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿Qué hace el MFA?",
+    "options": [
+      "Monitorean y bloquean actividades sospechosas en la red.",
+      "Protege la confidencialidad de los datos mediante algoritmos matemáticos.",
+      "Asegura que solo usuarios autorizados puedan acceder a sistemas y aplicaciones.",
+      "Detecta patrones anómalos en el uso de sistemas."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿Qué hace el UBA?",
+    "options": [
+      "Monitorean y bloquean actividades sospechosas en la red.",
+      "Protege la confidencialidad de los datos mediante algoritmos matemáticos.",
+      "Asegura que solo usuarios autorizados puedan acceder a sistemas y aplicaciones.",
+      "Detecta patrones anómalos en el uso de sistemas."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿En qué aplicación tiene grandes posibilidades el blockchain en el sector de la sanidad?",
+    "options": [
+      "Consultas virtuales",
+      "Gestión de datos médicos",
+      "Monitoreo de signos vitales",
+      "Detectar anomalías"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 5,
+    "text": "¿Qué es el crowdfunding?",
+    "options": [
+      "Una app de capacitación de empleo",
+      "Una plataforma de gestión de voluntariado",
+      "Una plataforma para recaudar fondos",
+      "Una app con recursos educativos"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Cuál es la definición formal de Cloud Computing según el Instituto Nacional de Estándares y Tecnologías (NIST)?",
+    "options": [
+      "Un modelo que permite el acceso a redes adecuadas, desde cualquier lugar y bajo demanda, a un conjunto compartido de recursos informáticos.",
+      "Un modelo que permite el acceso a redes inadecuadas, desde cualquier lugar y bajo demanda, a un conjunto compartido de recursos informáticos.",
+      "Un modelo que restringe el acceso a redes adecuadas, desde cualquier lugar y bajo demanda, a un conjunto compartido de recursos informáticos.",
+      "Un modelo que permite el acceso a redes adecuadas, desde cualquier lugar y bajo demanda, a recursos informáticos exclusivos."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Qué tipo de servicio de Cloud Computing proporciona una plataforma de desarrollo completa y herramientas para desarrollar, probar y desplegar aplicaciones web y móviles?",
+    "options": [
+      "Infraestructura como servicio (IaaS)",
+      "Plataforma como servicio (PaaS)",
+      "Software como servicio (SaaS)",
+      "Red como servicio (RaaS)"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Qué característica principal define a la tecnología de Cloud Computing?",
+    "options": [
+      "La accesibilidad para el usuario desde cualquier lugar y en cualquier momento.",
+      "La restricción de acceso a datos y recursos.",
+      "La necesidad de interacción constante con el proveedor de servicios.",
+      "La complejidad de su gestión y mantenimiento."
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Cómo se llama a las nubes compartidas por varias organizaciones?",
+    "options": [
+      "Públicas",
+      "Privadas",
+      "Híbridas",
+      "Comunitaria"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Cuál es la característica principal de las nubes privadas?",
+    "options": [
+      "Ofrecen una escalabilidad y una flexibilidad excepcionales.",
+      "Están ubicadas en el centro de datos de la organización.",
+      "Ofrecen un mayor control sobre la seguridad y el cumplimiento normativo.",
+      "Permiten compartir los costos de la infraestructura de nube entre varias organizaciones."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Qué significa el modelo de pago por uso en la infraestructura como servicio (IaaS)?",
+    "options": [
+      "Se paga una tarifa fija independientemente del uso.",
+      "Se paga por los recursos utilizados solo cuando se supera un límite predeterminado.",
+      "Se paga solo por los recursos que se utilizan.",
+      "No hay costos asociados con el uso de recursos."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Qué ventaja ofrece la infraestructura como servicio (IaaS) en términos de escalabilidad?",
+    "options": [
+      "Se pueden reducir los retrasos en el aprovisionamiento.",
+      "Puede adaptarse a picos de demanda inesperados de forma casi inmediata.",
+      "Ofrece redundancia y tolerancia a fallos integrados.",
+      "Minimiza la latencia y aumenta el rendimiento colocando aplicaciones en regiones cercanas a los usuarios finales."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Qué tipo de interfaz proporciona la plataforma como servicio (PaaS) para que los desarrolladores trabajen en proyectos desde cualquier ubicación y colaboren sin restricciones con otros miembros del equipo?",
+    "options": [
+      "Interfaz gráfica de usuario (GUI).",
+      "Interfaz de línea de comandos (CLI).",
+      "Interfaz de API.",
+      "Todas las anteriores."
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Qué característica define al modelo de software como servicio (SaaS)?",
+    "options": [
+      "Los usuarios deben preocuparse por el mantenimiento del servicio.",
+      "Los usuarios pueden acceder a las aplicaciones a través de un navegador de Internet.",
+      "Los clientes gestionan las aplicaciones y bases de datos.",
+      "Los datos de los usuarios se mezclan con los datos de otros clientes."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 6,
+    "text": "¿Cómo se clasifica el mercado del software como servicio según su forma de explotación?",
+    "options": [
+      "Por la complejidad del producto.",
+      "Por el número de clientes atendidos.",
+      "Por el tipo de relación con el proveedor y el nivel de servicio requerido.",
+      "Por la cantidad de características ofrecidas."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Cuál es la principal ventaja de la arquitectura de Edge Computing en comparación con un centro de datos centralizado?",
+    "options": [
+      "Mayor coste de mantenimiento",
+      "Incremento de la latencia",
+      "Reducción de la latencia y optimización del ancho de banda",
+      "Dependencia total de la nube"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Qué tipos de dispositivos se consideran parte del \"borde\" (edge) en Edge Computing?",
+    "options": [
+      "Centros de datos centralizados",
+      "Routers, gateways, dispositivos IoT, estaciones base de telecomunicaciones",
+      "Solo dispositivos IoT",
+      "Solo servidores en la nube"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Cómo se complementan el edge y la nube en la arquitectura de Edge Computing?",
+    "options": [
+      "El edge realiza tareas de análisis masivo de datos y la nube tareas de baja latencia",
+      "El edge funciona de manera aislada sin necesidad de la nube",
+      "El edge maneja tareas que requieren baja latencia y procesamiento en tiempo real, mientras que la nube se encarga de análisis masivos de datos y almacenamiento a gran escala",
+      "La nube solo se utiliza para actualizaciones y mantenimiento del edge"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Qué es Fog Computing?",
+    "options": [
+      "Un tipo de computación que se realiza exclusivamente en la núcleo de la red.",
+      "Una arquitectura de red que extiende las capacidades de la computación en la nube al borde de la red.",
+      "Un enfoque que utiliza exclusivamente dispositivos IoT para procesar datos.",
+      "Una técnica para reducir la latencia en centros de datos."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Cuál de las siguientes es una característica principal de Fog Computing?",
+    "options": [
+      "Aumento de la latencia en el procesamiento de datos",
+      "Centralización exclusiva del procesamiento en la nube",
+      "Preprocesamiento de datos para reducir la cantidad de datos transmitidos a la nube",
+      "Exclusiva compatibilidad con dispositivos móviles"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Por qué es importante la reducción de latencia en Fog Computing?",
+    "options": [
+      "Para aumentar los costos de ancho de banda",
+      "Para mejorar aplicaciones en tiempo real como la conducción autónoma y la telemedicina",
+      "Para garantizar que todos los datos se procesen en un solo nodo",
+      "Para evitar la heterogeneidad de dispositivos y protocolos"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Qué distingue principalmente a Mist Computing de Fog Computing?",
+    "options": [
+      "Se enfoca en la capa intermedia de nodos distribuidos",
+      "Se ocupa del procesamiento en dispositivos extremadamente cercanos al punto de generación de datos",
+      "Se centra exclusivamente en el procesamiento en la nube",
+      "Utiliza recursos ilimitados para el procesamiento de datos"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Cuál es una característica clave de los dispositivos utilizados en Mist Computing?",
+    "options": [
+      "Capacidad de procesamiento y almacenamiento ilimitados",
+      "Alta latencia en el procesamiento de datos",
+      "Recursos limitados y capacidad para realizar tareas específicas y ligeras",
+      "Exclusivo enfoque en análisis masivos de datos"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Qué implica la reducción de CapEx al adoptar la computación en la nube?",
+    "options": [
+      "Transformar los gastos de capital en gastos operativos",
+      "Incrementar la necesidad de inversiones iniciales en hardware y software",
+      "Incrementar los costos de mantenimiento y gestión",
+      "Aumentar la complejidad de la infraestructura de TI"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 7,
+    "text": "¿Cómo contribuye Mist Computing a la eficiencia de la red en un sistema distribuido?",
+    "options": [
+      "Aumentando la carga de trabajo en la capa de fog y en la nube",
+      "Procesando datos masivos en centros de datos centralizados",
+      "Realizando tareas simples directamente en los dispositivos, reduciendo la carga en fog y cloud",
+      "Enfocándose únicamente en el almacenamiento a largo plazo"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿Qué procesos incluye la inteligencia artificial?",
+    "options": [
+      "Solo el aprendizaje y el razonamiento.",
+      "La adquisición de información y la toma de decisiones.",
+      "El aprendizaje, el razonamiento y la autocorrección.",
+      "Solo la percepción visual y el reconocimiento del habla."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿Cuál de los siguientes es un objetivo principal de la IA?",
+    "options": [
+      "Crear emociones humanas.",
+      "Aumentar la eficiencia y reducir errores humanos.",
+      "Controlar todos los procesos industriales.",
+      "Sustituir completamente a los médicos en diagnósticos."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿En qué año se acuñó el término \"inteligencia artificial\"?",
+    "options": [
+      "1950",
+      "1956",
+      "1960",
+      "1970"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿Qué evento significativo ocurrió en 1997 relacionado con la inteligencia artificial?",
+    "options": [
+      "La publicación del artículo \"Computing Machinery and Intelligence\"",
+      "La invención de LISP por John McCarthy",
+      "La victoria de Deep Blue contra Garry Kasparov",
+      "La victoria de AlphaGo contra el campeón mundial de Go"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿Cuál es la principal característica de los sistemas expertos en la primera generación de IA?",
+    "options": [
+      "Utilización de grandes volúmenes de datos para aprendizaje.",
+      "Emulación de la toma de decisiones de un experto humano en un dominio específico.",
+      "Uso de redes neuronales profundas.",
+      "Aplicación en motores de recomendación."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿Qué elemento de los sistemas expertos utiliza las reglas de la base de conocimientos para deducir nueva información?",
+    "options": [
+      "Algoritmo de regresión.",
+      "Motor de inferencia.",
+      "Interfaz de usuario.",
+      "Máquina de vectores de soporte."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿Cuál es la unidad básica de las redes neuronales que realiza tareas de clasificación binaria?",
+    "options": [
+      "Red neuronal profunda",
+      "Red convolucional (CNN)",
+      "Perceptrón",
+      "Red recurrente (RNN)"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿Qué tipo de red neuronal se utiliza principalmente para el procesamiento de secuencias?",
+    "options": [
+      "Red neuronal profunda",
+      "Red convolucional (CNN)",
+      "Perceptrón",
+      "Red recurrente (RNN)"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿Cuál de las siguientes características es propia de la IA débil?",
+    "options": [
+      "Capacidad para transferir conocimiento entre dominios.",
+      "Consciencia y comprensión profunda.",
+      "Especialización en tareas específicas.",
+      "Autonomía en la toma de decisiones."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 8,
+    "text": "¿Qué ejemplo es una aplicación de IA débil?",
+    "options": [
+      "Un sistema capaz de entender y aplicar conocimientos humanos.",
+      "Un asistente virtual como Siri o Alexa.",
+      "Un sistema que puede aprender de experiencias sin intervención humana.",
+      "Una inteligencia artificial con autoconciencia."
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Cuál es una de las razones por las que los datos son cruciales para el desarrollo y el funcionamiento de los sistemas de IA?",
+    "options": [
+      "Para reducir la complejidad de los algoritmos",
+      "Para entrenar, validar y probar los modelos de IA",
+      "Para reemplazar los algoritmos de IA",
+      "Para minimizar el uso de hardware en los sistemas de IA"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Qué tipo de datos están organizados en formatos fijos como bases de datos relacionales?",
+    "options": [
+      "Datos no estructurados",
+      "Datos semiestructurados",
+      "Datos estructurados",
+      "Datos de sensores"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Qué se debe hacer con los datos antes de que puedan ser utilizados para entrenar modelos de IA?",
+    "options": [
+      "Guardarlos en una base de datos NoSQL",
+      "Anonimizarlos y pseudonimizarlos",
+      "Procesarlos y limpiarlos para eliminar inconsistencias",
+      "Cifrarlos en tránsito y en reposo"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Qué técnica se utiliza para proteger la identidad de los individuos en los conjuntos de datos reemplazando los datos identificativos con pseudónimos?",
+    "options": [
+      "Cifrado",
+      "Regulaciones y cumplimiento",
+      "Anonimización",
+      "Pseudonimización"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Cuál de las siguientes técnicas de procesamiento de datos implica reemplazar datos perdidos con estimaciones basadas en otros datos?",
+    "options": [
+      "Normalización",
+      "Imputación de valores faltantes",
+      "Análisis de Componentes Principales (PCA)",
+      "Codificación"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Qué técnica de transformación de datos ajusta los valores de datos para que sigan una escala común?",
+    "options": [
+      "Estandarización",
+      "Normalización",
+      "Codificación one-hot",
+      "Análisis de correlación"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Cuál de las siguientes técnicas de reducción de dimensionalidad transforma los datos a un nuevo espacio de menor dimensión que captura la mayor variabilidad posible?",
+    "options": [
+      "Codificación",
+      "Eliminación de duplicados",
+      "Análisis de Componentes Principales (PCA)",
+      "Agrupación y agregación"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Cuál de los siguientes no es un paso en la limpieza de datos?",
+    "options": [
+      "Imputación de valores faltantes",
+      "Eliminación de duplicados",
+      "Codificación",
+      "Corrección de errores"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Cuál es el objetivo principal de la minería de datos?",
+    "options": [
+      "Almacenar grandes conjuntos de datos",
+      "Descubrir patrones, correlaciones y tendencias significativas en grandes conjuntos de datos",
+      "Generar informes financieros",
+      "Realizar copias de seguridad de datos"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 9,
+    "text": "¿Qué se entiende por 'instancias' en el contexto de la minería de datos?",
+    "options": [
+      "Atributos o variables en un conjunto de datos",
+      "Regularidades o tendencias en los datos",
+      "Algoritmos de machine learning",
+      "Casos individuales o registros en un conjunto de datos"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "¿Cuál de las siguientes afirmaciones NO es correcta sobre cómo la IA se entrelaza con otras tecnologías?",
+    "options": [
+      "La IA y el IoT permiten una gestión más inteligente de activos y procesos mediante sensores y análisis de datos.",
+      "La IA incrementa la seguridad y confianza en blockchain al detectar patrones anómalos o fraudes.",
+      "La IA limita el almacenamiento de datos en Cloud Computing debido a su gran tamaño.",
+      "La IA mejora las experiencias de AR y VR al adaptarse a las preferencias del usuario."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "¿Cuál es la principal responsabilidad de los especialistas en ética de la IA según el texto?",
+    "options": [
+      "Diseñar y construir sistemas inteligentes",
+      "Abordar temas como el sesgo algorítmico, la privacidad de datos y el impacto social de la automatización",
+      "Interpretar grandes volúmenes de datos para extraer insights valiosos",
+      "Optimizar la interacción entre humanos y sistemas de IA"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "¿Cuál de los siguientes profesionales está a la vanguardia del desarrollo de la IA, trabajando en el diseño, construcción y mantenimiento de sistemas inteligentes?",
+    "options": [
+      "Científicos de datos",
+      "Especialistas en ética de la IA",
+      "Analistas de negocios en IA",
+      "Especialistas en IA y Machine Learning"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "¿Cuál de las siguientes aplicaciones utiliza IA para procesar el lenguaje natural, comprender comandos de voz y realizar tareas específicas, como buscar información en la web o controlar dispositivos IoT en el hogar?",
+    "options": [
+      "Reconocimiento de Música",
+      "Asistentes Virtuales",
+      "Análisis de Datos",
+      "Reconocimiento de Imágenes"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "¿Cuál de las siguientes opciones describe una aplicación de la IA en el reconocimiento de imágenes según el texto?",
+    "options": [
+      "Diagnósticos médicos basados en radiografías o resonancias magnéticas",
+      "Análisis de sentimientos en redes sociales",
+      "Transcripción médica en el sector de salud",
+      "Respuestas automatizadas"
+    ],
+    "correctOptionIndex": 0
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "¿Qué significa NPL?",
+    "options": [
+      "Procesamiento de logística natural",
+      "Procesamiento del lenguaje natural",
+      "Procesamiento de logística nativa",
+      "Procesamiento de lenguaje natural"
+    ],
+    "correctOptionIndex": 1
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "Señala que sentencia incorrecta de las siguientes, referida a la IA en el sector de la salud.",
+    "options": [
+      "La IA ayuda a los investigadores a descubrir nuevas asociaciones genéticas y biomarcadores",
+      "La IA puede predecir la susceptibilidad de un individuo a ciertas enfermedades y recomendar tratamientos personalizados basados en su perfil genético.",
+      "La IA puede detectar anomalías en las imágenes radiológicas pero aun no puede detectar tumores",
+      "La IA puede crear simulaciones detalladas de procedimientos quirúrgicos"
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "Señala que sentencia incorrecta de las siguientes, referida a la IA en el sector de la educación",
+    "options": [
+      "La IA puede ajustar el contenido y el ritmo del aprendizaje según el desempeño y las preferencias del estudiante",
+      "La IA puede proporcionar retroalimentación inmediata y detallada sobre las tareas",
+      "La IA aun no permite gestionar admisión de estudiantes, revisar solicitudes y verificar documentos.",
+      "La IA puede proporcionar herramientas de traducción que ayudan a estudiantes que hablen diferentes idiomas."
+    ],
+    "correctOptionIndex": 2
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "¿Qué puede hacer la IA en el sector financiero?",
+    "options": [
+      "Analizar los perfiles de crédito de los solicitantes de préstamos, evaluando su solvencia mediante el análisis de datos históricos, transacciones y comportamientos financieros",
+      "Los algoritmos de IA pueden identificar patrones de actividad sospechosa en tiempo real, ayudando a prevenir fraudes financieros.",
+      "Automatizar tareas administrativas repetitivas, como la gestión de cuentas, el cumplimiento normativo y la conciliación de cuentas.",
+      "Todas son correctas"
+    ],
+    "correctOptionIndex": 3
+  },
+  {
+    "subjectId": "digitalizacion",
+    "topicId": 10,
+    "text": "Señala que sentencia incorrecta de las siguientes, referida a la IA en el sector del comercio y marketing",
+    "options": [
+      "Los sistemas de IA analizan el comportamiento y las preferencias de los usuarios",
+      "La IA puede gestionar y optimizar campañas de publicidad programática en tiempo real",
+      "Los algoritmos de IA pueden ajustar los precios en tiempo real basándose en factores como la demanda, la competencia, la disponibilidad de stock y el comportamiento del cliente.",
+      "La IA no permite analizar como varia el precio afectando a la demanda de productos"
+    ],
+    "correctOptionIndex": 3
+  }
+]
