@@ -1,11 +1,3 @@
-import java.util.Properties
-
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(localPropertiesFile.inputStream())
-}
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -28,8 +20,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 
-        buildConfigField("String", "GEMINI_API_KEY", "\"${localProperties.getProperty("GEMINI_API_KEY")}\"")
+    applicationVariants.all {
+        val variant = this
+        variant.outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            output.outputFileName = "DAMTest-${variant.versionName}.apk"
+        }
     }
 
     buildTypes {
@@ -80,25 +78,32 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Room components
+    // Room
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
+
+    // Utilities
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("com.google.android.material:material:1.11.0")
-    // AI
-    implementation("com.google.ai.client.generativeai:generativeai:0.7.0")
 
-    // Firebase BoM
+    // AI
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
+    // Firebase BoM — manages all Firebase SDK versions
     implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
 
     // Firebase SDKs
     implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-config")   // Remote Config
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-analytics")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
-    // Squareup
+    // Networking
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // Groq (via OpenAI-compatible client)
+    implementation("com.aallam.openai:openai-client:3.8.2")
 }

@@ -25,7 +25,6 @@
                 android:id="@+id/tvQuestionCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
                 android:textColor="#64748B"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -37,8 +36,6 @@
                 android:layout_height="8dp"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="16dp"
-                android:progress="0"
-                android:max="10"
                 android:progressDrawable="@drawable/custom_progress_bar" />
 
             <com.google.android.material.button.MaterialButton
@@ -74,78 +71,139 @@
                 android:minHeight="160dp"
                 android:gravity="center"
                 android:padding="24dp"
-                android:text="¿Cuál es el bloque de declaraciones?"
                 android:textSize="20sp"
                 android:textColor="#1E293B"
                 android:textStyle="bold" />
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnOptionA"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="64dp"
+            android:orientation="vertical"
             android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp"
-            android:text="Opción A"
-            android:textAlignment="viewStart"
-            android:paddingHorizontal="20dp"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            app:cornerRadius="16dp"
-            app:backgroundTint="#4F46E5"
-            android:textColor="#FFFFFF" />
+            android:layout_marginBottom="12dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOptionA"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="64dp"
+                android:textAlignment="viewStart"
+                android:paddingHorizontal="20dp"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="16dp"
+                app:backgroundTint="#4F46E5" />
+            <TextView
+                android:id="@+id/tvFeedbackA"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingHorizontal="12dp"
+                android:textSize="13sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="12dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOptionB"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="64dp"
+                android:textAlignment="viewStart"
+                android:paddingHorizontal="20dp"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="16dp"
+                app:backgroundTint="#4F46E5" />
+            <TextView
+                android:id="@+id/tvFeedbackB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingHorizontal="12dp"
+                android:textSize="13sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="12dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOptionC"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="64dp"
+                android:textAlignment="viewStart"
+                android:paddingHorizontal="20dp"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="16dp"
+                app:backgroundTint="#4F46E5" />
+            <TextView
+                android:id="@+id/tvFeedbackC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingHorizontal="12dp"
+                android:textSize="13sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="12dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOptionD"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="64dp"
+                android:textAlignment="viewStart"
+                android:paddingHorizontal="20dp"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="16dp"
+                app:backgroundTint="#4F46E5" />
+            <TextView
+                android:id="@+id/tvFeedbackD"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingHorizontal="12dp"
+                android:textSize="13sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnOptionB"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:id="@+id/btnNextQuestion"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="64dp"
+            android:layout_height="60dp"
             android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp"
-            android:text="Opción B"
-            android:textAlignment="viewStart"
-            android:paddingHorizontal="20dp"
-            android:textAllCaps="false"
-            android:textSize="16sp"
+            android:layout_marginTop="24dp"
+            android:text="SIGUIENTE PREGUNTA"
+            android:visibility="gone"
+            android:letterSpacing="0.1"
+            android:textStyle="bold"
             app:cornerRadius="16dp"
-            app:backgroundTint="#4F46E5"
-            android:textColor="#FFFFFF" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnOptionC"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="64dp"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp"
-            android:text="Opción C"
-            android:textAlignment="viewStart"
-            android:paddingHorizontal="20dp"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            app:cornerRadius="16dp"
-            app:backgroundTint="#4F46E5"
-            android:textColor="#FFFFFF" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnOptionD"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="64dp"
-            android:layout_marginHorizontal="24dp"
-            android:text="Opción D"
-            android:textAlignment="viewStart"
-            android:paddingHorizontal="20dp"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            app:cornerRadius="16dp"
-            app:backgroundTint="#4F46E5"
-            android:textColor="#FFFFFF" />
+            app:backgroundTint="#1E293B" />
 
     </LinearLayout>
 </ScrollView>

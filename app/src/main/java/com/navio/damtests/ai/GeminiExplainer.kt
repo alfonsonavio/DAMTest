@@ -1,36 +1,63 @@
-package com.navio.damtests.ai // Ajusta según tu paquete real
+package com.navio.damtests.ai
 
 import com.google.ai.client.generativeai.GenerativeModel
-import com.navio.damtests.BuildConfig
-import com.navio.damtests.data.local.entity.Question // He visto que esta es tu clase base
+import com.navio.damtests.data.local.entity.Question
 
-class GeminiExplainer {
+/**
+ * Generates AI-powered explanations for incorrectly answered questions
+ * using the Gemini 2.5 Flash model.
+ *
+ * The API key is injected at construction time and sourced from
+ * [com.navio.damtests.RemoteConfigManager] — never hardcoded or stored in source control.
+ *
+ * @param apiKey  Gemini API key retrieved from Firebase Remote Config.
+ */
+class GeminiExplainer(apiKey: String) {
+
     private val generativeModel = GenerativeModel(
         modelName = "gemini-2.5-flash",
-        apiKey = BuildConfig.GEMINI_API_KEY
+        apiKey = apiKey
     )
 
+    /**
+     * Returns a short, clear explanation of why the correct answer is correct
+     * and why the student's selected answer was wrong.
+     *
+     * @param pregunta  The question that was answered incorrectly.
+     * @param respuestaUsuario  The 0-based index of the option the student chose.
+     */
     suspend fun explicarFallo(pregunta: Question, respuestaUsuario: Int): String {
+        val contexto = if (!pregunta.contextText.isNullOrEmpty())
+            "Enunciado/Contexto del caso:\n${pregunta.contextText}\n\n"
+        else ""
+
         val prompt = """
-            Actúa como un profesor de DAM. Una alumna llamada Mari Carmen ha fallado una pregunta de test.
-            Enunciado general: ${pregunta.contextText} ? "no tiene"
-            Pregunta: ${pregunta.text}
+            Actúa como un profesor experto en DAM (Desarrollo de Aplicaciones Multiplataforma).
+            Un alumno ha respondido incorrectamente la siguiente pregunta de test.
+
+            ${contexto}Pregunta: ${pregunta.text}
+
             Opciones:
             0: ${pregunta.optionA}
             1: ${pregunta.optionB}
             2: ${pregunta.optionC}
             3: ${pregunta.optionD}
-            El alumno marcó la opción $respuestaUsuario, pero la correcta es la ${pregunta.correctOptionIndex}.
-            Explica de forma breve y clara por qué la respuesta correcta es esa. No te extiendas demasiado pero sé muy claro en tu respuesta,
-            como si fueras un profesor de DAM.
-            Al final de la respuesta, añade alguna frase de animo como si tu fueras yo, es decir por ejemplo "Animo, te amo muchisimo!" o algo por el estilo pero como si yo fuera quien habla. Pero algo muy breve como el ejemplo que te he puesto o "Tu puedes vida mia" o "Todo va a ir genial amor mio". Ella es mujer por cierto, para la hora de hablarle.
+
+            El alumno marcó la opción $respuestaUsuario, pero la respuesta correcta es la opción ${pregunta.correctOptionIndex}.
+
+            Explica de forma breve y clara:
+            1. Por qué la respuesta correcta (opción ${pregunta.correctOptionIndex}) es la correcta.
+            2. Por qué la opción elegida ($respuestaUsuario) es incorrecta.
+
+            Sé pedagógico y conciso. No uses listas con guiones ni formato Markdown, solo texto plano.
+            Termina con una frase de ánimo breve.
         """.trimIndent()
 
         return try {
             val response = generativeModel.generateContent(prompt)
-            response.text ?: "No tengo una explicación disponible ahora mismo."
+            response.text ?: "No hay explicación disponible en este momento."
         } catch (e: Exception) {
-            "Error al obtener explicación: ${e.localizedMessage}"
+            "Error al obtener la explicación: ${e.localizedMessage}"
         }
     }
 }

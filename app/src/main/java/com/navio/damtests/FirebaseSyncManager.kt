@@ -6,64 +6,78 @@ import com.google.firebase.database.FirebaseDatabase
 import com.navio.damtests.data.local.entity.Question
 import kotlinx.coroutines.tasks.await
 
+/**
+ * Synchronises questions from Firebase Realtime Database to the local Room cache.
+ *
+ * The sync is version-based: each subject/topic pair has an integer version stored
+ * under `versiones/<subjectId>/<topicId>` in Firebase. A local copy of the last
+ * seen version is kept in SharedPreferences. Questions are only downloaded when
+ * the remote version is newer than the local one, minimising bandwidth usage.
+ */
 class FirebaseSyncManager(private val context: Context, private val repository: QuizRepository) {
 
-    private val prefs = context.getSharedPreferences("sync_prefs", Context.MODE_PRIVATE)
-    private val database = FirebaseDatabase.getInstance("https://damtests-5ec43-default-rtdb.firebaseio.com/").reference
+    private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
+    // Uses the URL from google-services.json automatically — no hardcoding needed.
+    private val database = FirebaseDatabase.getInstance().reference
+
+    /**
+     * Checks all subject/topic version numbers and downloads any that are outdated.
+     * Safe to call on any coroutine dispatcher (IO-safe via Firebase's own thread pool).
+     */
     suspend fun syncQuestions() {
         try {
-            Log.d("SYNC", "Accediendo a versiones...")
-            val versionesSnapshot = database.child("versiones").get().await()
+            Log.d(TAG, "Starting version check…")
+            val versionsSnapshot = database.child("versiones").get().await()
 
-            for (subjectSnapshot in versionesSnapshot.children) {
+            for (subjectSnapshot in versionsSnapshot.children) {
                 val subjectId = subjectSnapshot.key ?: continue
                 for (topicSnapshot in subjectSnapshot.children) {
-                    val topicId = topicSnapshot.key ?: continue // Esto leerá "tema_1"
+                    val topicId = topicSnapshot.key ?: continue
                     val remoteVersion = topicSnapshot.getValue(Int::class.java) ?: 0
-
-                    val prefKey = "version_${subjectId}_$topicId"
+                    val prefKey = prefKey(subjectId, topicId)
                     val localVersion = prefs.getInt(prefKey, 0)
 
-                    Log.d("SYNC", "Asignatura: $subjectId, Tema: $topicId, Versión remota: $remoteVersion, Local: $localVersion")
+                    Log.d(TAG, "[$subjectId/$topicId] remote=$remoteVersion local=$localVersion")
 
                     if (remoteVersion > localVersion) {
                         downloadTopic(subjectId, topicId, remoteVersion)
                     }
                 }
             }
+            Log.d(TAG, "Sync completed.")
         } catch (e: Exception) {
-            Log.e("SYNC", "Error crítico: ${e.message}")
+            Log.e(TAG, "Sync failed: ${e.message}")
         }
     }
 
     private suspend fun downloadTopic(subjectId: String, topicId: String, newVersion: Int) {
         try {
-            val questionsSnapshot = database.child("preguntas")
+            val questionsSnapshot = database
+                .child("preguntas")
                 .child(subjectId)
                 .child(topicId)
                 .get().await()
 
-            val questionsList = mutableListOf<Question>()
-
-            for (qSnap in questionsSnapshot.children) {
-                // qSnap representa a "p1", "p2", etc.
-                // .getValue() extraerá el contenido del objeto dentro de p1
-                val question = qSnap.getValue(Question::class.java)
-                question?.let {
-                    questionsList.add(it.copy(subjectId = subjectId, topicId = topicId))
-                }
+            val questionsList = questionsSnapshot.children.mapNotNull { qSnap ->
+                qSnap.getValue(Question::class.java)
+                    ?.copy(subjectId = subjectId, topicId = topicId)
             }
 
             if (questionsList.isNotEmpty()) {
-                // 3. Guardar en Room (borra lo viejo de ese tema y mete lo nuevo)
                 repository.updateTopicQuestions(subjectId, topicId, questionsList)
-
-                // 4. Actualizar versión local en SharedPreferences
-                prefs.edit().putInt("version_${subjectId}_$topicId", newVersion).apply()
+                prefs.edit().putInt(prefKey(subjectId, topicId), newVersion).apply()
+                Log.d(TAG, "[$subjectId/$topicId] Downloaded ${questionsList.size} questions (v$newVersion).")
             }
         } catch (e: Exception) {
-            Log.e("SYNC", "Error descargando tema $topicId: ${e.message}")
+            Log.e(TAG, "Error downloading [$subjectId/$topicId]: ${e.message}")
         }
+    }
+
+    private fun prefKey(subjectId: String, topicId: String) = "version_${subjectId}_$topicId"
+
+    companion object {
+        private const val TAG = "FirebaseSyncManager"
+        private const val PREFS_NAME = "sync_prefs"
     }
 }
