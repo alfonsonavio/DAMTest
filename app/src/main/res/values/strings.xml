@@ -6,6 +6,21 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="navigation_drawer_open">Abrir menú de navegación</string>
-    <string name="navigation_drawer_close">Cerrar menú de navegación</string>
+    <string name="loading">Cargando…</string>
+    <string name="quiz_result_message">Has acertado %1$d preguntas.</string>
+    <string name="review_final_score">Resultado final: %1$d / %2$d</string>
+    <string name="context_dialog_title">Enunciado del Caso</string>
+    <string name="close">Cerrar</string>
+    <string name="next_question">Siguiente Pregunta</string>
+    <string name="finish_test">Finalizar Test</string>
+    <string name="no_pdf_general_test">El Test General no tiene PDF asociado.</string>
+    <string name="downloading_pdf">Descargando apuntes…</string>
+    <string name="pdf_not_found">El PDF no está disponible en el servidor.</string>
+    <string name="network_error">Error de red. Comprueba tu conexión.</string>
+    <string name="pdf_open_error">No se pudo abrir el PDF.</string>
+    <string name="ai_key_not_available">Explicación no disponible. Comprueba tu conexión e inténtalo de nuevo.</string>
+    <string name="ai_error">Error al obtener la explicación: %1$s</string>
+    <string name="ai_analyzing">⏳ Analizando tu respuesta…</string>
+    <string name="ai_preparing_correction">⏳ Preparando corrección…</string>
+    <string name="ai_connection_error">❌ Error al conectar con la IA</string>
 </resources>

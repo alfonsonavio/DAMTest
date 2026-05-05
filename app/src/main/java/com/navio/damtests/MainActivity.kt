@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.navio.damtests.data.local.db.AppDatabase
@@ -24,16 +26,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        tvAvgScore = findViewById(R.id.tvAvgScore)
+        tvAvgScore   = findViewById(R.id.tvAvgScore)
         tvTotalTests = findViewById(R.id.tvTotalTests)
 
         val database = AppDatabase.getDatabase(this)
-        repository = QuizRepository(database.questionsDao())
+        repository   = QuizRepository(database.questionsDao())
+        syncManager  = FirebaseSyncManager(this, repository)
 
-        syncManager = FirebaseSyncManager(this, repository)
+        // Fetch Remote Config (API keys) and sync questions in parallel at startup
+        lifecycleScope.launch {
+            Log.d(TAG, "Starting Remote Config fetch…")
+            RemoteConfigManager.fetchAndActivate()
+        }
 
         lifecycleScope.launch {
-            Log.d("SYNC", "Iniciando sincronización desde MainActivity...")
+            Log.d(TAG, "Starting Firebase question sync…")
             syncManager.syncQuestions()
         }
 
@@ -42,18 +49,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupDashboardStats() {
-        lifecycleScope.launchWhenStarted {
-            repository.getAllProgress().collect { allProgress ->
-                if (allProgress.isNotEmpty()) {
-                    val totalTests = allProgress.sumOf { it.attemptsCount }
-                    val totalScore = allProgress.sumOf { it.lastScore }
-                    val totalQuestions = allProgress.sumOf { it.totalQuestions }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                repository.getAllProgress().collect { allProgress ->
+                    if (allProgress.isNotEmpty()) {
+                        val totalTests     = allProgress.sumOf { it.attemptsCount }
+                        val totalScore     = allProgress.sumOf { it.lastScore }
+                        val totalQuestions = allProgress.sumOf { it.totalQuestions }
+                        val average = if (totalQuestions > 0)
+                            totalScore.toDouble() / totalQuestions * 10 else 0.0
 
-                    val average = if (totalQuestions > 0)
-                        (totalScore.toDouble() / totalQuestions * 10) else 0.0
-
-                    tvAvgScore.text = String.format("%.1f", average)
-                    tvTotalTests.text = totalTests.toString()
+                        tvAvgScore.text   = String.format("%.1f", average)
+                        tvTotalTests.text = totalTests.toString()
+                    }
                 }
             }
         }
@@ -63,27 +71,32 @@ class MainActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.rvSubjects)
         rv.layoutManager = GridLayoutManager(this, 2)
 
-        lifecycleScope.launchWhenStarted {
-            repository.getAllProgress().collect { progressList ->
-                rv.adapter = SubjectAdapter(getSubjectsList(), progressList) { subject ->
-                    val intent = Intent(this@MainActivity, TopicSelectionActivity::class.java)
-                    intent.putExtra("SUBJECT_ID", subject.id)
-                    startActivity(intent)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                repository.getAllProgress().collect { progressList ->
+                    rv.adapter = SubjectAdapter(getSubjectsList(), progressList) { subject ->
+                        startActivity(
+                            Intent(this@MainActivity, TopicSelectionActivity::class.java)
+                                .putExtra("SUBJECT_ID", subject.id)
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun getSubjectsList(): List<Subject> {
-        return listOf(
-            Subject("programacion", "Programación", R.drawable.ic_terminal, R.color.bg_prog),
-            Subject("base_de_datos", "Base de Datos", R.drawable.ic_storage, R.color.bg_db),
-            Subject("sistemas", "Sistemas", R.drawable.ic_memory, R.color.bg_sistemas),
-            Subject("marcas", "Leng. Marcas", R.drawable.ic_description, R.color.bg_marcas),
-            Subject("entornos", "Entornos", R.drawable.ic_code, R.color.bg_entornos),
-            Subject("digitalizacion", "Digitalización", R.drawable.ic_computer, R.color.bg_digital),
-            Subject("ipe", "IPE", R.drawable.ic_assessment, R.color.bg_ipe),
-            Subject("sostenibilidad", "Sostenibilidad", R.drawable.ic_eco, R.color.bg_sostenibilidad)
-        )
+    private fun getSubjectsList(): List<Subject> = listOf(
+        Subject("programacion",   "Programación",   R.drawable.ic_terminal,    R.color.bg_prog),
+        Subject("base_de_datos",  "Base de Datos",  R.drawable.ic_storage,     R.color.bg_db),
+        Subject("sistemas",       "Sistemas",        R.drawable.ic_memory,      R.color.bg_sistemas),
+        Subject("marcas",         "Leng. Marcas",    R.drawable.ic_description, R.color.bg_marcas),
+        Subject("entornos",       "Entornos",        R.drawable.ic_code,        R.color.bg_entornos),
+        Subject("digitalizacion", "Digitalización",  R.drawable.ic_computer,    R.color.bg_digital),
+        Subject("ipe",            "IPE",             R.drawable.ic_assessment,  R.color.bg_ipe),
+        Subject("sostenibilidad", "Sostenibilidad",  R.drawable.ic_eco,         R.color.bg_sostenibilidad)
+    )
+
+    companion object {
+        private const val TAG = "MainActivity"
     }
 }

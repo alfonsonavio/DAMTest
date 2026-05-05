@@ -12,58 +12,60 @@ import com.navio.damtests.ui.viewmodel.QuestionResult
 
 class ReviewAdapter(
     private val results: List<QuestionResult>,
-    private val onExplainClick: (QuestionResult) -> Unit // Añadimos esto
+    private val onExplainClick: (QuestionResult) -> Unit
 ) : RecyclerView.Adapter<ReviewAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvQuestion: TextView = view.findViewById(R.id.tvReviewQuestion)
-        val tvOptions: TextView = view.findViewById(R.id.tvReviewOptions)
+        val tvOptions: TextView  = view.findViewById(R.id.tvReviewOptions)
         val card: MaterialCardView = view.findViewById(R.id.cardReview)
-        val btnVerExplicacion: Button = view.findViewById(R.id.btnVerExplicacion) // Ahora sí existe
+        val btnVerExplicacion: Button = view.findViewById(R.id.btnVerExplicacion)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_review, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_review, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val res = results[position]
-        val q = res.question
-        val isCorrect = res.userSelectedIndex == q.correctOptionIndex
+        val q   = res.question
+
+        // FIX: use the pre-computed isCorrect flag from QuizViewModel.
+        // DO NOT recalculate as (userSelectedIndex == correctOptionIndex) because
+        // userSelectedIndex is a position in the SHUFFLED list while
+        // correctOptionIndex is a position in the ORIGINAL unshuffled options —
+        // comparing them directly gives wrong results.
+        val isCorrect = res.isCorrect
 
         holder.tvQuestion.text = "${position + 1}. ${q.text}"
 
-        val optionsText = StringBuilder()
+        // The correct answer text (from original option order)
+        val correctText = when (q.correctOptionIndex) {
+            0    -> q.optionA
+            1    -> q.optionB
+            2    -> q.optionC
+            else -> q.optionD
+        }
+
+        // FIX: the user's selected text comes from the SHUFFLED options list,
+        // NOT from the original optionA/B/C/D indexed by userSelectedIndex.
+        val userSelectedText = res.shuffledOptions.getOrElse(res.userSelectedIndex) { "" }
+
         val labels = listOf("a", "b", "c", "d")
-        val displayedOptions = res.shuffledOptions
-
-        val correctText = when(q.correctOptionIndex) {
-            0 -> q.optionA
-            1 -> q.optionB
-            2 -> q.optionC
-            else -> q.optionD
-        }
-
-        val userSelectedText = when(res.userSelectedIndex) {
-            0 -> q.optionA
-            1 -> q.optionB
-            2 -> q.optionC
-            else -> q.optionD
-        }
-
-        for (i in displayedOptions.indices) {
-            val currentOptionText = displayedOptions[i]
+        val optionsText = StringBuilder()
+        for (i in res.shuffledOptions.indices) {
+            val optionText = res.shuffledOptions[i]
             val prefix = when {
-                currentOptionText == correctText -> "✅ "
-                currentOptionText == userSelectedText && !isCorrect -> "❌ "
-                else -> "      "
+                optionText == correctText                       -> "✅ "
+                optionText == userSelectedText && !isCorrect   -> "❌ "
+                else                                           -> "      "
             }
-            optionsText.append("$prefix ${labels[i]}) $currentOptionText\n")
+            optionsText.append("$prefix ${labels[i]}) $optionText\n")
         }
         holder.tvOptions.text = optionsText.toString().trim()
 
-        // LÓGICA DE COLORES Y BOTÓN
         if (isCorrect) {
             holder.card.setCardBackgroundColor(Color.parseColor("#DCFCE7"))
             holder.card.strokeColor = Color.parseColor("#22C55E")
