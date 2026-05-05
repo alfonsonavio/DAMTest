@@ -14,5 +14,5 @@ object Constants {
      * Example: https://github.com/alfonsonavio/DAMTest/releases/download/v1.0/base_de_datos_1.pdf
      */
     const val PDF_BASE_URL =
-        "https://github.com/alfonsonavio/DAMTest/releases/download/v1.0/"
+        "https://github.com/alfonsonavio/DAMTest/releases/download/v1.0.0-resources/"
 }
