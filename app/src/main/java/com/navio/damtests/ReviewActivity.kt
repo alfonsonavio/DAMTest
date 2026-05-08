@@ -1,6 +1,7 @@
 package com.navio.damtests
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.TextView
@@ -20,11 +21,21 @@ class ReviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_review)
 
-        val score   = intent.getIntExtra("SCORE", 0)
-        val results = TestDataHolder.lastResults
+        // All data arrives via Intent — no global singleton needed
+        val score     = intent.getIntExtra("SCORE", 0)
+        val total     = intent.getIntExtra("TOTAL", 0)
+        val subjectId = intent.getStringExtra("SUBJECT_ID") ?: "programacion"
+        val topicId   = intent.getStringExtra("TOPIC_ID")   ?: "tema_1"
+
+        @Suppress("DEPRECATION")
+        val results: List<QuestionResult> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableArrayListExtra("RESULTS", QuestionResult::class.java) ?: emptyList()
+        } else {
+            intent.getParcelableArrayListExtra("RESULTS") ?: emptyList()
+        }
 
         findViewById<TextView>(R.id.tvReviewScore).text =
-            getString(R.string.review_final_score, score, results.size)
+            getString(R.string.review_final_score, score, total)
 
         val rv = findViewById<RecyclerView>(R.id.rvReview)
         rv.layoutManager = LinearLayoutManager(this)
@@ -41,8 +52,8 @@ class ReviewActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btnRepeatTest).setOnClickListener {
             startActivity(
                 Intent(this, QuizActivity::class.java)
-                    .putExtra("SUBJECT_ID", TestDataHolder.currentSubjectId)
-                    .putExtra("TOPIC_ID",   TestDataHolder.currentTopicId)
+                    .putExtra("SUBJECT_ID", subjectId)
+                    .putExtra("TOPIC_ID", topicId)
             )
             finish()
         }
@@ -67,15 +78,13 @@ class ReviewActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // API key fetched from Firebase Remote Config — not stored in source code
                 val apiKey = RemoteConfigManager.getString(RemoteConfigManager.KEY_GEMINI)
                 if (apiKey.isBlank()) {
                     tvMessage.text = getString(R.string.ai_key_not_available)
                     return@launch
                 }
-                val explanation = GeminiExplainer(apiKey)
+                tvMessage.text = GeminiExplainer(apiKey)
                     .explicarFallo(result.question, result.userSelectedIndex)
-                tvMessage.text = explanation
             } catch (e: Exception) {
                 tvMessage.text = getString(R.string.ai_error, e.message)
             }
