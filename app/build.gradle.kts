@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.googleDevtoolsKsp)
     id("com.google.gms.google-services")
+    id("kotlin-parcelize")
 }
 
 android {

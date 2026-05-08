@@ -56,5 +56,12 @@ First public release. Covers the full first-year and second-year DAM curriculum.
 
 ---
 
-[Unreleased]: https://github.com/alfonsonavio/DAMTest/compare/v1.0.0...HEAD
+## [Unreleased]
+
+### Changed
+- Replaced `TestDataHolder` singleton with `Parcelable` Intent extras for passing
+  quiz results between `QuizActivity` and `ReviewActivity`. `Question` and
+  `QuestionResult` now implement `Parcelable` via `@Parcelize`. Eliminates the
+  risk of stale data if the system recreates Activities from the back stack.
+
 [1.0.0]: https://github.com/alfonsonavio/DAMTest/releases/tag/v1.0.0

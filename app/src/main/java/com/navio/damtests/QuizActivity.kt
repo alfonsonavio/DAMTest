@@ -43,35 +43,36 @@ class QuizActivity : AppCompatActivity() {
     private var currentShuffledQuestion: ShuffledQuestion? = null
     private val groq = FastExplainer()
 
+    // Subject and topic received from TopicSelectionActivity
+    private lateinit var subjectId: String
+    private lateinit var topicId: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
 
         applyLightStatusBar()
 
-        tvQuestion    = findViewById(R.id.tvQuestionText)
-        btnA          = findViewById(R.id.btnOptionA)
-        btnB          = findViewById(R.id.btnOptionB)
-        btnC          = findViewById(R.id.btnOptionC)
-        btnD          = findViewById(R.id.btnOptionD)
-        tvFeedbackA   = findViewById(R.id.tvFeedbackA)
-        tvFeedbackB   = findViewById(R.id.tvFeedbackB)
-        tvFeedbackC   = findViewById(R.id.tvFeedbackC)
-        tvFeedbackD   = findViewById(R.id.tvFeedbackD)
-        tvCount       = findViewById(R.id.tvQuestionCount)
-        progressBar   = findViewById(R.id.quizProgressBar)
+        subjectId = intent.getStringExtra("SUBJECT_ID") ?: "programacion"
+        topicId   = intent.getStringExtra("TOPIC_ID")   ?: "tema_1"
+
+        tvQuestion     = findViewById(R.id.tvQuestionText)
+        btnA           = findViewById(R.id.btnOptionA)
+        btnB           = findViewById(R.id.btnOptionB)
+        btnC           = findViewById(R.id.btnOptionC)
+        btnD           = findViewById(R.id.btnOptionD)
+        tvFeedbackA    = findViewById(R.id.tvFeedbackA)
+        tvFeedbackB    = findViewById(R.id.tvFeedbackB)
+        tvFeedbackC    = findViewById(R.id.tvFeedbackC)
+        tvFeedbackD    = findViewById(R.id.tvFeedbackD)
+        tvCount        = findViewById(R.id.tvQuestionCount)
+        progressBar    = findViewById(R.id.quizProgressBar)
         btnContextInfo = findViewById(R.id.btnContextInfo)
-        btnNext       = findViewById(R.id.btnNextQuestion)
+        btnNext        = findViewById(R.id.btnNextQuestion)
 
         val database   = AppDatabase.getDatabase(this)
         val repository = QuizRepository(database.questionsDao())
         viewModel = ViewModelProvider(this, QuizViewModelFactory(repository))[QuizViewModel::class.java]
-
-        val subjectId = intent.getStringExtra("SUBJECT_ID") ?: "programacion"
-        val topicId   = intent.getStringExtra("TOPIC_ID")   ?: "tema_1"
-
-        TestDataHolder.currentSubjectId = subjectId
-        TestDataHolder.currentTopicId   = topicId
 
         setupObservers()
         setupClickListeners()
@@ -126,10 +127,8 @@ class QuizActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.currentAnswerState.collect { result ->
                     when {
-                        result != null                     -> highlightAnswer(result)
-                        // Don't reset UI if the test just finished — it causes
-                        // a brief flash of the clean question before the dialog appears.
-                        !viewModel.isTestFinished.value    -> resetAnswerUI()
+                        result != null                  -> highlightAnswer(result)
+                        !viewModel.isTestFinished.value -> resetAnswerUI()
                     }
                 }
             }
@@ -140,21 +139,21 @@ class QuizActivity : AppCompatActivity() {
 
     private fun refreshCountAndProgress(index: Int, total: Int) {
         val pos = index + 1
-        tvCount.text      = "$pos de $total"
+        tvCount.text         = "$pos de $total"
         progressBar.progress = pos
         btnNext.text = if (pos == total) getString(R.string.finish_test)
-        else getString(R.string.next_question)
+                       else getString(R.string.next_question)
     }
 
     private fun updateUI(question: Question) {
         val shuffled = question.shuffle()
         currentShuffledQuestion = shuffled
 
-        tvQuestion.text       = shuffled.originalQuestion.text
-        btnA.text             = shuffled.shuffledOptions[0]
-        btnB.text             = shuffled.shuffledOptions[1]
-        btnC.text             = shuffled.shuffledOptions[2]
-        btnD.text             = shuffled.shuffledOptions[3]
+        tvQuestion.text = shuffled.originalQuestion.text
+        btnA.text       = shuffled.shuffledOptions[0]
+        btnB.text       = shuffled.shuffledOptions[1]
+        btnC.text       = shuffled.shuffledOptions[2]
+        btnD.text       = shuffled.shuffledOptions[3]
 
         if (!question.contextText.isNullOrEmpty()) {
             btnContextInfo.visibility = View.VISIBLE
@@ -170,25 +169,24 @@ class QuizActivity : AppCompatActivity() {
 
         setAnswerButtonsEnabled(false)
 
-        val shuffled      = currentShuffledQuestion ?: return
-        val question      = shuffled.originalQuestion
-        val correctText   = when (question.correctOptionIndex) {
+        val shuffled    = currentShuffledQuestion ?: return
+        val question    = shuffled.originalQuestion
+        val correctText = when (question.correctOptionIndex) {
             0    -> question.optionA
             1    -> question.optionB
             2    -> question.optionC
             else -> question.optionD
         }
 
-        // Highlight button borders
         buttons.forEachIndexed { index, button ->
-            val mBtn         = button as MaterialButton
-            val isCorrectBtn = mBtn.text == correctText
+            val mBtn          = button as MaterialButton
+            val isCorrectBtn  = mBtn.text == correctText
             val isSelectedBtn = index == result.selectedIndex
 
             mBtn.strokeWidth = when {
-                isCorrectBtn                        -> 8
-                isSelectedBtn && !result.isCorrect  -> 8
-                else                                -> 0
+                isCorrectBtn                       -> 8
+                isSelectedBtn && !result.isCorrect -> 8
+                else                               -> 0
             }
             if (isCorrectBtn) {
                 mBtn.setStrokeColorResource(android.R.color.holo_green_dark)
@@ -197,7 +195,6 @@ class QuizActivity : AppCompatActivity() {
             }
         }
 
-        // Show Groq feedback only on wrong answers
         if (!result.isCorrect) {
             feedbacks[result.selectedIndex].apply {
                 visibility = View.VISIBLE
@@ -301,11 +298,14 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun showReviewScreen() {
-        TestDataHolder.lastResults = viewModel.getResults()
+        val results = viewModel.getResults()
         startActivity(
             Intent(this, ReviewActivity::class.java)
+                .putExtra("SUBJECT_ID", subjectId)
+                .putExtra("TOPIC_ID", topicId)
                 .putExtra("SCORE", viewModel.score.value)
-                .putExtra("TOTAL", viewModel.getResults().size)
+                .putExtra("TOTAL", results.size)
+                .putParcelableArrayListExtra("RESULTS", ArrayList(results))
         )
         finish()
     }
