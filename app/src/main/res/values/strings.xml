@@ -23,4 +23,6 @@
     <string name="ai_analyzing">⏳ Analizando tu respuesta…</string>
     <string name="ai_preparing_correction">⏳ Preparando corrección…</string>
     <string name="ai_connection_error">❌ Error al conectar con la IA</string>
+    <string name="no_questions_title">Sin preguntas disponibles</string>
+    <string name="no_questions_yet">Las preguntas de este tema aún no están disponibles, pero puedes consultar los apuntes en PDF.</string>
 </resources>
