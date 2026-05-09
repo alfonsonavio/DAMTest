@@ -58,10 +58,19 @@ First public release. Covers the full first-year and second-year DAM curriculum.
 
 ## [Unreleased]
 
+### Added
+- `PdfReleaseRepository` queries the GitHub Release API to determine which topics
+  have a PDF available, independently of whether they have questions in the DB.
+
 ### Changed
 - Replaced `TestDataHolder` singleton with `Parcelable` Intent extras for passing
   quiz results between `QuizActivity` and `ReviewActivity`. `Question` and
   `QuestionResult` now implement `Parcelable` via `@Parcelize`. Eliminates the
   risk of stale data if the system recreates Activities from the back stack.
+- Topic list now merges two sources: Room DB (topics with questions) and GitHub
+  Release assets (topics with PDFs). A topic appears if it exists in either.
+- PDF button shown only when a PDF actually exists for that topic in the release.
+- Tapping the test button on a topic without questions shows a dialog instead of
+  opening an empty quiz.
 
 [1.0.0]: https://github.com/alfonsonavio/DAMTest/releases/tag/v1.0.0
