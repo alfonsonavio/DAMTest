@@ -1,9 +1,9 @@
 package com.navio.damtests
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
@@ -26,6 +26,9 @@ class TopicSelectionActivity : AppCompatActivity() {
     private lateinit var repository: QuizRepository
     private lateinit var adapter: TopicAdapter
     private val httpClient = OkHttpClient()
+
+    // Topics with PDF available, populated once from GitHub Release API
+    private var pdfTopicIds: Set<String> = emptySet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,20 +53,23 @@ class TopicSelectionActivity : AppCompatActivity() {
         rvTopics.layoutManager = LinearLayoutManager(this)
 
         lifecycleScope.launch {
-            val sortedTopics = repository.getUniqueTopicsForSubject(subjectId)
+            // Fetch PDF list and DB topics in parallel via both sources
+            pdfTopicIds = PdfReleaseRepository.getTopicIdsWithPdf(subjectId)
+
+            val sortedTopics = repository
+                .getUniqueTopicsForSubject(subjectId, pdfTopicIds)
                 .sortedWith(compareBy(
                     { topic ->
                         when {
-                            topic.id.startsWith("tema_")   -> 0
-                            topic.id.startsWith("caso_")   -> 1
-                            topic.id.startsWith("repaso_") -> 2
+                            topic.id.startsWith("tema_")         -> 0
+                            topic.id.startsWith("caso_")         -> 1
+                            topic.id.startsWith("repaso_")       -> 2
                             topic.id in listOf("-2", "-3", "-1") -> 3
-                            else -> 4
+                            else                                 -> 4
                         }
                     },
                     { topic ->
                         if (topic.id.startsWith("-")) {
-                            // Keep -2 before -3 before -1
                             when (topic.id) { "-2" -> 1; "-3" -> 2; else -> 3 }
                         } else {
                             topic.id.filter { it.isDigit() }.toIntOrNull() ?: Int.MAX_VALUE
@@ -76,11 +82,35 @@ class TopicSelectionActivity : AppCompatActivity() {
                     adapter = TopicAdapter(
                         topics       = sortedTopics,
                         progressList = progressList,
-                        onTopicClick = { topic -> startQuiz(subjectId, topic.id) },
+                        pdfTopicIds  = pdfTopicIds,
+                        onTopicClick = { topic -> onTopicSelected(subjectId, topic.id) },
                         onPdfClick   = { topic -> openPdf(subjectId, topic.id) }
                     )
                     rvTopics.adapter = adapter
                 }
+            }
+        }
+    }
+
+    // --- Topic selection ---
+
+    private fun onTopicSelected(subjectId: String, topicId: String) {
+        lifecycleScope.launch {
+            val isGeneralTest = topicId.startsWith("-")
+            val hasQuestions  = isGeneralTest || repository.hasQuestions(subjectId, topicId)
+
+            if (hasQuestions) {
+                startActivity(
+                    Intent(this@TopicSelectionActivity, QuizActivity::class.java)
+                        .putExtra("SUBJECT_ID", subjectId)
+                        .putExtra("TOPIC_ID", topicId)
+                )
+            } else {
+                AlertDialog.Builder(this@TopicSelectionActivity)
+                    .setTitle(R.string.no_questions_title)
+                    .setMessage(R.string.no_questions_yet)
+                    .setPositiveButton(R.string.close, null)
+                    .show()
             }
         }
     }
@@ -93,8 +123,8 @@ class TopicSelectionActivity : AppCompatActivity() {
             return
         }
 
-        val cleanId  = topicId.removePrefix("tema_")
-        val fileName = "${subjectId}_${cleanId}.pdf"
+        val cleanId   = topicId.removePrefix("tema_")
+        val fileName  = "${subjectId}_${cleanId}.pdf"
         val localFile = File(cacheDir, fileName)
 
         if (localFile.exists()) showPdf(localFile) else downloadAndOpenPdf(fileName, localFile)
@@ -103,10 +133,9 @@ class TopicSelectionActivity : AppCompatActivity() {
     private fun downloadAndOpenPdf(fileName: String, destination: File) {
         Toast.makeText(this, R.string.downloading_pdf, Toast.LENGTH_SHORT).show()
 
-        val url = "${Constants.PDF_BASE_URL}$fileName"
-
         lifecycleScope.launch(Dispatchers.IO) {
             try {
+                val url      = "${Constants.PDF_BASE_URL}$fileName"
                 val response = httpClient.newCall(Request.Builder().url(url).build()).execute()
                 if (response.isSuccessful) {
                     response.body?.bytes()?.let { bytes ->
@@ -115,12 +144,14 @@ class TopicSelectionActivity : AppCompatActivity() {
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@TopicSelectionActivity, R.string.pdf_not_found, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@TopicSelectionActivity,
+                            R.string.pdf_not_found, Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@TopicSelectionActivity, R.string.network_error, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@TopicSelectionActivity,
+                        R.string.network_error, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -138,16 +169,6 @@ class TopicSelectionActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, R.string.pdf_open_error, Toast.LENGTH_SHORT).show()
         }
-    }
-
-    // --- Navigation ---
-
-    private fun startQuiz(subjectId: String, topicId: String) {
-        startActivity(
-            Intent(this, QuizActivity::class.java)
-                .putExtra("SUBJECT_ID", subjectId)
-                .putExtra("TOPIC_ID", topicId)
-        )
     }
 
     override fun onSupportNavigateUp(): Boolean {
