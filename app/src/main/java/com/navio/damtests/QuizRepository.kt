@@ -13,7 +13,6 @@ class QuizRepository(private val questionsDao: QuestionsDao) {
 
     // --- Question management ---
 
-    /** Replaces all questions for a given topic (used by [FirebaseSyncManager]). */
     suspend fun updateTopicQuestions(subjectId: String, topicId: String, questions: List<Question>) {
         questionsDao.deleteQuestionsByTopic(subjectId, topicId)
         questionsDao.insertQuestions(questions)
@@ -28,18 +27,12 @@ class QuizRepository(private val questionsDao: QuestionsDao) {
     suspend fun refreshQuestions(questions: List<Question>) =
         questionsDao.refreshAllQuestions(questions)
 
-    /** Returns up to [limit] random questions for a specific topic. */
     suspend fun getQuestionsByTopic(subjectId: String, topicId: String, limit: Int): List<Question> =
         questionsDao.getRandomQuestionsForTopic(subjectId, topicId, limit)
 
-    /** Returns up to [limit] random questions from ALL tema_* topics (full general test). */
     suspend fun getRandomQuestionsForGeneralTest(subjectId: String, limit: Int): List<Question> =
         questionsDao.getRandomQuestionsForGeneralTest(subjectId, limit)
 
-    /**
-     * Returns up to [limit] random questions from tema_[start] through tema_[end].
-     * Used for the partial general tests (e.g. topics 1–10, 11–20).
-     */
     suspend fun getQuestionsForRange(subjectId: String, start: Int, end: Int, limit: Int): List<Question> {
         val topicIds = (start..end).map { "tema_$it" }
         return questionsDao.getRandomQuestionsForTopicList(subjectId, topicIds, limit)
@@ -47,6 +40,10 @@ class QuizRepository(private val questionsDao: QuestionsDao) {
 
     suspend fun getUniqueTopicIds(subjectId: String): List<String> =
         questionsDao.getUniqueTopicIds(subjectId)
+
+    /** Returns true if there is at least one question for this topic in the local cache. */
+    suspend fun hasQuestions(subjectId: String, topicId: String): Boolean =
+        questionsDao.getRandomQuestionsForTopic(subjectId, topicId, 1).isNotEmpty()
 
     // --- Progress management ---
 
@@ -65,17 +62,21 @@ class QuizRepository(private val questionsDao: QuestionsDao) {
     // --- Topic helpers ---
 
     /**
-     * Returns a sorted list of [Topic] objects for the given subject, plus three
-     * general test entries at the end:
-     *  - "-2" → Temas 1–10
-     *  - "-3" → Temas 11–20
-     *  - "-1" → All topics
+     * Builds the topic list for a subject merging two sources:
+     *  - Room DB  → topics that have questions
+     *  - [pdfTopicIds] → topics that have a PDF in the GitHub Release
      *
-     * Sort order within regular topics: tema_* → caso_* → repaso_*, then numerically.
+     * A topic appears if it exists in either source.
+     * The caller is responsible for fetching [pdfTopicIds] via [PdfReleaseRepository].
      */
-    suspend fun getUniqueTopicsForSubject(subjectId: String): List<Topic> {
-        val topicIds = questionsDao.getUniqueTopicIds(subjectId)
-        val topics   = topicIds.map { id ->
+    suspend fun getUniqueTopicsForSubject(
+        subjectId: String,
+        pdfTopicIds: Set<String> = emptySet()
+    ): List<Topic> {
+        val dbTopicIds = questionsDao.getUniqueTopicIds(subjectId).toSet()
+        val allTopicIds = dbTopicIds + pdfTopicIds
+
+        val topics = allTopicIds.map { id ->
             val title = when {
                 id.startsWith("tema_")   -> "Tema ${id.removePrefix("tema_")}"
                 id.startsWith("caso_")   -> "Caso Práctico ${id.removePrefix("caso_")}"

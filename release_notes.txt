@@ -1,0 +1,9 @@
+## DAMTest v1.0.0 
+ 
+Descarga e instala DAMTest en tu Android: 
+ 
+1. Descarga el archivo DAMTest-1.0.apk 
+2. En tu Android ve a Ajustes, Seguridad y activa Instalar apps de fuentes desconocidas 
+3. Abre el APK descargado e instalalo 
+ 
+Requisitos: Android 8.0 o superior 
