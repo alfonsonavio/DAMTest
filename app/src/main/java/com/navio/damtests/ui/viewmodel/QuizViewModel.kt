@@ -70,7 +70,7 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
                 "-2"  -> repository.getQuestionsForRange(subjectId, 1,  10, limit)
                 "-3"  -> repository.getQuestionsForRange(subjectId, 11, 20, limit)
                 else  -> repository.getQuestionsByTopic(subjectId, topicId, limit)
-            }
+            }.distinctBy { it.text }  // prevent duplicates if Room has stale rows
 
             _isLoading.value = false
         }
