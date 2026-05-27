@@ -76,7 +76,9 @@ class QuizActivity : AppCompatActivity() {
 
         setupObservers()
         setupClickListeners()
-        viewModel.loadQuestions(subjectId, topicId)
+        if (viewModel.questions.value.isEmpty()) {
+            viewModel.loadQuestions(subjectId, topicId)
+        }
     }
 
     // --- Observers ---
@@ -142,7 +144,7 @@ class QuizActivity : AppCompatActivity() {
         tvCount.text         = "$pos de $total"
         progressBar.progress = pos
         btnNext.text = if (pos == total) getString(R.string.finish_test)
-                       else getString(R.string.next_question)
+        else getString(R.string.next_question)
     }
 
     private fun updateUI(question: Question) {
