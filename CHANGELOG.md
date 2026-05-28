@@ -72,6 +72,9 @@ First public release. Covers the full first-year and second-year DAM curriculum.
 - PDF button shown only when a PDF actually exists for that topic in the release.
 - Tapping the test button on a topic without questions shows a dialog instead of
   opening an empty quiz.
+- Migrated Firebase project to professional account (alfonsonavio).
+- `minFetchInterval` changed from 0 to 3600 — app is now production-ready
+  in terms of Remote Config fetch frequency.
 
 ### Fixed
 - Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
