@@ -20,12 +20,12 @@ object RemoteConfigManager {
             // was not awaited, so the interval change wasn't applied before fetch.
             config.setConfigSettingsAsync(
                 FirebaseRemoteConfigSettings.Builder()
-                    .setMinimumFetchIntervalInSeconds(0) // TODO always fresh during development
+                    .setMinimumFetchIntervalInSeconds(3600)
                     .build()
             ).await()
 
             // Fetch and activate separately for maximum reliability
-            config.fetch(0).await()         // force fresh fetch, ignore cache
+            config.fetch(3600).await()         // force fresh fetch, ignore cache
             val activated = config.activate().await()
 
             Log.d(TAG, "fetch+activate done. activated=$activated")
