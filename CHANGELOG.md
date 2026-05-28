@@ -73,4 +73,13 @@ First public release. Covers the full first-year and second-year DAM curriculum.
 - Tapping the test button on a topic without questions shows a dialog instead of
   opening an empty quiz.
 
+### Fixed
+- Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
+  screen rotation). `loadQuestions()` is now guarded with `isEmpty()` so the ViewModel
+  state is preserved across Activity recreations.
+- Question counter not advancing correctly when first question was answered wrong,
+  caused by the same Activity recreation issue above.
+- Duplicate questions within a test prevented with `distinctBy { it.text }` after
+  loading from Room.
+
 [1.0.0]: https://github.com/alfonsonavio/DAMTest/releases/tag/v1.0.0
