@@ -55,4 +55,8 @@ interface QuestionsDao {
 
     @Query("SELECT * FROM topic_progress")
     fun getAllProgress(): Flow<List<TopicProgress>>
+
+    /** One-shot (non-Flow) query used for cloud sync on login/register. */
+    @Query("SELECT * FROM topic_progress")
+    suspend fun getAllProgressOnce(): List<TopicProgress>
 }

@@ -3,6 +3,7 @@ package com.navio.damtests
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -10,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.data.local.db.AppDatabase
 import com.navio.damtests.data.local.entity.Subject
 import com.navio.damtests.ui.SubjectAdapter
@@ -20,20 +23,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repository: QuizRepository
     private lateinit var tvAvgScore: TextView
     private lateinit var tvTotalTests: TextView
+    private lateinit var tvWelcome: TextView
     private lateinit var syncManager: FirebaseSyncManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Guard: if not logged in, redirect to LoginActivity
+        if (!AuthManager.isLoggedIn) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_main)
 
         tvAvgScore   = findViewById(R.id.tvAvgScore)
         tvTotalTests = findViewById(R.id.tvTotalTests)
+        tvWelcome    = findViewById(R.id.tvWelcome)
+
+        tvWelcome.text = getString(R.string.welcome_user, AuthManager.displayName)
+
+        // Logout button in the custom header
+        findViewById<ImageButton>(R.id.btnLogout).setOnClickListener { confirmLogout() }
 
         val database = AppDatabase.getDatabase(this)
         repository   = QuizRepository(database.questionsDao())
         syncManager  = FirebaseSyncManager(this, repository)
 
-        // Fetch Remote Config (API keys) and sync questions in parallel at startup
         lifecycleScope.launch {
             Log.d(TAG, "Starting Remote Config fetch…")
             RemoteConfigManager.fetchAndActivate()
@@ -46,6 +63,21 @@ class MainActivity : AppCompatActivity() {
 
         setupDashboardStats()
         setupSubjectList()
+    }
+
+    private fun confirmLogout() {
+        AuthUiHelper.showConfirm(
+            context = this,
+            title = getString(R.string.logout_title),
+            message = getString(R.string.logout_message),
+            confirmText = getString(R.string.logout_confirm)
+        ) {
+            AuthManager.signOut()
+            startActivity(
+                Intent(this, LoginActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }
     }
 
     private fun setupDashboardStats() {

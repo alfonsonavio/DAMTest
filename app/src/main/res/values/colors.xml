@@ -15,4 +15,6 @@
     <color name="colorPrimaryLight">#E0E7FF</color>
     <color name="colorPrimary">#4F46E5</color>
         <color name="bg_prog">#E0E7FF</color>         <color name="bg_db">#DCFCE7</color>           <color name="bg_sistemas">#FFEDD5</color>     <color name="bg_marcas">#FEE2E2</color>       <color name="bg_entornos">#F3E8FF</color>     <color name="bg_digital">#CCFBF1</color>      <color name="bg_ipe">#FCE7F3</color>          <color name="bg_sostenibilidad">#D1FAE5</color><color name="bg_fol">#F1F5F9</color>          <color name="bg_extra">#FEF3C7</color>
+    <color name="bg_screen">#F8FAFC</color>
+    <color name="text_secondary">#64748B</color>
 </resources>
