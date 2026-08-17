@@ -97,9 +97,13 @@ dependencies {
 
     // Firebase SDKs
     implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-config")   // Remote Config
+    implementation("com.google.firebase:firebase-config")    // Remote Config
     implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore") // User progress sync
     implementation("com.google.firebase:firebase-analytics")
+
+    // Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     // Networking

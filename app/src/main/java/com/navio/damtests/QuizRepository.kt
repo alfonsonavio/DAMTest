@@ -1,5 +1,7 @@
 package com.navio.damtests
 
+import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.auth.UserProgressRepository
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.Topic
@@ -7,7 +9,9 @@ import com.navio.damtests.data.local.entity.TopicProgress
 
 /**
  * Single source of truth for all quiz data.
- * Abstracts the Room DAO from the rest of the app.
+ *
+ * [updateProgress] saves to Room AND to Firestore (if a user is logged in)
+ * so progress is always backed up to the cloud transparently.
  */
 class QuizRepository(private val questionsDao: QuestionsDao) {
 
@@ -41,14 +45,21 @@ class QuizRepository(private val questionsDao: QuestionsDao) {
     suspend fun getUniqueTopicIds(subjectId: String): List<String> =
         questionsDao.getUniqueTopicIds(subjectId)
 
-    /** Returns true if there is at least one question for this topic in the local cache. */
     suspend fun hasQuestions(subjectId: String, topicId: String): Boolean =
         questionsDao.getRandomQuestionsForTopic(subjectId, topicId, 1).isNotEmpty()
 
     // --- Progress management ---
 
-    suspend fun updateProgress(progress: TopicProgress) =
+    /**
+     * Saves progress to Room and, if a user is logged in, also to Firestore.
+     * The Firestore write is fire-and-forget — a failure won't crash the app.
+     */
+    suspend fun updateProgress(progress: TopicProgress) {
         questionsDao.saveProgress(progress)
+        AuthManager.currentUid?.let { uid ->
+            UserProgressRepository.saveTopicProgress(uid, progress)
+        }
+    }
 
     suspend fun getProgress(subjectId: String, topicId: String): TopicProgress? =
         questionsDao.getProgress(subjectId, topicId)
@@ -61,19 +72,11 @@ class QuizRepository(private val questionsDao: QuestionsDao) {
 
     // --- Topic helpers ---
 
-    /**
-     * Builds the topic list for a subject merging two sources:
-     *  - Room DB  → topics that have questions
-     *  - [pdfTopicIds] → topics that have a PDF in the GitHub Release
-     *
-     * A topic appears if it exists in either source.
-     * The caller is responsible for fetching [pdfTopicIds] via [PdfReleaseRepository].
-     */
     suspend fun getUniqueTopicsForSubject(
         subjectId: String,
         pdfTopicIds: Set<String> = emptySet()
     ): List<Topic> {
-        val dbTopicIds = questionsDao.getUniqueTopicIds(subjectId).toSet()
+        val dbTopicIds  = questionsDao.getUniqueTopicIds(subjectId).toSet()
         val allTopicIds = dbTopicIds + pdfTopicIds
 
         val topics = allTopicIds.map { id ->

@@ -25,4 +25,47 @@
     <string name="ai_connection_error">❌ Error al conectar con la IA</string>
     <string name="no_questions_title">Sin preguntas disponibles</string>
     <string name="no_questions_yet">Las preguntas de este tema aún no están disponibles, pero puedes consultar los apuntes en PDF.</string>
+
+    <!-- Auth - General -->
+    <string name="login_subtitle">Inicia sesión para continuar</string>
+    <string name="hint_email">Correo electrónico</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="hint_name">Nombre</string>
+    <string name="hint_password_confirm">Confirmar contraseña</string>
+    <string name="or_divider">— o —</string>
+
+    <!-- Auth - Login -->
+    <string name="btn_login">Iniciar sesión</string>
+    <string name="btn_google_signin">Continuar con Google</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="no_account_register">¿No tienes cuenta? Regístrate</string>
+
+    <!-- Auth - Register -->
+    <string name="register_title">Crear cuenta</string>
+    <string name="register_subtitle">Únete para guardar tu progreso</string>
+    <string name="btn_register">Crear cuenta</string>
+    <string name="already_have_account">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="register_success">¡Cuenta creada! Ya puedes iniciar sesión</string>
+
+    <!-- Auth - Errors -->
+    <string name="error_fields_required">Rellena todos los campos</string>
+    <string name="error_invalid_credentials">Email o contraseña incorrectos</string>
+    <string name="error_passwords_no_match">Las contraseñas no coinciden</string>
+    <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="error_register">Error al crear la cuenta. Inténtalo de nuevo</string>
+    <string name="error_google_signin">Error al iniciar sesión con Google</string>
+    <string name="error_email_for_reset">Introduce tu email primero</string>
+    <string name="error_reset_email">No se pudo enviar el email de recuperación</string>
+    <string name="error_generic">Algo salió mal. Inténtalo de nuevo</string>
+
+    <!-- Auth - Success -->
+    <string name="reset_email_sent">Email de recuperación enviado</string>
+    <string name="welcome_user">Hola, %1$s</string>
+
+    <!-- Auth - Logout -->
+    <string name="logout_title">Cerrar sesión</string>
+    <string name="logout_message">¿Seguro que quieres cerrar sesión?</string>
+    <string name="logout_confirm">Cerrar sesión</string>
+    <string name="cancel">Cancelar</string>
+
 </resources>
