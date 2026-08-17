@@ -9,11 +9,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned
-- Firebase Authentication with cloud-synced student progress
-- Per-subject statistics screen with performance charts
-- Dark mode support
-- Study reminder notifications
+### Added
+- **Firebase Authentication** — users must log in before accessing the app.
+  Supports email/password registration and Google Sign-In.
+- `LoginActivity` — custom login screen with email/password fields, Google
+  Sign-In button, and a "Forgot password?" dialog with its own email field
+  that sends a Firebase password-reset email.
+- `RegisterActivity` — registration screen with inline field validation:
+  password must be at least 8 characters with a letter and a number, shown as
+  permanent helper text and enforced with per-field error messages. On success
+  the user is signed out and returned to login to sign in manually.
+- `AuthManager` — singleton wrapping all Firebase Auth operations, returning
+  `Result<T>` for clean error handling.
+- `AuthUiHelper` — shows the app's custom card-styled dialogs (info, confirm,
+  forgot-password) instead of default grey ones, and translates Firebase Auth
+  error messages to Spanish.
+- **Firestore progress sync** — after each test, progress is saved to Room AND
+  to Firestore (`users/{uid}/progress/...`). On login, local and cloud progress
+  are merged (most recent timestamp wins). Sync runs in the background and never
+  blocks login.
+- `UserProgressRepository` — Firestore read/write/merge for user progress.
+- Custom header bar in `MainActivity` with a logout button and styled
+  confirmation dialog.
+- `QuestionsDao.getAllProgressOnce()` — one-shot query for cloud sync.
+- `PdfReleaseRepository` queries the GitHub Release API to determine which topics
+  have a PDF available, independently of whether they have questions in the DB.
+
+### Changed
+- `LoginActivity` is now the launcher Activity; `MainActivity` requires an
+  authenticated session.
+- `QuizRepository.updateProgress()` transparently syncs to Firestore when a
+  user is logged in.
+- Loading states now show a clean card with a spinner instead of a grey overlay.
+- Replaced `TestDataHolder` singleton with `Parcelable` Intent extras for passing
+  quiz results between `QuizActivity` and `ReviewActivity`. `Question` and
+  `QuestionResult` now implement `Parcelable` via `@Parcelize`. Eliminates the
+  risk of stale data if the system recreates Activities from the back stack.
+- Topic list now merges two sources: Room DB (topics with questions) and GitHub
+  Release assets (topics with PDFs). A topic appears if it exists in either.
+- PDF button shown only when a PDF actually exists for that topic in the release.
+- Tapping the test button on a topic without questions shows a dialog instead of
+  opening an empty quiz.
+- Migrated Firebase project to professional account (alfonsonavio).
+- `minFetchInterval` changed from 0 to 3600 — app is now production-ready
+  in terms of Remote Config fetch frequency.
+
+### Fixed
+- Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
+  screen rotation). `loadQuestions()` is now guarded with `isEmpty()` so the ViewModel
+  state is preserved across Activity recreations.
+- Question counter not advancing correctly when first question was answered wrong,
+  caused by the same Activity recreation issue above.
+- Duplicate questions within a test prevented with `distinctBy { it.text }` after
+  loading from Room.
+
+### Configuration
+- Firebase password policy set to "Enforce" (min 8 chars, lowercase + numeric)
+  so the requirement applies to both registration and password reset.
 
 ---
 
@@ -56,33 +108,5 @@ First public release. Covers the full first-year and second-year DAM curriculum.
 
 ---
 
-## [Unreleased]
-
-### Added
-- `PdfReleaseRepository` queries the GitHub Release API to determine which topics
-  have a PDF available, independently of whether they have questions in the DB.
-
-### Changed
-- Replaced `TestDataHolder` singleton with `Parcelable` Intent extras for passing
-  quiz results between `QuizActivity` and `ReviewActivity`. `Question` and
-  `QuestionResult` now implement `Parcelable` via `@Parcelize`. Eliminates the
-  risk of stale data if the system recreates Activities from the back stack.
-- Topic list now merges two sources: Room DB (topics with questions) and GitHub
-  Release assets (topics with PDFs). A topic appears if it exists in either.
-- PDF button shown only when a PDF actually exists for that topic in the release.
-- Tapping the test button on a topic without questions shows a dialog instead of
-  opening an empty quiz.
-- Migrated Firebase project to professional account (alfonsonavio).
-- `minFetchInterval` changed from 0 to 3600 — app is now production-ready
-  in terms of Remote Config fetch frequency.
-
-### Fixed
-- Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
-  screen rotation). `loadQuestions()` is now guarded with `isEmpty()` so the ViewModel
-  state is preserved across Activity recreations.
-- Question counter not advancing correctly when first question was answered wrong,
-  caused by the same Activity recreation issue above.
-- Duplicate questions within a test prevented with `distinctBy { it.text }` after
-  loading from Room.
-
+[Unreleased]: https://github.com/alfonsonavio/DAMTest/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/alfonsonavio/DAMTest/releases/tag/v1.0.0
