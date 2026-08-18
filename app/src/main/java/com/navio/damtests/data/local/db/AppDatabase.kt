@@ -7,11 +7,13 @@ import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.TopicProgress
 
 /**
- * Room database. The instance is provided as a singleton by Hilt
- * (see [com.navio.damtests.di.AppModule]), so no manual companion-object
- * singleton is needed here anymore.
+ * Room database. Provided as a singleton by Hilt (see di/AppModule).
+ *
+ * Version 2: added Question.stableId. Uses destructive migration — the local
+ * question cache is safely rebuilt from Firebase on the next sync, and user
+ * progress lives in Firestore, so nothing irreplaceable is lost.
  */
-@Database(entities = [Question::class, TopicProgress::class], version = 1)
+@Database(entities = [Question::class, TopicProgress::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun questionsDao(): QuestionsDao
 }
