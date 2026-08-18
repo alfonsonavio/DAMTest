@@ -11,11 +11,15 @@ import javax.inject.Inject
 /**
  * Single source of truth for all quiz data.
  *
- * [updateProgress] saves to Room AND to Firestore (if a user is logged in)
- * so progress is always backed up to the cloud transparently.
+ * AuthManager and UserProgressRepository are now INJECTED (previously they were
+ * global objects called directly). This is what makes updateProgress() testable:
+ * a unit test can pass mocked versions and verify behaviour without touching
+ * real Firebase.
  */
 class QuizRepository @Inject constructor(
-    private val questionsDao: QuestionsDao
+    private val questionsDao: QuestionsDao,
+    private val authManager: AuthManager,
+    private val userProgressRepository: UserProgressRepository
 ) {
 
     // --- Question management ---
@@ -55,12 +59,11 @@ class QuizRepository @Inject constructor(
 
     /**
      * Saves progress to Room and, if a user is logged in, also to Firestore.
-     * The Firestore write is fire-and-forget — a failure won't crash the app.
      */
     suspend fun updateProgress(progress: TopicProgress) {
         questionsDao.saveProgress(progress)
-        AuthManager.currentUid?.let { uid ->
-            UserProgressRepository.saveTopicProgress(uid, progress)
+        authManager.currentUid?.let { uid ->
+            userProgressRepository.saveTopicProgress(uid, progress)
         }
     }
 

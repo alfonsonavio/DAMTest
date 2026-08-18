@@ -4,23 +4,22 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.navio.damtests.data.local.entity.TopicProgress
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
- * Handles synchronisation of per-user progress between Room (local) and
- * Cloud Firestore (remote).
+ * Synchronises per-user progress between Room (local) and Cloud Firestore (remote).
  *
- * Firestore structure:
- *   users/{uid}/progress/{subjectId}_{topicId}
- *     - subjectId, topicId, lastScore, totalQuestions,
- *       attemptsCount, lastAttemptTimestamp
+ * Now an injectable @Singleton class (was an `object`). FirebaseFirestore is
+ * injected so tests can supply a mock instead of the real Firestore.
  *
- * Merge strategy: the record with the most recent [lastAttemptTimestamp] wins.
+ * Firestore structure: users/{uid}/progress/{subjectId}_{topicId}
+ * Merge strategy: the record with the most recent lastAttemptTimestamp wins.
  */
-object UserProgressRepository {
-
-    private const val TAG = "UserProgressRepo"
-
-    private val firestore = FirebaseFirestore.getInstance()
+@Singleton
+class UserProgressRepository @Inject constructor(
+    private val firestore: FirebaseFirestore
+) {
 
     private fun progressDocId(progress: TopicProgress) =
         "${progress.subjectId}_${progress.topicId}"
@@ -29,9 +28,6 @@ object UserProgressRepository {
         firestore.collection("users").document(uid)
             .collection("progress").document(progressDocId(progress))
 
-    // --- Write ---
-
-    /** Saves a single topic progress record to Firestore. */
     suspend fun saveTopicProgress(uid: String, progress: TopicProgress) {
         try {
             val data = mapOf(
@@ -49,18 +45,11 @@ object UserProgressRepository {
         }
     }
 
-    /** Uploads all local progress records to Firestore (used on first login). */
     suspend fun uploadAllProgress(uid: String, allProgress: List<TopicProgress>) {
         allProgress.forEach { saveTopicProgress(uid, it) }
         Log.d(TAG, "Uploaded ${allProgress.size} progress records")
     }
 
-    // --- Read ---
-
-    /**
-     * Downloads all progress records from Firestore for the given user.
-     * Returns an empty list if the user has no cloud data yet.
-     */
     suspend fun downloadAllProgress(uid: String): List<TopicProgress> {
         return try {
             val snapshot = firestore.collection("users").document(uid)
@@ -85,19 +74,15 @@ object UserProgressRepository {
         }
     }
 
-    // --- Merge ---
-
     /**
-     * Merges cloud and local progress lists.
-     * For each topic, the record with the most recent [lastAttemptTimestamp] wins.
-     * Returns the merged list ready to be saved to Room.
+     * Merges cloud and local progress. For each topic, the record with the most
+     * recent lastAttemptTimestamp wins. Pure function — easy to unit test.
      */
     fun mergeProgress(
         local: List<TopicProgress>,
         cloud: List<TopicProgress>
     ): List<TopicProgress> {
         val merged = mutableMapOf<String, TopicProgress>()
-
         (local + cloud).forEach { progress ->
             val key = "${progress.subjectId}_${progress.topicId}"
             val existing = merged[key]
@@ -106,5 +91,9 @@ object UserProgressRepository {
             }
         }
         return merged.values.toList()
+    }
+
+    companion object {
+        private const val TAG = "UserProgressRepo"
     }
 }

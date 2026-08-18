@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var authManager: AuthManager
     private lateinit var tvAvgScore: TextView
     private lateinit var tvTotalTests: TextView
     private lateinit var tvWelcome: TextView
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Guard: if not logged in, redirect to LoginActivity
-        if (!AuthManager.isLoggedIn) {
+        if (!authManager.isLoggedIn) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         tvTotalTests = findViewById(R.id.tvTotalTests)
         tvWelcome    = findViewById(R.id.tvWelcome)
 
-        tvWelcome.text = getString(R.string.welcome_user, AuthManager.displayName)
+        tvWelcome.text = getString(R.string.welcome_user, authManager.displayName)
 
         // Logout button in the custom header
         findViewById<ImageButton>(R.id.btnLogout).setOnClickListener { confirmLogout() }
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             message = getString(R.string.logout_message),
             confirmText = getString(R.string.logout_confirm)
         ) {
-            AuthManager.signOut()
+            authManager.signOut()
             startActivity(
                 Intent(this, LoginActivity::class.java)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)

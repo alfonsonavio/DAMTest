@@ -6,17 +6,21 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
- * Singleton handling all Firebase Authentication operations.
+ * Handles all Firebase Authentication operations.
  *
- * Supports email/password and Google Sign-In. All suspend functions
- * return [Result] so callers can handle success and failure cleanly
- * without try/catch at every call site.
+ * Previously an `object` (global singleton). Now an injectable @Singleton class:
+ * FirebaseAuth is injected via the constructor, which means tests can pass a
+ * mocked FirebaseAuth instead of the real one. Hilt still guarantees a single
+ * instance app-wide thanks to @Singleton.
  */
-object AuthManager {
-
-    private val auth = FirebaseAuth.getInstance()
+@Singleton
+class AuthManager @Inject constructor(
+    private val auth: FirebaseAuth
+) {
 
     val currentUser: FirebaseUser? get() = auth.currentUser
     val isLoggedIn: Boolean get() = auth.currentUser != null
@@ -43,7 +47,6 @@ object AuthManager {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user!!
-            // Set display name immediately after creation
             val profileUpdate = UserProfileChangeRequest.Builder()
                 .setDisplayName(displayName)
                 .build()
