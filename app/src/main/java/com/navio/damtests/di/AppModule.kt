@@ -27,7 +27,9 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "quiz_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     @Singleton
