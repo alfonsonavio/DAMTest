@@ -49,6 +49,9 @@ class QuizViewModel @Inject constructor(
 
     private val _resultsList = mutableListOf<QuestionResult>()
 
+    /** The topicId this test was launched with (e.g. "-4" for smart review). */
+    private var currentTopicId: String = ""
+
     // --- Actions ---
 
     /**
@@ -61,6 +64,7 @@ class QuizViewModel @Inject constructor(
      *  - any other → specific topic (10 questions)
      */
     fun loadQuestions(subjectId: String, topicId: String) {
+        currentTopicId = topicId
         viewModelScope.launch {
             _isLoading.value = true
             _resultsList.clear()
@@ -74,6 +78,7 @@ class QuizViewModel @Inject constructor(
                 "-1"  -> repository.getRandomQuestionsForGeneralTest(subjectId, limit)
                 "-2"  -> repository.getQuestionsForRange(subjectId, 1,  10, limit)
                 "-3"  -> repository.getQuestionsForRange(subjectId, 11, 20, limit)
+                "-4"  -> repository.getSmartReviewQuestions(subjectId, limit)
                 else  -> repository.getQuestionsByTopic(subjectId, topicId, limit)
             }.distinctBy { it.text }  // prevent duplicates if Room has stale rows
 
@@ -106,7 +111,6 @@ class QuizViewModel @Inject constructor(
         _resultsList.add(QuestionResult(currentQuestion, uiIndex, shuffledOptions, isCorrect))
         if (isCorrect) _score.value += 1
 
-        // Record per-question stats for smart review (fire-and-forget)
         viewModelScope.launch {
             repository.recordAnswer(currentQuestion, isCorrect)
         }
@@ -121,8 +125,11 @@ class QuizViewModel @Inject constructor(
             _currentQuestionIndex.value += 1
         } else {
             _isTestFinished.value = true
-            _questions.value.firstOrNull()?.let {
-                saveFinalProgress(it.subjectId, it.topicId)
+            // Smart review (-4) is practice only — it does not save a score.
+            if (currentTopicId != "-4") {
+                _questions.value.firstOrNull()?.let {
+                    saveFinalProgress(it.subjectId, it.topicId)
+                }
             }
         }
     }

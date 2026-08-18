@@ -64,13 +64,13 @@ class TopicSelectionActivity : AppCompatActivity() {
                             topic.id.startsWith("tema_")         -> 0
                             topic.id.startsWith("caso_")         -> 1
                             topic.id.startsWith("repaso_")       -> 2
-                            topic.id in listOf("-2", "-3", "-1") -> 3
-                            else                                 -> 4
+                            topic.id in listOf("-2", "-3", "-1", "-4") -> 3
+                            else                                       -> 4
                         }
                     },
                     { topic ->
                         if (topic.id.startsWith("-")) {
-                            when (topic.id) { "-2" -> 1; "-3" -> 2; else -> 3 }
+                            when (topic.id) { "-2" -> 1; "-3" -> 2; "-1" -> 3; else -> 4 }
                         } else {
                             topic.id.filter { it.isDigit() }.toIntOrNull() ?: Int.MAX_VALUE
                         }
