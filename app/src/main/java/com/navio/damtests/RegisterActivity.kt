@@ -20,6 +20,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
 
+    @Inject lateinit var authManager: AuthManager
+    @Inject lateinit var userProgressRepository: UserProgressRepository
     @Inject lateinit var questionsDao: QuestionsDao
 
     private lateinit var tilName: TextInputLayout
@@ -74,7 +76,7 @@ class RegisterActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             setLoading(true)
-            val result = AuthManager.register(email, password, name)
+            val result = authManager.register(email, password, name)
             result.fold(
                 onSuccess = { onRegisterSuccess() },
                 onFailure = {
@@ -139,15 +141,15 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private suspend fun onRegisterSuccess() {
-        val uid = AuthManager.currentUid
+        val uid = authManager.currentUid
         if (uid != null) {
             try {
                 val localProgress = questionsDao.getAllProgressOnce()
-                UserProgressRepository.uploadAllProgress(uid, localProgress)
+                userProgressRepository.uploadAllProgress(uid, localProgress)
             } catch (_: Exception) { }
         }
 
-        AuthManager.signOut()
+        authManager.signOut()
         setResult(RESULT_OK)
         finish()
     }

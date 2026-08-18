@@ -116,4 +116,10 @@ dependencies {
 
     // Groq (via OpenAI-compatible client)
     implementation("com.aallam.openai:openai-client:3.8.2")
+
+    // Unit testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("app.cash.turbine:turbine:1.1.0")
 }
