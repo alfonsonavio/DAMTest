@@ -33,9 +33,4 @@ object AppModule {
     @Singleton
     fun provideQuestionsDao(database: AppDatabase): QuestionsDao =
         database.questionsDao()
-
-    @Provides
-    @Singleton
-    fun provideQuizRepository(questionsDao: QuestionsDao): QuizRepository =
-        QuizRepository(questionsDao)
 }
