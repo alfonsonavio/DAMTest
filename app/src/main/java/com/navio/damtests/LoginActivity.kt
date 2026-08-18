@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -14,10 +16,13 @@ import com.google.android.material.textfield.TextInputEditText
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.auth.UserProgressRepository
-import com.navio.damtests.data.local.db.AppDatabase
+import com.navio.damtests.data.local.entity.QuestionsDao
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
+
+    @Inject lateinit var questionsDao: QuestionsDao
 
     private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
@@ -152,11 +157,10 @@ class LoginActivity : AppCompatActivity() {
         if (uid != null) {
             // Merge cloud + local progress in the background — don't block the UI
             try {
-                val database      = AppDatabase.getDatabase(this)
-                val localProgress = database.questionsDao().getAllProgressOnce()
+                val localProgress = questionsDao.getAllProgressOnce()
                 val cloudProgress = UserProgressRepository.downloadAllProgress(uid)
                 val merged        = UserProgressRepository.mergeProgress(localProgress, cloudProgress)
-                merged.forEach { database.questionsDao().saveProgress(it) }
+                merged.forEach { questionsDao.saveProgress(it) }
             } catch (_: Exception) {
                 // Sync failure shouldn't block login
             }

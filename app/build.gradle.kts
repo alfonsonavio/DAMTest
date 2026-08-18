@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.googleDevtoolsKsp)
+    alias(libs.plugins.hilt)
     id("com.google.gms.google-services")
     id("kotlin-parcelize")
 }
@@ -78,6 +79,10 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Hilt — dependency injection
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
