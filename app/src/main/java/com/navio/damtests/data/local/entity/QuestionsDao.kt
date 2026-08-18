@@ -59,4 +59,18 @@ interface QuestionsDao {
     /** One-shot (non-Flow) query used for cloud sync on login/register. */
     @Query("SELECT * FROM topic_progress")
     suspend fun getAllProgressOnce(): List<TopicProgress>
+
+    // --- Question statistics (smart review) ---
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveQuestionStats(stats: QuestionStats)
+
+    @Query("SELECT * FROM question_stats WHERE stableId = :stableId")
+    suspend fun getQuestionStats(stableId: String): QuestionStats?
+
+    @Query("SELECT * FROM question_stats WHERE subjectId = :subjectId")
+    suspend fun getStatsForSubject(subjectId: String): List<QuestionStats>
+
+    @Query("SELECT * FROM question_stats")
+    suspend fun getAllQuestionStats(): List<QuestionStats>
 }
