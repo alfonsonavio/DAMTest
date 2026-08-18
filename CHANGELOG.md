@@ -53,6 +53,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrated Firebase project to professional account (alfonsonavio).
 - `minFetchInterval` changed from 0 to 3600 — app is now production-ready
   in terms of Remote Config fetch frequency.
+- Introduced Hilt for dependency injection. The Room database, DAO and
+    `QuizRepository` are now provided as singletons via a Hilt module
+    (`di/AppModule`), and Activities receive dependencies with `@Inject`
+    instead of manual instantiation. `QuizViewModel` uses `@HiltViewModel`
+    with `by viewModels()`, removing the manual `QuizViewModelFactory`
+    (deleted) and the manual singleton in `AppDatabase`.
 
 ### Fixed
 - Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
