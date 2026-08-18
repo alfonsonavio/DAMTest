@@ -38,6 +38,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `UserProgressRepository.mergeProgress` (22 tests). `MainDispatcherRule`
   swaps `Dispatchers.Main` for a test dispatcher so `viewModelScope`
   coroutines run synchronously in tests.
+- **Smart review mode** ("Repaso inteligente") — a per-subject practice mode
+  that prioritises the questions the user fails most, using weighted random
+  sampling (spaced-repetition style: base weight + failure rate + novelty for
+  unseen questions + staleness). Accessed via a dedicated entry in the topic
+  list (topicId "-4"), keeping the general tests purely random.
+- `QuestionStats` table tracking per-question seen/correct/wrong counts, keyed
+  by a Firebase-derived `stableId` that survives re-syncs. Updated on every
+  answer in all test modes.
+- `SmartReviewSelector` — pure, unit-tested weighted-sampling algorithm
+  (8 tests), plus repository and ViewModel wiring.
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
@@ -68,6 +78,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `FirebaseFirestore` provided via a new `FirebaseModule`. This removes hidden
   singleton dependencies from `QuizRepository`, making `updateProgress` fully
   unit-testable with mocked dependencies.
+- `Question` now has a `stableId` ({subjectId}_{topicId}_{firebaseKey}) so
+  per-question stats stay attached across syncs. Room bumped to v3.
+- `FirebaseSyncManager` re-downloads a topic when its local cache is empty even
+  if the version matches (recovers from destructive migrations), and now logs a
+  single summary line instead of one per topic.
+- Smart review is practice-only: it records per-question stats but does not save
+  a test score, and its card shows "Practica tus fallos".
 
 ### Fixed
 - Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
