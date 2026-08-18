@@ -46,16 +46,24 @@ class TopicAdapter(
         ) {
             tvTitle.text = topic.title
 
-            if (progress == null) {
-                tvStats.text = "Pendiente de realizar"
-                tvStats.setTextColor(Color.parseColor("#94A3B8"))
-            } else {
-                val percent = (progress.lastScore.toFloat() / progress.totalQuestions * 100).toInt()
-                tvStats.text = "Última nota: $percent%"
-                tvStats.setTextColor(
-                    if (percent >= 50) Color.parseColor("#22C55E")
-                    else Color.parseColor("#EF4444")
-                )
+            when {
+                // Smart review is a practice tool — it never shows a score
+                topic.id == "-4" -> {
+                    tvStats.text = "Practica tus fallos"
+                    tvStats.setTextColor(Color.parseColor("#94A3B8"))
+                }
+                progress == null -> {
+                    tvStats.text = "Pendiente de realizar"
+                    tvStats.setTextColor(Color.parseColor("#94A3B8"))
+                }
+                else -> {
+                    val percent = (progress.lastScore.toFloat() / progress.totalQuestions * 100).toInt()
+                    tvStats.text = "Última nota: $percent%"
+                    tvStats.setTextColor(
+                        if (percent >= 50) Color.parseColor("#22C55E")
+                        else Color.parseColor("#EF4444")
+                    )
+                }
             }
 
             // Show PDF button only if a PDF exists for this topic in the release

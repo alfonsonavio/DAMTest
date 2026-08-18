@@ -100,6 +100,7 @@ class QuizRepository @Inject constructor(
         topics.add(Topic("-2", "TEST GENERAL (TEMAS 1-10)",  subjectId))
         topics.add(Topic("-3", "TEST GENERAL (TEMAS 11-20)", subjectId))
         topics.add(Topic("-1", "TEST GENERAL (TODO)",        subjectId))
+        topics.add(Topic("-4", "REPASO INTELIGENTE",         subjectId))
         return topics
     }
 
