@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
@@ -12,10 +14,13 @@ import com.google.android.material.textfield.TextInputLayout
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.auth.UserProgressRepository
-import com.navio.damtests.data.local.db.AppDatabase
+import com.navio.damtests.data.local.entity.QuestionsDao
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
+
+    @Inject lateinit var questionsDao: QuestionsDao
 
     private lateinit var tilName: TextInputLayout
     private lateinit var tilEmail: TextInputLayout
@@ -137,8 +142,7 @@ class RegisterActivity : AppCompatActivity() {
         val uid = AuthManager.currentUid
         if (uid != null) {
             try {
-                val database = AppDatabase.getDatabase(this)
-                val localProgress = database.questionsDao().getAllProgressOnce()
+                val localProgress = questionsDao.getAllProgressOnce()
                 UserProgressRepository.uploadAllProgress(uid, localProgress)
             } catch (_: Exception) { }
         }

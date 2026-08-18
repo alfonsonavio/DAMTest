@@ -6,6 +6,7 @@ import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.Topic
 import com.navio.damtests.data.local.entity.TopicProgress
+import javax.inject.Inject
 
 /**
  * Single source of truth for all quiz data.
@@ -13,7 +14,9 @@ import com.navio.damtests.data.local.entity.TopicProgress
  * [updateProgress] saves to Room AND to Firestore (if a user is logged in)
  * so progress is always backed up to the cloud transparently.
  */
-class QuizRepository(private val questionsDao: QuestionsDao) {
+class QuizRepository @Inject constructor(
+    private val questionsDao: QuestionsDao
+) {
 
     // --- Question management ---
 

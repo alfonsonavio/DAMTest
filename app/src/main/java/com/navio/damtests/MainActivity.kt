@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -13,14 +15,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
-import com.navio.damtests.data.local.db.AppDatabase
 import com.navio.damtests.data.local.entity.Subject
 import com.navio.damtests.ui.SubjectAdapter
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var repository: QuizRepository
+    @Inject lateinit var repository: QuizRepository
     private lateinit var tvAvgScore: TextView
     private lateinit var tvTotalTests: TextView
     private lateinit var tvWelcome: TextView
@@ -47,8 +49,6 @@ class MainActivity : AppCompatActivity() {
         // Logout button in the custom header
         findViewById<ImageButton>(R.id.btnLogout).setOnClickListener { confirmLogout() }
 
-        val database = AppDatabase.getDatabase(this)
-        repository   = QuizRepository(database.questionsDao())
         syncManager  = FirebaseSyncManager(this, repository)
 
         lifecycleScope.launch {

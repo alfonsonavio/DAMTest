@@ -2,6 +2,8 @@ package com.navio.damtests.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
@@ -9,7 +11,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
+@HiltViewModel
+class QuizViewModel @Inject constructor(
+    private val repository: QuizRepository
+) : ViewModel() {
 
     // --- Public state ---
 

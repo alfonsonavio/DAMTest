@@ -11,21 +11,21 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.button.MaterialButton
 import com.navio.damtests.ai.FastExplainer
-import com.navio.damtests.data.local.db.AppDatabase
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.ui.viewmodel.QuizViewModel
-import com.navio.damtests.ui.viewmodel.QuizViewModelFactory
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class QuizActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: QuizViewModel
+    private val viewModel: QuizViewModel by viewModels()
     private lateinit var tvQuestion: TextView
     private lateinit var btnA: Button
     private lateinit var btnB: Button
@@ -70,9 +70,6 @@ class QuizActivity : AppCompatActivity() {
         btnContextInfo = findViewById(R.id.btnContextInfo)
         btnNext        = findViewById(R.id.btnNextQuestion)
 
-        val database   = AppDatabase.getDatabase(this)
-        val repository = QuizRepository(database.questionsDao())
-        viewModel = ViewModelProvider(this, QuizViewModelFactory(repository))[QuizViewModel::class.java]
 
         setupObservers()
         setupClickListeners()
