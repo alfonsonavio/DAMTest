@@ -6,6 +6,7 @@ import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.Topic
 import com.navio.damtests.data.local.entity.TopicProgress
+import com.navio.damtests.data.local.entity.QuestionStats
 import javax.inject.Inject
 
 /**
@@ -99,5 +100,34 @@ class QuizRepository @Inject constructor(
         topics.add(Topic("-3", "TEST GENERAL (TEMAS 11-20)", subjectId))
         topics.add(Topic("-1", "TEST GENERAL (TODO)",        subjectId))
         return topics
+    }
+
+    /**
+     * Records the outcome of a single answered question into QuestionStats.
+     * Called every time the user answers, in any test mode, so the smart-review
+     * data stays complete. Uses the question's stableId as the key.
+     */
+    suspend fun recordAnswer(question: Question, wasCorrect: Boolean) {
+        if (question.stableId.isBlank()) return  // safety: skip un-synced questions
+
+        val existing = questionsDao.getQuestionStats(question.stableId)
+        val updated = if (existing == null) {
+            QuestionStats(
+                stableId          = question.stableId,
+                subjectId         = question.subjectId,
+                timesSeen         = 1,
+                timesCorrect      = if (wasCorrect) 1 else 0,
+                timesWrong        = if (wasCorrect) 0 else 1,
+                lastSeenTimestamp = System.currentTimeMillis()
+            )
+        } else {
+            existing.copy(
+                timesSeen         = existing.timesSeen + 1,
+                timesCorrect      = existing.timesCorrect + if (wasCorrect) 1 else 0,
+                timesWrong        = existing.timesWrong + if (wasCorrect) 0 else 1,
+                lastSeenTimestamp = System.currentTimeMillis()
+            )
+        }
+        questionsDao.saveQuestionStats(updated)
     }
 }

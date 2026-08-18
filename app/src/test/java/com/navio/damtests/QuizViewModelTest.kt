@@ -162,4 +162,16 @@ class QuizViewModelTest {
 
         assertEquals(2, viewModel.getResults().size)
     }
+
+    @Test
+    fun `checkAnswer records question stats`() = runTest {
+        val q = question(1, correct = 0)
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1")) // correct
+
+        // The ViewModel must record the outcome for smart review
+        coVerify { repository.recordAnswer(q, true) }
+    }
 }
