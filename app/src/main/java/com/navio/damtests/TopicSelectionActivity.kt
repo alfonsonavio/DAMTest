@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.navio.damtests.data.local.db.AppDatabase
 import com.navio.damtests.ui.TopicAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,9 +22,10 @@ import okhttp3.Request
 import java.io.File
 import java.io.FileOutputStream
 
+@AndroidEntryPoint
 class TopicSelectionActivity : AppCompatActivity() {
 
-    private lateinit var repository: QuizRepository
+    @Inject lateinit var repository: QuizRepository
     private lateinit var adapter: TopicAdapter
     private val httpClient = OkHttpClient()
 
@@ -36,8 +38,6 @@ class TopicSelectionActivity : AppCompatActivity() {
 
         val subjectId = intent.getStringExtra("SUBJECT_ID") ?: "programacion"
 
-        val database = AppDatabase.getDatabase(this)
-        repository   = QuizRepository(database.questionsDao())
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar_topics)
         setSupportActionBar(toolbar)
