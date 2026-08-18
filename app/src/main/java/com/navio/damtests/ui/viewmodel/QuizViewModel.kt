@@ -106,6 +106,11 @@ class QuizViewModel @Inject constructor(
         _resultsList.add(QuestionResult(currentQuestion, uiIndex, shuffledOptions, isCorrect))
         if (isCorrect) _score.value += 1
 
+        // Record per-question stats for smart review (fire-and-forget)
+        viewModelScope.launch {
+            repository.recordAnswer(currentQuestion, isCorrect)
+        }
+
         _currentAnswerState.value = AnswerResult(uiIndex, correctUiIndex, isCorrect)
     }
 
