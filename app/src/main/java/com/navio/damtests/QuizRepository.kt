@@ -6,6 +6,8 @@ import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.Topic
 import com.navio.damtests.data.local.entity.TopicProgress
+import com.navio.damtests.data.local.entity.QuestionStats
+import com.navio.damtests.data.SmartReviewSelector
 import javax.inject.Inject
 
 /**
@@ -98,6 +100,51 @@ class QuizRepository @Inject constructor(
         topics.add(Topic("-2", "TEST GENERAL (TEMAS 1-10)",  subjectId))
         topics.add(Topic("-3", "TEST GENERAL (TEMAS 11-20)", subjectId))
         topics.add(Topic("-1", "TEST GENERAL (TODO)",        subjectId))
+        topics.add(Topic("-4", "REPASO INTELIGENTE",         subjectId))
         return topics
+    }
+
+    /**
+     * Records the outcome of a single answered question into QuestionStats.
+     * Called every time the user answers, in any test mode, so the smart-review
+     * data stays complete. Uses the question's stableId as the key.
+     */
+    suspend fun recordAnswer(question: Question, wasCorrect: Boolean) {
+        if (question.stableId.isBlank()) return  // safety: skip un-synced questions
+
+        val existing = questionsDao.getQuestionStats(question.stableId)
+        val updated = if (existing == null) {
+            QuestionStats(
+                stableId          = question.stableId,
+                subjectId         = question.subjectId,
+                timesSeen         = 1,
+                timesCorrect      = if (wasCorrect) 1 else 0,
+                timesWrong        = if (wasCorrect) 0 else 1,
+                lastSeenTimestamp = System.currentTimeMillis()
+            )
+        } else {
+            existing.copy(
+                timesSeen         = existing.timesSeen + 1,
+                timesCorrect      = existing.timesCorrect + if (wasCorrect) 1 else 0,
+                timesWrong        = existing.timesWrong + if (wasCorrect) 0 else 1,
+                lastSeenTimestamp = System.currentTimeMillis()
+            )
+        }
+        questionsDao.saveQuestionStats(updated)
+    }
+
+    /**
+     * Builds a smart-review test for a subject: [limit] questions chosen by
+     * weighted random sampling, prioritising the ones the user fails most and
+     * hasn't seen recently. Falls back gracefully when there are few questions.
+     */
+    suspend fun getSmartReviewQuestions(subjectId: String, limit: Int = 20): List<Question> {
+        val allQuestions = questionsDao.getAllQuestionsForSubject(subjectId)
+        if (allQuestions.isEmpty()) return emptyList()
+
+        val statsById = questionsDao.getStatsForSubject(subjectId)
+            .associateBy { it.stableId }
+
+        return SmartReviewSelector().select(allQuestions, statsById, limit)
     }
 }
