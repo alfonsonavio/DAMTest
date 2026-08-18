@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +23,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
+    @Inject lateinit var authManager: AuthManager
+    @Inject lateinit var userProgressRepository: UserProgressRepository
     @Inject lateinit var questionsDao: QuestionsDao
 
     private lateinit var etEmail: TextInputEditText
@@ -48,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
             val account = task.getResult(ApiException::class.java)
             lifecycleScope.launch {
                 setLoading(true)
-                val authResult = AuthManager.signInWithGoogle(account)
+                val authResult = authManager.signInWithGoogle(account)
                 authResult.fold(
                     onSuccess = { onLoginSuccess() },
                     onFailure = {
@@ -75,7 +78,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (AuthManager.isLoggedIn) {
+        if (authManager.isLoggedIn) {
             goToMain()
             return
         }
@@ -109,7 +112,7 @@ class LoginActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             setLoading(true)
-            val result = AuthManager.signInWithEmail(email, password)
+            val result = authManager.signInWithEmail(email, password)
             result.fold(
                 onSuccess = { onLoginSuccess() },
                 onFailure = {
@@ -136,7 +139,7 @@ class LoginActivity : AppCompatActivity() {
                 return@showForgotPassword
             }
             lifecycleScope.launch {
-                val result = AuthManager.sendPasswordResetEmail(email)
+                val result = authManager.sendPasswordResetEmail(email)
                 dialog.dismiss()
                 result.fold(
                     onSuccess = {
@@ -153,13 +156,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private suspend fun onLoginSuccess() {
-        val uid = AuthManager.currentUid
+        val uid = authManager.currentUid
         if (uid != null) {
             // Merge cloud + local progress in the background — don't block the UI
             try {
                 val localProgress = questionsDao.getAllProgressOnce()
-                val cloudProgress = UserProgressRepository.downloadAllProgress(uid)
-                val merged        = UserProgressRepository.mergeProgress(localProgress, cloudProgress)
+                val cloudProgress = userProgressRepository.downloadAllProgress(uid)
+                val merged        = userProgressRepository.mergeProgress(localProgress, cloudProgress)
                 merged.forEach { questionsDao.saveProgress(it) }
             } catch (_: Exception) {
                 // Sync failure shouldn't block login

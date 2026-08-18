@@ -34,6 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `QuestionsDao.getAllProgressOnce()` — one-shot query for cloud sync.
 - `PdfReleaseRepository` queries the GitHub Release API to determine which topics
   have a PDF available, independently of whether they have questions in the DB.
+- Unit tests with JUnit and MockK for `QuizViewModel`, `QuizRepository` and
+  `UserProgressRepository.mergeProgress` (22 tests). `MainDispatcherRule`
+  swaps `Dispatchers.Main` for a test dispatcher so `viewModelScope`
+  coroutines run synchronously in tests.
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
@@ -59,6 +63,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     instead of manual instantiation. `QuizViewModel` uses `@HiltViewModel`
     with `by viewModels()`, removing the manual `QuizViewModelFactory`
     (deleted) and the manual singleton in `AppDatabase`.
+- Made `AuthManager` and `UserProgressRepository` injectable `@Singleton`
+  classes (previously global `object`s), with `FirebaseAuth` and
+  `FirebaseFirestore` provided via a new `FirebaseModule`. This removes hidden
+  singleton dependencies from `QuizRepository`, making `updateProgress` fully
+  unit-testable with mocked dependencies.
 
 ### Fixed
 - Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
