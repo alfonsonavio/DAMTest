@@ -73,4 +73,8 @@ interface QuestionsDao {
 
     @Query("SELECT * FROM question_stats")
     suspend fun getAllQuestionStats(): List<QuestionStats>
+
+    /** All tema_* questions for a subject (no limit) — used to weight smart review. */
+    @Query("SELECT * FROM questions WHERE subjectId = :subjectId AND topicId LIKE 'tema_%'")
+    suspend fun getAllQuestionsForSubject(subjectId: String): List<Question>
 }

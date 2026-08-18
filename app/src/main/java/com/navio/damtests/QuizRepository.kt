@@ -7,6 +7,7 @@ import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.Topic
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.data.local.entity.QuestionStats
+import com.navio.damtests.data.SmartReviewSelector
 import javax.inject.Inject
 
 /**
@@ -129,5 +130,20 @@ class QuizRepository @Inject constructor(
             )
         }
         questionsDao.saveQuestionStats(updated)
+    }
+
+    /**
+     * Builds a smart-review test for a subject: [limit] questions chosen by
+     * weighted random sampling, prioritising the ones the user fails most and
+     * hasn't seen recently. Falls back gracefully when there are few questions.
+     */
+    suspend fun getSmartReviewQuestions(subjectId: String, limit: Int = 20): List<Question> {
+        val allQuestions = questionsDao.getAllQuestionsForSubject(subjectId)
+        if (allQuestions.isEmpty()) return emptyList()
+
+        val statsById = questionsDao.getStatsForSubject(subjectId)
+            .associateBy { it.stableId }
+
+        return SmartReviewSelector().select(allQuestions, statsById, limit)
     }
 }
