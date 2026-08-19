@@ -48,6 +48,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   answer in all test modes.
 - `SmartReviewSelector` — pure, unit-tested weighted-sampling algorithm
   (8 tests), plus repository and ViewModel wiring.
+- Haptic feedback on answering: a soft tick for correct answers and a stronger
+  double buzz for wrong ones, via a toggleable `HapticFeedbackManager` (ready
+  for a future settings toggle). Requires the VIBRATE permission.
+- Slide-in animation: the question content slides in from the right on each new
+  question, while the progress bar and next button stay fixed.
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
