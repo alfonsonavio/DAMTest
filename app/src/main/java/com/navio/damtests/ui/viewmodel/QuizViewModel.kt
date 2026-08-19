@@ -120,17 +120,24 @@ class QuizViewModel @Inject constructor(
 
     /** Advances to the next question, or finishes the test if this was the last one. */
     fun goToNextQuestion() {
-        _currentAnswerState.value = null
-        if (_currentQuestionIndex.value < _questions.value.size - 1) {
-            _currentQuestionIndex.value += 1
-        } else {
+        val isLastQuestion = _currentQuestionIndex.value >= _questions.value.size - 1
+
+        if (isLastQuestion) {
+            // Mark the test finished BEFORE clearing the answer state. Otherwise the
+            // currentAnswerState collector receives null while isTestFinished is still
+            // false and briefly repaints a clean question behind the results dialog.
             _isTestFinished.value = true
+            _currentAnswerState.value = null
+
             // Smart review (-4) is practice only — it does not save a score.
             if (currentTopicId != "-4") {
                 _questions.value.firstOrNull()?.let {
                     saveFinalProgress(it.subjectId, it.topicId)
                 }
             }
+        } else {
+            _currentAnswerState.value = null
+            _currentQuestionIndex.value += 1
         }
     }
 
