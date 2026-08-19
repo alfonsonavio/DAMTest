@@ -54,142 +54,150 @@
                 android:insetBottom="0dp" />
         </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="32dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="#E2E8F0">
-
-            <TextView
-                android:id="@+id/tvQuestionText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="160dp"
-                android:gravity="center"
-                android:padding="24dp"
-                android:textSize="20sp"
-                android:textColor="#1E293B"
-                android:textStyle="bold" />
-        </com.google.android.material.card.MaterialCardView>
-
         <LinearLayout
+            android:id="@+id/quizContentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOptionA"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="64dp"
-                android:textAlignment="viewStart"
-                android:paddingHorizontal="20dp"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                app:cornerRadius="16dp"
-                app:backgroundTint="#4F46E5" />
-            <TextView
-                android:id="@+id/tvFeedbackA"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:paddingHorizontal="12dp"
-                android:textSize="13sp"
-                android:textStyle="italic"
-                android:visibility="gone" />
-        </LinearLayout>
+            android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOptionB"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dp"
-                android:textAlignment="viewStart"
-                android:paddingHorizontal="20dp"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                app:cornerRadius="16dp"
-                app:backgroundTint="#4F46E5" />
-            <TextView
-                android:id="@+id/tvFeedbackB"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:paddingHorizontal="12dp"
-                android:textSize="13sp"
-                android:textStyle="italic"
-                android:visibility="gone" />
-        </LinearLayout>
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginBottom="32dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOptionC"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="64dp"
-                android:textAlignment="viewStart"
-                android:paddingHorizontal="20dp"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                app:cornerRadius="16dp"
-                app:backgroundTint="#4F46E5" />
-            <TextView
-                android:id="@+id/tvFeedbackC"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:paddingHorizontal="12dp"
-                android:textSize="13sp"
-                android:textStyle="italic"
-                android:visibility="gone" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tvQuestionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="160dp"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:textSize="20sp"
+                    android:textColor="#1E293B"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOptionD"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="64dp"
-                android:textAlignment="viewStart"
-                android:paddingHorizontal="20dp"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                app:cornerRadius="16dp"
-                app:backgroundTint="#4F46E5" />
-            <TextView
-                android:id="@+id/tvFeedbackD"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginBottom="12dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOptionA"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="64dp"
+                    android:textAlignment="viewStart"
+                    android:paddingHorizontal="20dp"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="#4F46E5" />
+                <TextView
+                    android:id="@+id/tvFeedbackA"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:paddingHorizontal="12dp"
+                    android:textSize="13sp"
+                    android:textStyle="italic"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:paddingHorizontal="12dp"
-                android:textSize="13sp"
-                android:textStyle="italic"
-                android:visibility="gone" />
+                android:orientation="vertical"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginBottom="12dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOptionB"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="64dp"
+                    android:textAlignment="viewStart"
+                    android:paddingHorizontal="20dp"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="#4F46E5" />
+                <TextView
+                    android:id="@+id/tvFeedbackB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:paddingHorizontal="12dp"
+                    android:textSize="13sp"
+                    android:textStyle="italic"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginBottom="12dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOptionC"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="64dp"
+                    android:textAlignment="viewStart"
+                    android:paddingHorizontal="20dp"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="#4F46E5" />
+                <TextView
+                    android:id="@+id/tvFeedbackC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:paddingHorizontal="12dp"
+                    android:textSize="13sp"
+                    android:textStyle="italic"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginBottom="12dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOptionD"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="64dp"
+                    android:textAlignment="viewStart"
+                    android:paddingHorizontal="20dp"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="#4F46E5" />
+                <TextView
+                    android:id="@+id/tvFeedbackD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:paddingHorizontal="12dp"
+                    android:textSize="13sp"
+                    android:textStyle="italic"
+                    android:visibility="gone" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
