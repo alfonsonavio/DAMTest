@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.view.WindowInsetsController
 import android.widget.Button
 import android.widget.ProgressBar
@@ -20,6 +21,7 @@ import com.google.android.material.button.MaterialButton
 import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.ui.viewmodel.QuizViewModel
+import com.navio.damtests.util.HapticFeedbackManager
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -42,6 +44,8 @@ class QuizActivity : AppCompatActivity() {
 
     private var currentShuffledQuestion: ShuffledQuestion? = null
     private val groq = FastExplainer()
+    private lateinit var haptic: HapticFeedbackManager
+    private lateinit var quizContent: View
 
     // Subject and topic received from TopicSelectionActivity
     private lateinit var subjectId: String
@@ -50,6 +54,9 @@ class QuizActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
+
+        haptic      = HapticFeedbackManager(this)
+        quizContent = findViewById(R.id.quizContentContainer)
 
         applyLightStatusBar()
 
@@ -148,6 +155,11 @@ class QuizActivity : AppCompatActivity() {
         val shuffled = question.shuffle()
         currentShuffledQuestion = shuffled
 
+        // Slide the question content in from the right
+        quizContent.startAnimation(
+            AnimationUtils.loadAnimation(this, R.anim.slide_in_right)
+        )
+
         tvQuestion.text = shuffled.originalQuestion.text
         btnA.text       = shuffled.shuffledOptions[0]
         btnB.text       = shuffled.shuffledOptions[1]
@@ -165,6 +177,9 @@ class QuizActivity : AppCompatActivity() {
     private fun highlightAnswer(result: QuizViewModel.AnswerResult) {
         val buttons   = listOf(btnA, btnB, btnC, btnD)
         val feedbacks = listOf(tvFeedbackA, tvFeedbackB, tvFeedbackC, tvFeedbackD)
+
+        // Haptic feedback: soft tick if correct, stronger double buzz if wrong
+        if (result.isCorrect) haptic.correct() else haptic.wrong()
 
         setAnswerButtonsEnabled(false)
 
