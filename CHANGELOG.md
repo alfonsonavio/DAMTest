@@ -53,6 +53,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   for a future settings toggle). Requires the VIBRATE permission.
 - Slide-in animation: the question content slides in from the right on each new
   question, while the progress bar and next button stay fixed.
+- **Study reminder notifications** — a daily reminder (18:00) scheduled with
+  WorkManager, showing a rotating motivational message that opens the app when
+  tapped. Scheduled only for logged-in users and cancelled on logout.
+  Requests the POST_NOTIFICATIONS permission at runtime on Android 13+.
+  Reminder hour and on/off are centralised for a future settings screen.
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
