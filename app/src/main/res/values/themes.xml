@@ -1,27 +1,57 @@
-<resources>
-    <style name="Theme.DamTests" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">#4F46E5</item>
-        <item name="colorPrimaryVariant">#3730A3</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorSecondary">#10B981</item>
-        <item name="colorSecondaryVariant">#059669</item>
-        <item name="colorOnSecondary">#FFFFFF</item>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Va en res/values/themes.xml — tema base DAMTest (modo claro).
+     Unifica el tema (antes había nombres inconsistentes). El dark mode
+     se añadirá en values-night en la rama dark-mode. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-        <item name="android:windowBackground">#F8FAFC</item>
-        <item name="colorSurface">#FFFFFF</item>
-        <item name="colorOnSurface">#1E293B</item>
+    <style name="Theme.DAMTest" parent="Theme.MaterialComponents.Light.NoActionBar">
 
+        <!-- Paleta -->
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorPrimaryVariant">@color/brand_primary_dark</item>
+        <item name="colorOnPrimary">@color/text_on_dark</item>
+        <item name="colorSecondary">@color/accent_raspberry</item>
+        <item name="colorSecondaryVariant">@color/accent_raspberry_light</item>
+        <item name="colorOnSecondary">@color/text_on_dark</item>
+
+        <!-- Superficies -->
+        <item name="android:windowBackground">@color/surface_bg</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+
+        <!-- Tipografía por defecto (Inter para todo el texto base) -->
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+
+        <!-- Barra de estado: navy, con iconos claros -->
+        <item name="android:statusBarColor">@color/brand_navy</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Sin ActionBar (usamos toolbars propias) -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:statusBarColor">#4F46E5</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:fitsSystemWindows">true</item>
     </style>
 
-    <style name="QuizButtonStyle" parent="Widget.MaterialComponents.Button">
+    <!-- Estilo de botón principal (periwinkle, texto Inter, esquinas 12dp) -->
+    <style name="Widget.DAMTest.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/brand_primary</item>
+        <item name="android:textColor">@color/text_on_dark</item>
+        <item name="android:textAppearance">@style/TextAppearance.DAMTest.Button</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+    </style>
+
+    <!-- Botones de respuesta del quiz -->
+    <style name="Widget.DAMTest.QuizOption" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textAppearance">@style/TextAppearance.DAMTest.Body</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="strokeColor">@color/surface_border</item>
+        <item name="backgroundTint">@color/surface</item>
+        <item name="cornerRadius">12dp</item>
         <item name="android:layout_marginBottom">12dp</item>
         <item name="android:padding">16dp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">#FFFFFF</item> <item name="backgroundTint">#4F46E5</item>    <item name="cornerRadius">12dp</item>
+        <item name="android:gravity">start|center_vertical</item>
     </style>
+
 </resources>
