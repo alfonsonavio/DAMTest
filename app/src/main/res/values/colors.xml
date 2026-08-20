@@ -1,20 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="primary">#3F51B5</color>
-    <color name="primary_dark">#303F9F</color>
-    <color name="accent">#FF4081</color>
-    <color name="background_light">#F5F5F5</color>
-    <color name="card_bg">#FFFFFF</color>
-    <color name="colorPrimaryLight">#E0E7FF</color>
-    <color name="colorPrimary">#4F46E5</color>
-        <color name="bg_prog">#E0E7FF</color>         <color name="bg_db">#DCFCE7</color>           <color name="bg_sistemas">#FFEDD5</color>     <color name="bg_marcas">#FEE2E2</color>       <color name="bg_entornos">#F3E8FF</color>     <color name="bg_digital">#CCFBF1</color>      <color name="bg_ipe">#FCE7F3</color>          <color name="bg_sostenibilidad">#D1FAE5</color><color name="bg_fol">#F1F5F9</color>          <color name="bg_extra">#FEF3C7</color>
-    <color name="bg_screen">#F8FAFC</color>
+
+    <!-- ============================================================
+         DAMTest Design System — Color palette
+         Navy (principal) + Periwinkle (interactivo) + Frambuesa (acento)
+         Nombres semánticos: usa SIEMPRE estos, nunca hex sueltos.
+         ============================================================ -->
+
+    <!-- === Marca / principal (Navy medianoche) === -->
+    <color name="brand_navy">#1E293B</color>
+    <color name="brand_navy_light">#334155</color>
+    <color name="brand_navy_dark">#0F172A</color>
+
+    <!-- === Interactivo (Periwinkle / azul-violeta) === -->
+    <color name="brand_primary">#4F46E5</color>
+    <color name="brand_primary_light">#6366F1</color>
+    <color name="brand_primary_dark">#3730A3</color>
+    <color name="brand_primary_bg">#EEF2FF</color>
+
+    <!-- === Acento (Frambuesa) — rachas, destacados puntuales === -->
+    <color name="accent_raspberry">#BE123C</color>
+    <color name="accent_raspberry_light">#E11D48</color>
+    <color name="accent_raspberry_bg">#FFE4E9</color>
+
+    <!-- === Superficies y fondos === -->
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_bg">#F8FAFC</color>
+    <color name="surface_border">#EEF2F7</color>
+
+    <!-- === Texto === -->
+    <color name="text_primary">#1E293B</color>
     <color name="text_secondary">#64748B</color>
+    <color name="text_muted">#94A3B8</color>
+    <color name="text_on_dark">#FFFFFF</color>
+    <color name="text_on_dark_muted">#94A3B8</color>
+
+    <!-- === Estados semánticos === -->
+    <color name="state_success">#16A34A</color>
+    <color name="state_success_bg">#DCFCE7</color>
+    <color name="state_success_text">#166534</color>
+    <color name="state_error">#DC2626</color>
+    <color name="state_error_bg">#FEE2E2</color>
+    <color name="state_error_text">#991B1B</color>
+
+    <!-- === Colores de asignaturas (pastel recalibrado) ===
+         Fondo (bg) + texto legible sobre ese fondo (fg) -->
+    <color name="subject_prog_bg">#EEF2FF</color>
+    <color name="subject_prog_fg">#3730A3</color>
+    <color name="subject_db_bg">#E0F2FE</color>
+    <color name="subject_db_fg">#075985</color>
+    <color name="subject_sistemas_bg">#FEF3C7</color>
+    <color name="subject_sistemas_fg">#92400E</color>
+    <color name="subject_marcas_bg">#FCE7F3</color>
+    <color name="subject_marcas_fg">#9D174D</color>
+    <color name="subject_entornos_bg">#F3E8FF</color>
+    <color name="subject_entornos_fg">#6B21A8</color>
+    <color name="subject_digital_bg">#CCFBF1</color>
+    <color name="subject_digital_fg">#115E59</color>
+    <color name="subject_ipe_bg">#FFE4E9</color>
+    <color name="subject_ipe_fg">#9F1239</color>
+    <color name="subject_sostenibilidad_bg">#DCFCE7</color>
+    <color name="subject_sostenibilidad_fg">#166534</color>
+
+    <!-- === Utilidad === -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- ============================================================
+         ALIAS TEMPORALES DE COMPATIBILIDAD — ⚠️ BORRAR
+         Mapean nombres viejos a los nuevos para que los layouts y el
+         código actuales compilen sin migrarlos aún. Se eliminan a medida
+         que cada pantalla se rehace en las ramas del rediseño.
+         PENDIENTE: borrar este bloque cuando ningún layout/código los use.
+         ============================================================ -->
+    <color name="colorPrimary">@color/brand_primary</color>
+    <color name="colorPrimaryLight">@color/brand_primary_bg</color>
+    <color name="primary_dark">@color/brand_primary_dark</color>
+    <color name="bg_screen">@color/surface_bg</color>
+    <color name="purple_700">@color/brand_primary_dark</color>
+
+    <!-- Colores de asignatura viejos (usados en código Kotlin) → nuevos -->
+    <color name="bg_prog">@color/subject_prog_bg</color>
+    <color name="bg_db">@color/subject_db_bg</color>
+    <color name="bg_sistemas">@color/subject_sistemas_bg</color>
+    <color name="bg_marcas">@color/subject_marcas_bg</color>
+    <color name="bg_entornos">@color/subject_entornos_bg</color>
+    <color name="bg_digital">@color/subject_digital_bg</color>
+    <color name="bg_ipe">@color/subject_ipe_bg</color>
+    <color name="bg_sostenibilidad">@color/subject_sostenibilidad_bg</color>
+
 </resources>
