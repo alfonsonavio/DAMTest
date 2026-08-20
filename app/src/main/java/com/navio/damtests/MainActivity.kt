@@ -1,11 +1,16 @@
 package com.navio.damtests
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.lifecycle.Lifecycle
@@ -14,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.notifications.ReminderScheduler
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.data.local.entity.Subject
 import com.navio.damtests.ui.SubjectAdapter
@@ -28,6 +34,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvTotalTests: TextView
     private lateinit var tvWelcome: TextView
     private lateinit var syncManager: FirebaseSyncManager
+
+    // Notification permission launcher (Android 13+). Result ignored: if the user
+    // declines, reminders simply won't show — no need to block anything.
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* granted or not, nothing else to do here */ }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +76,27 @@ class MainActivity : AppCompatActivity() {
 
         setupDashboardStats()
         setupSubjectList()
+
+        requestNotificationPermissionIfNeeded()
+
+        // User is logged in (guard above) → schedule the daily study reminder
+        ReminderScheduler.schedule(this)
+    }
+
+    /**
+     * On Android 13+ the POST_NOTIFICATIONS permission must be requested at
+     * runtime. On older versions notifications work without it, so we skip.
+     */
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+
+        val alreadyGranted = ContextCompat.checkSelfPermission(
+            this, Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!alreadyGranted) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     private fun confirmLogout() {
@@ -74,6 +107,7 @@ class MainActivity : AppCompatActivity() {
             confirmText = getString(R.string.logout_confirm)
         ) {
             authManager.signOut()
+            ReminderScheduler.cancel(this)
             startActivity(
                 Intent(this, LoginActivity::class.java)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)

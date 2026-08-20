@@ -122,4 +122,7 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.13")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("app.cash.turbine:turbine:1.1.0")
+
+    // WorkManager — scheduled study reminders
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
 }
