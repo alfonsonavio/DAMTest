@@ -58,6 +58,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   tapped. Scheduled only for logged-in users and cancelled on logout.
   Requests the POST_NOTIFICATIONS permission at runtime on Android 13+.
   Reminder hour and on/off are centralised for a future settings screen.
+- **Visual redesign — design system.** New color palette (navy + periwinkle +
+  raspberry) with semantic color names, bundled Poppins (titles) and Inter
+  (body) fonts with a `TextAppearance.DAMTest.*` type scale, and a unified
+  `Theme.DAMTest`. Subject pastels recalibrated.
+- **Bottom navigation.** Migrated to a Navigation Component architecture: a
+  `NavHostFragment` + `BottomNavigationView` shell with Inicio / Asignaturas /
+  Estadísticas destinations. `MainActivity` is now a lightweight container.
+- **Home screen (`HomeFragment`).** Redesigned dashboard with a time-of-day
+  greeting, quick stats (streak, average, tests), a "continue where you left
+  off" card, and a smart-review shortcut.
+- **`SubjectsFragment`.** Subject grid with a 1º/2º course segmented control.
+  Second-year subjects (Acceso a Datos, Desarrollo de Interfaces, Prog.
+  Multimedia y Móviles, Prog. Servicios y Procesos, Sist. Gestión Empresarial,
+  EIE) added as placeholders until their questions are uploaded to Firebase.
+- Subjects with no downloaded content show a styled "coming soon" dialog instead
+  of an empty topic screen. Availability is detected automatically from the local
+  cache (`subjectHasContent`) — no manual flag to maintain.
+- `StatisticsFragment` placeholder destination (charts come in a later branch).
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
@@ -95,6 +113,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   single summary line instead of one per topic.
 - Smart review is practice-only: it records per-question stats but does not save
   a test score, and its card shows "Practica tus fallos".
+- `Subject` gains a `course` field (1 or 2), inferred in-app rather than stored
+  in Firebase; both years share the same `preguntas/<subjectId>/` structure.
+- Status bar is now navy and the home header reserves the status-bar inset via
+  padding, so content no longer overlaps the system clock.
+- Removed leftover template themes (values-v23) and consolidated to a single
+  `Theme.DAMTest`. Temporary compatibility color aliases kept until every screen
+  is migrated to the new semantic names.
 
 ### Fixed
 - Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
