@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/surface_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ===== Cabecera navy =====
+             paddingTop 52dp reserva la barra de estado SIN usar
+             fitsSystemWindows (que anulaba el padding horizontal). -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/brand_navy"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="52dp"
+            android:paddingBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tvGreeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Buenas tardes"
+                        android:textColor="@color/text_on_dark_muted"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Secondary" />
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alfonso"
+                        android:textColor="@color/text_on_dark"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Headline"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btnSettings"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:src="@drawable/ic_settings"
+                    android:background="@drawable/bg_circle_navy_light"
+                    android:contentDescription="Ajustes"
+                    android:scaleType="centerInside"
+                    android:padding="9dp"
+                    app:tint="@color/text_on_dark" />
+            </LinearLayout>
+
+            <!-- Stats rápidos -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:baselineAligned="false">
+
+                <LinearLayout style="@style/HomeStatPill" android:layout_marginEnd="6dp">
+                    <TextView android:id="@+id/tvStreak"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="🔥 5" android:textColor="@color/text_on_dark"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Title" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="racha" android:textColor="@color/text_on_dark_muted"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Caption"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/HomeStatPill"
+                    android:layout_marginStart="6dp" android:layout_marginEnd="6dp">
+                    <TextView android:id="@+id/tvAvgScore"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="0.0" android:textColor="@color/text_on_dark"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Title" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="nota media" android:textColor="@color/text_on_dark_muted"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Caption"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/HomeStatPill" android:layout_marginStart="6dp">
+                    <TextView android:id="@+id/tvTotalTests"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="0" android:textColor="@color/text_on_dark"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Title" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="tests" android:textColor="@color/text_on_dark_muted"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Caption"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ===== Contenido ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Continúa donde lo dejaste -->
+            <TextView
+                android:id="@+id/tvContinueHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Continúa donde lo dejaste"
+                android:textAppearance="@style/TextAppearance.DAMTest.Title"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardContinue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/brand_primary"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="18dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvContinueSubject"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Programación"
+                            android:textColor="@color/text_on_dark"
+                            android:textAppearance="@style/TextAppearance.DAMTest.CardTitle" />
+                        <TextView
+                            android:id="@+id/tvContinueDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tema 4"
+                            android:textColor="#C7D2FE"
+                            android:textAppearance="@style/TextAppearance.DAMTest.Secondary"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:text="▶"
+                        android:gravity="center"
+                        android:textColor="@color/brand_primary"
+                        android:textSize="16sp"
+                        android:background="@drawable/bg_circle_white" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Accesos rápidos -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accesos rápidos"
+                android:textAppearance="@style/TextAppearance.DAMTest.Title"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSmartReview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/surface_border"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:text="🎯"
+                        android:gravity="center"
+                        android:textSize="22sp"
+                        android:background="@drawable/bg_rounded_raspberry" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="14dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Repaso inteligente"
+                            android:textAppearance="@style/TextAppearance.DAMTest.CardTitle" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Practica las preguntas que sueles fallar"
+                            android:textAppearance="@style/TextAppearance.DAMTest.Secondary" />
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textColor="@color/text_muted"
+                        android:textSize="24sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -54,4 +54,12 @@
         <item name="android:gravity">start|center_vertical</item>
     </style>
 
+    <style name="HomeStatPill">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/bg_stat_pill</item>
+        <item name="android:padding">12dp</item>
+    </style>
 </resources>
