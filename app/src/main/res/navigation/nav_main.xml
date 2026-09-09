@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.navio.damtests.ui.home.HomeFragment"
+        android:label="Inicio"
+        tools:layout="@layout/fragment_home"
+        xmlns:tools="http://schemas.android.com/tools" />
+
+    <fragment
+        android:id="@+id/subjectsFragment"
+        android:name="com.navio.damtests.ui.subjects.SubjectsFragment"
+        android:label="Asignaturas"
+        tools:layout="@layout/fragment_subjects"
+        xmlns:tools="http://schemas.android.com/tools" />
+
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="com.navio.damtests.ui.statistics.StatisticsFragment"
+        android:label="Estadísticas"
+        tools:layout="@layout/fragment_statistics"
+        xmlns:tools="http://schemas.android.com/tools" />
+</navigation>
