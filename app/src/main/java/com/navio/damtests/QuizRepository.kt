@@ -57,6 +57,15 @@ class QuizRepository @Inject constructor(
     suspend fun hasQuestions(subjectId: String, topicId: String): Boolean =
         questionsDao.getRandomQuestionsForTopic(subjectId, topicId, 1).isNotEmpty()
 
+    /**
+     * Whether a subject has any downloaded content yet. Used to show a
+     * "coming soon" message for placeholder subjects (e.g. second-year ones
+     * whose questions aren't in Firebase yet). Detected automatically from the
+     * local cache — no manual availability flag to keep in sync.
+     */
+    suspend fun subjectHasContent(subjectId: String): Boolean =
+        questionsDao.getUniqueTopicIds(subjectId).isNotEmpty()
+
     // --- Progress management ---
 
     /**
