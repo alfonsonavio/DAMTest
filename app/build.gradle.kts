@@ -125,4 +125,7 @@ dependencies {
 
     // WorkManager — scheduled study reminders
     implementation("androidx.work:work-runtime-ktx:2.9.1")
+
+    // MPAndroidChart — statistics evolution chart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
