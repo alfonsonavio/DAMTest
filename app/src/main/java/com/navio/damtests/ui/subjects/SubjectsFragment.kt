@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.tabs.TabLayout
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.R
 import com.navio.damtests.TopicSelectionActivity
@@ -21,9 +21,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Subjects grid with 1º/2º course tabs. The course is an in-app property of each
- * Subject (see Subject.course); switching tabs just filters the grid. Second-year
- * subjects are placeholders until their questions are uploaded to Firebase.
+ * Subjects grid with a 1º/2º segmented control. The course is an in-app property
+ * of each Subject (see Subject.course); switching segment just filters the grid.
+ * Second-year subjects are placeholders until their questions are uploaded.
  */
 @AndroidEntryPoint
 class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
@@ -40,15 +40,15 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
         rv = view.findViewById(R.id.rvSubjects)
         rv.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        val tabs = view.findViewById<TabLayout>(R.id.tabsCourse)
-        tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                selectedCourse = tab.position + 1  // tab 0 → 1º, tab 1 → 2º
+        val toggle = view.findViewById<MaterialButtonToggleGroup>(R.id.toggleCourse)
+        // Default: 1º selected
+        toggle.check(R.id.btnCourse1)
+        toggle.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                selectedCourse = if (checkedId == R.id.btnCourse2) 2 else 1
                 renderSubjects()
             }
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

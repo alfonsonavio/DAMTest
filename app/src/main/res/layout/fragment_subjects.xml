@@ -13,33 +13,36 @@
         android:textAppearance="@style/TextAppearance.DAMTest.Headline"
         android:paddingHorizontal="20dp"
         android:paddingTop="24dp"
-        android:paddingBottom="8dp" />
+        android:paddingBottom="12dp" />
 
-    <!-- Tabs de curso: 1º / 2º -->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabsCourse"
+    <!-- Segmented control 1º / 2º -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleCourse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="8dp"
-        app:tabMode="fixed"
-        app:tabGravity="fill"
-        app:tabSelectedTextColor="@color/brand_primary"
-        app:tabTextColor="@color/text_secondary"
-        app:tabIndicatorColor="@color/brand_primary"
-        app:tabIndicatorFullWidth="false"
-        app:tabTextAppearance="@style/TextAppearance.DAMTest.Button">
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_segmented_container"
+        android:padding="4dp"
+        app:singleSelection="true"
+        app:selectionRequired="true">
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCourse1"
+            style="@style/Widget.DAMTest.SegmentedButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="1º" />
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCourse2"
+            style="@style/Widget.DAMTest.SegmentedButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="2º" />
-    </com.google.android.material.tabs.TabLayout>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSubjects"
@@ -47,6 +50,5 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingHorizontal="16dp"
-        android:paddingTop="8dp"
         android:paddingBottom="16dp" />
 </LinearLayout>
