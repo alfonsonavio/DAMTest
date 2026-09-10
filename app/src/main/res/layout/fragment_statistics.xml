@@ -1,25 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
+    android:fillViewport="true"
     android:background="@color/surface_bg">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="📊"
-        android:textSize="48sp"
-        android:layout_marginBottom="12dp" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Estadísticas"
-        android:textAppearance="@style/TextAppearance.DAMTest.Title" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Próximamente"
-        android:textAppearance="@style/TextAppearance.DAMTest.Secondary" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estadísticas"
+            android:textAppearance="@style/TextAppearance.DAMTest.Headline"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="12dp" />
+
+        <!-- Segmented 1º/2º -->
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleCourse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_segmented_container"
+            android:padding="4dp"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCourse1"
+                style="@style/Widget.DAMTest.SegmentedButton"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:text="1º" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCourse2"
+                style="@style/Widget.DAMTest.SegmentedButton"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:text="2º" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <!-- Estado vacío -->
+        <LinearLayout
+            android:id="@+id/emptyState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="48dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="📊" android:textSize="44sp" android:layout_marginBottom="12dp" />
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Aún no hay datos"
+                android:textAppearance="@style/TextAppearance.DAMTest.CardTitle" />
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Haz algún test para ver tus estadísticas"
+                android:textAppearance="@style/TextAppearance.DAMTest.Secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Contenido con datos -->
+        <LinearLayout
+            android:id="@+id/contentState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp">
+
+            <!-- KPIs -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp"
+                android:baselineAligned="false">
+
+                <LinearLayout style="@style/StatKpiCard" android:layout_marginEnd="6dp">
+                    <TextView android:id="@+id/tvAccuracy"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="0%" android:textColor="@color/brand_primary"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Stat"
+                        android:textSize="22sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Precisión" android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/StatKpiCard"
+                    android:layout_marginStart="6dp" android:layout_marginEnd="6dp">
+                    <TextView android:id="@+id/tvTotalTests"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="0" android:textColor="@color/text_primary"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Stat"
+                        android:textSize="22sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Tests" android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/StatKpiCard" android:layout_marginStart="6dp">
+                    <TextView android:id="@+id/tvSubjectsStudied"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="0" android:textColor="@color/accent_raspberry"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Stat"
+                        android:textSize="22sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Asignaturas" android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Placeholder de la gráfica de evolución (se rellena en el commit 6) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardEvolution"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/surface_border"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="14dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Tu evolución"
+                        android:textAppearance="@style/TextAppearance.DAMTest.CardTitle" />
+                    <TextView
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Nota media por test"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Caption"
+                        android:layout_marginBottom="8dp" />
+                    <!-- El LineChart se añade aquí en el commit 6 -->
+                    <FrameLayout
+                        android:id="@+id/chartContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Rendimiento por asignatura -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/surface_border"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="14dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Rendimiento por asignatura"
+                        android:textAppearance="@style/TextAppearance.DAMTest.CardTitle"
+                        android:layout_marginBottom="12dp" />
+                    <LinearLayout
+                        android:id="@+id/subjectBarsContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- A repasar -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardWeakest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/surface_border"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="@color/surface">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="A repasar"
+                        android:textAppearance="@style/TextAppearance.DAMTest.CardTitle"
+                        android:layout_marginBottom="12dp" />
+                    <LinearLayout
+                        android:id="@+id/weakestContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
