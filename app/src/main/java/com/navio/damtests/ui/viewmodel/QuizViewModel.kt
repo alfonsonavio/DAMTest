@@ -160,6 +160,15 @@ class QuizViewModel @Inject constructor(
                     lastAttemptTimestamp  = System.currentTimeMillis()
                 )
             )
+
+            // Also append to the immutable attempt history (powers statistics).
+            // Reached only for non-smart-review tests (guarded in goToNextQuestion).
+            repository.recordTestAttempt(
+                subjectId = subjectId,
+                topicId = topicId,
+                score = _score.value,
+                totalQuestions = _questions.value.size
+            )
         }
     }
 }

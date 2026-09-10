@@ -174,4 +174,30 @@ class QuizViewModelTest {
         // The ViewModel must record the outcome for smart review
         coVerify { repository.recordAnswer(q, true) }
     }
+
+    @Test
+    fun `finishing a normal test records an attempt in history`() = runTest {
+        val questions = listOf(question(1))
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns questions
+        coEvery { repository.getProgress(any(), any()) } returns null
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
+        viewModel.goToNextQuestion() // finishes
+
+        coVerify { repository.recordTestAttempt("programacion", "tema_1", any(), any()) }
+    }
+
+    @Test
+    fun `finishing smart review does NOT record an attempt`() = runTest {
+        val questions = listOf(question(1))
+        coEvery { repository.getSmartReviewQuestions(any(), any()) } returns questions
+        viewModel.loadQuestions("programacion", "-4") // smart review
+
+        viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
+        viewModel.goToNextQuestion() // finishes
+
+        // Smart review is practice-only — no attempt, no progress
+        coVerify(exactly = 0) { repository.recordTestAttempt(any(), any(), any(), any()) }
+    }
 }
