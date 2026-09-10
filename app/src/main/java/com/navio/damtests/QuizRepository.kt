@@ -9,6 +9,8 @@ import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.data.local.entity.QuestionStats
 import com.navio.damtests.data.SmartReviewSelector
 import com.navio.damtests.data.local.entity.TestAttempt
+import com.navio.damtests.data.statistics.StatisticsCalculator
+import com.navio.damtests.data.statistics.StatisticsData
 import javax.inject.Inject
 
 /**
@@ -24,6 +26,8 @@ class QuizRepository @Inject constructor(
     private val authManager: AuthManager,
     private val userProgressRepository: UserProgressRepository
 ) {
+
+    private val statisticsCalculator = StatisticsCalculator()
 
     // --- Question management ---
 
@@ -176,5 +180,17 @@ class QuizRepository @Inject constructor(
                 totalQuestions = totalQuestions
             )
         )
+    }
+
+    /**
+     * Builds the statistics for a course, given that course's subject ids.
+     * Gathers attempts and question stats for those subjects and delegates the
+     * maths to [StatisticsCalculator].
+     */
+    suspend fun getStatistics(subjectIds: List<String>): StatisticsData {
+        val attempts = questionsDao.getAttemptsForSubjects(subjectIds)
+        val stats    = questionsDao.getAllQuestionStats()
+            .filter { it.subjectId in subjectIds }
+        return statisticsCalculator.calculate(attempts, stats)
     }
 }
