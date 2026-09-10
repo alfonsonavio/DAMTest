@@ -76,6 +76,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of an empty topic screen. Availability is detected automatically from the local
   cache (`subjectHasContent`) — no manual flag to maintain.
 - `StatisticsFragment` placeholder destination (charts come in a later branch).
+- **Statistics screen.** Per-course (1º/2º) dashboard with KPIs (global accuracy,
+  tests done, subjects studied), an evolution line chart (score per test over
+  time, MPAndroidChart, smooth cubic with gradient fill), per-subject accuracy
+  bars, and a "to review" list of the weakest topics. Fed by a new immutable
+  `TestAttempt` history table and existing `QuestionStats`.
+- `StatisticsCalculator` — pure, unit-tested statistics logic (10 tests).
+- `TestAttempt` table recording each completed test (excludes smart review).
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an

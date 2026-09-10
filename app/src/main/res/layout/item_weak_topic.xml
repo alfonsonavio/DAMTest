@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="10dp">
+
+    <TextView
+        android:id="@+id/tvWeakIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:text="📉"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:background="@drawable/bg_rounded_error" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="10dp">
+        <TextView
+            android:id="@+id/tvWeakTopic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Asignatura · Tema"
+            android:textAppearance="@style/TextAppearance.DAMTest.Secondary"
+            android:textColor="@color/text_primary" />
+        <TextView
+            android:id="@+id/tvWeakDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fallas el 0%"
+            android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+    </LinearLayout>
+</LinearLayout>

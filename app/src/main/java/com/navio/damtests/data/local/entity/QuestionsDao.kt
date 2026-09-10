@@ -77,4 +77,15 @@ interface QuestionsDao {
     /** All tema_* questions for a subject (no limit) — used to weight smart review. */
     @Query("SELECT * FROM questions WHERE subjectId = :subjectId AND topicId LIKE 'tema_%'")
     suspend fun getAllQuestionsForSubject(subjectId: String): List<Question>
+
+    @Insert
+    suspend fun insertTestAttempt(attempt: TestAttempt)
+
+    /** All attempts for a set of subjects (a course), newest last. */
+    @Query("SELECT * FROM test_attempts WHERE subjectId IN (:subjectIds) ORDER BY timestamp ASC")
+    suspend fun getAttemptsForSubjects(subjectIds: List<String>): List<TestAttempt>
+
+    /** All attempts, newest last. */
+    @Query("SELECT * FROM test_attempts ORDER BY timestamp ASC")
+    suspend fun getAllAttempts(): List<TestAttempt>
 }
