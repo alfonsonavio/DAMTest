@@ -143,11 +143,10 @@
                         android:text="Nota media por test"
                         android:textAppearance="@style/TextAppearance.DAMTest.Caption"
                         android:layout_marginBottom="8dp" />
-                    <!-- El LineChart se añade aquí en el commit 6 -->
-                    <FrameLayout
-                        android:id="@+id/chartContainer"
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/evolutionChart"
                         android:layout_width="match_parent"
-                        android:layout_height="160dp" />
+                        android:layout_height="170dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
