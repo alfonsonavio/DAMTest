@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/surface_bg">
+
+    <!-- Barra superior navy con volver -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/brand_navy"
+        android:paddingStart="12dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="44dp"
+        android:paddingBottom="16dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Volver"
+            app:tint="@color/text_on_dark" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ajustes"
+            android:textColor="@color/text_on_dark"
+            android:textAppearance="@style/TextAppearance.DAMTest.Title"
+            android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <!-- Contenido scrollable; el logout queda fuera del scroll, anclado abajo -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Perfil -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/surface_border"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="24dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:id="@+id/tvAvatar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:text="A"
+                        android:gravity="center"
+                        android:textColor="@color/text_on_dark"
+                        android:textAppearance="@style/TextAppearance.DAMTest.Title"
+                        android:background="@drawable/bg_circle_primary" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="14dp">
+                        <TextView
+                            android:id="@+id/tvProfileName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Usuario"
+                            android:textAppearance="@style/TextAppearance.DAMTest.CardTitle" />
+                        <TextView
+                            android:id="@+id/tvProfileEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Sección Notificaciones -->
+            <TextView style="@style/SettingsSectionHeader" android:text="NOTIFICACIONES" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Recordatorios on/off -->
+                    <LinearLayout style="@style/SettingsRow">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="🔔" android:textSize="18sp" />
+                        <LinearLayout style="@style/SettingsRowText">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Recordatorios de estudio"
+                                android:textAppearance="@style/TextAppearance.DAMTest.Body" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Un aviso diario para practicar"
+                                android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchReminders"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Hora del recordatorio -->
+                    <LinearLayout android:id="@+id/rowReminderHour" style="@style/SettingsRow"
+                        android:clickable="true" android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="🕐" android:textSize="18sp" />
+                        <LinearLayout style="@style/SettingsRowText">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Hora del recordatorio"
+                                android:textAppearance="@style/TextAppearance.DAMTest.Body" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvReminderHour"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="18:00"
+                            android:textColor="@color/brand_primary"
+                            android:textAppearance="@style/TextAppearance.DAMTest.Body"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_rounded_primary_soft"
+                            android:paddingHorizontal="14dp"
+                            android:paddingVertical="6dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Sección Experiencia -->
+            <TextView style="@style/SettingsSectionHeader" android:text="EXPERIENCIA" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout style="@style/SettingsRow">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="📳" android:textSize="18sp" />
+                    <LinearLayout style="@style/SettingsRowText">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Vibración"
+                            android:textAppearance="@style/TextAppearance.DAMTest.Body" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Al responder preguntas"
+                            android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+                    </LinearLayout>
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchHaptics"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Logout SIEMPRE anclado abajo -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/surface_border"
+        app:strokeWidth="1dp"
+        app:cardBackgroundColor="@color/surface">
+        <LinearLayout
+            android:id="@+id/rowLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            android:padding="16dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="🚪" android:textSize="18sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cerrar sesión"
+                android:textColor="@color/state_error"
+                android:textAppearance="@style/TextAppearance.DAMTest.Body"
+                android:textStyle="bold"
+                android:layout_marginStart="14dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
