@@ -56,7 +56,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         // Settings button: screen comes in the `settings` branch. No-op for now.
-        btnSettings.setOnClickListener { /* TODO: open Settings (settings branch) */ }
+        btnSettings.setOnClickListener {
+            startActivity(Intent(requireContext(), com.navio.damtests.SettingsActivity::class.java))
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
