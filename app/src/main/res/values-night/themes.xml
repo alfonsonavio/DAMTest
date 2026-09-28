@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Va en res/values-night/themes.xml
      Placeholder del tema oscuro. Se desarrollará en la rama dark-mode.
-     Por ahora hereda del claro para no romper nada y mantener un único nombre. -->
+     Por ahora hereda del claro (Material 3) para no romper nada y
+     mantener un único nombre de tema. -->
 <resources>
-    <style name="Theme.DAMTest" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.DAMTest" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorOnPrimary">@color/text_on_dark</item>
         <item name="android:windowBackground">@color/surface_bg</item>
