@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Va en res/values/type.xml — jerarquía tipográfica DAMTest.
      Títulos en Poppins, texto en Inter. Usa estos estilos en los TextView
-     con android:textAppearance="@style/TextAppearance.DAMTest.XXX" -->
+     con android:textAppearance="@style/TextAppearance.DAMTest.XXX".
+     Parents migrados a la escala tipográfica de Material 3. -->
 <resources>
 
     <!-- === TÍTULOS (Poppins) === -->
 
     <!-- Saludo grande, cabecera de pantalla -->
-    <style name="TextAppearance.DAMTest.Headline" parent="TextAppearance.MaterialComponents.Headline5">
+    <style name="TextAppearance.DAMTest.Headline" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="fontFamily">@font/poppins</item>
         <item name="android:fontFamily">@font/poppins</item>
         <item name="android:textFontWeight">600</item>
@@ -16,7 +17,7 @@
     </style>
 
     <!-- Título de sección -->
-    <style name="TextAppearance.DAMTest.Title" parent="TextAppearance.MaterialComponents.Headline6">
+    <style name="TextAppearance.DAMTest.Title" parent="TextAppearance.Material3.TitleLarge">
         <item name="fontFamily">@font/poppins</item>
         <item name="android:fontFamily">@font/poppins</item>
         <item name="android:textFontWeight">600</item>
@@ -25,7 +26,7 @@
     </style>
 
     <!-- Título de tarjeta (asignatura, pregunta) -->
-    <style name="TextAppearance.DAMTest.CardTitle" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <style name="TextAppearance.DAMTest.CardTitle" parent="TextAppearance.Material3.TitleMedium">
         <item name="fontFamily">@font/poppins</item>
         <item name="android:fontFamily">@font/poppins</item>
         <item name="android:textFontWeight">600</item>
@@ -34,7 +35,7 @@
     </style>
 
     <!-- Números grandes (stats) -->
-    <style name="TextAppearance.DAMTest.Stat" parent="TextAppearance.MaterialComponents.Headline4">
+    <style name="TextAppearance.DAMTest.Stat" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="fontFamily">@font/poppins</item>
         <item name="android:fontFamily">@font/poppins</item>
         <item name="android:textFontWeight">600</item>
@@ -44,7 +45,7 @@
     <!-- === TEXTO (Inter) === -->
 
     <!-- Cuerpo principal: preguntas, opciones -->
-    <style name="TextAppearance.DAMTest.Body" parent="TextAppearance.MaterialComponents.Body1">
+    <style name="TextAppearance.DAMTest.Body" parent="TextAppearance.Material3.BodyLarge">
         <item name="fontFamily">@font/inter</item>
         <item name="android:fontFamily">@font/inter</item>
         <item name="android:textSize">15sp</item>
@@ -52,7 +53,7 @@
     </style>
 
     <!-- Texto secundario: descripciones, subtítulos -->
-    <style name="TextAppearance.DAMTest.Secondary" parent="TextAppearance.MaterialComponents.Body2">
+    <style name="TextAppearance.DAMTest.Secondary" parent="TextAppearance.Material3.BodyMedium">
         <item name="fontFamily">@font/inter</item>
         <item name="android:fontFamily">@font/inter</item>
         <item name="android:textSize">14sp</item>
@@ -60,7 +61,7 @@
     </style>
 
     <!-- Etiquetas pequeñas, captions -->
-    <style name="TextAppearance.DAMTest.Caption" parent="TextAppearance.MaterialComponents.Caption">
+    <style name="TextAppearance.DAMTest.Caption" parent="TextAppearance.Material3.BodySmall">
         <item name="fontFamily">@font/inter</item>
         <item name="android:fontFamily">@font/inter</item>
         <item name="android:textSize">12sp</item>
@@ -68,7 +69,7 @@
     </style>
 
     <!-- Texto de botón -->
-    <style name="TextAppearance.DAMTest.Button" parent="TextAppearance.MaterialComponents.Button">
+    <style name="TextAppearance.DAMTest.Button" parent="TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@font/inter</item>
         <item name="android:fontFamily">@font/inter</item>
         <item name="android:textFontWeight">500</item>

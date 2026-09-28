@@ -1,23 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Va en res/values/themes.xml — tema base DAMTest (modo claro).
-     Unifica el tema (antes había nombres inconsistentes). El dark mode
-     se añadirá en values-night en la rama dark-mode. -->
+     Migrado a Material 3. El dark mode se añadirá en values-night en la
+     rama dark-mode. -->
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.DAMTest" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.DAMTest" parent="Theme.Material3.Light.NoActionBar">
 
-        <!-- Paleta -->
+        <!-- Interactivo (periwinkle) como primario M3 -->
         <item name="colorPrimary">@color/brand_primary</item>
-        <item name="colorPrimaryVariant">@color/brand_primary_dark</item>
         <item name="colorOnPrimary">@color/text_on_dark</item>
+        <item name="colorPrimaryContainer">@color/brand_primary_bg</item>
+        <item name="colorOnPrimaryContainer">@color/brand_primary_dark</item>
+
+        <!-- Acento (frambuesa) como secundario M3 -->
         <item name="colorSecondary">@color/accent_raspberry</item>
-        <item name="colorSecondaryVariant">@color/accent_raspberry_light</item>
         <item name="colorOnSecondary">@color/text_on_dark</item>
+        <item name="colorSecondaryContainer">@color/accent_raspberry_bg</item>
+        <item name="colorOnSecondaryContainer">@color/accent_raspberry</item>
+
+        <!-- Navy de marca como terciario M3 -->
+        <item name="colorTertiary">@color/brand_navy</item>
+        <item name="colorOnTertiary">@color/text_on_dark</item>
 
         <!-- Superficies -->
         <item name="android:windowBackground">@color/surface_bg</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/surface_border</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/text_muted</item>
+        <item name="colorOutlineVariant">@color/surface_border</item>
+
+        <!-- Errores -->
+        <item name="colorError">@color/state_error</item>
+        <item name="colorOnError">@color/text_on_dark</item>
+        <item name="colorErrorContainer">@color/state_error_bg</item>
+        <item name="colorOnErrorContainer">@color/state_error_text</item>
 
         <!-- Tipografía por defecto (Inter para todo el texto base) -->
         <item name="fontFamily">@font/inter</item>
