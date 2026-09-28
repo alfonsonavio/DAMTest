@@ -56,7 +56,7 @@
             android:theme="@style/Theme.DAMTest" />
 
         <activity
-            android:name=".settings.SettingsActivity"
+            android:name=".SettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.DAMTest" />
 

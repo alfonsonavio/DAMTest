@@ -7,38 +7,35 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Persists the user's app preferences in SharedPreferences.
+ * User preferences, persisted with SharedPreferences.
  *
- * Injectable @Singleton so any screen or manager can read and write the same
- * values without passing a Context around. Defaults preserve today's behaviour:
- * daily reminders on at 18:00, and haptics on.
+ * Central place for the settings screen's toggles so the rest of the app reads
+ * from one source: reminders on/off, reminder hour, and haptics on/off.
  */
 @Singleton
 class SettingsManager @Inject constructor(
     @ApplicationContext context: Context
 ) {
-
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     var remindersEnabled: Boolean
-        get() = prefs.getBoolean(KEY_REMINDERS_ENABLED, true)
-        set(value) = prefs.edit { putBoolean(KEY_REMINDERS_ENABLED, value) }
+        get() = prefs.getBoolean(KEY_REMINDERS, true)
+        set(value) = prefs.edit { putBoolean(KEY_REMINDERS, value) }
 
-    /** Hour of day (0–23) the daily reminder fires. */
+    /** Hour of day (0-23) for the daily reminder. */
     var reminderHour: Int
         get() = prefs.getInt(KEY_REMINDER_HOUR, DEFAULT_HOUR)
         set(value) = prefs.edit { putInt(KEY_REMINDER_HOUR, value) }
 
     var hapticsEnabled: Boolean
-        get() = prefs.getBoolean(KEY_HAPTICS_ENABLED, true)
-        set(value) = prefs.edit { putBoolean(KEY_HAPTICS_ENABLED, value) }
+        get() = prefs.getBoolean(KEY_HAPTICS, true)
+        set(value) = prefs.edit { putBoolean(KEY_HAPTICS, value) }
 
     companion object {
-        const val DEFAULT_HOUR = 18
-
         private const val PREFS_NAME = "damtest_settings"
-        private const val KEY_REMINDERS_ENABLED = "reminders_enabled"
+        private const val KEY_REMINDERS = "reminders_enabled"
         private const val KEY_REMINDER_HOUR = "reminder_hour"
-        private const val KEY_HAPTICS_ENABLED = "haptics_enabled"
+        private const val KEY_HAPTICS = "haptics_enabled"
+        const val DEFAULT_HOUR = 18
     }
 }
