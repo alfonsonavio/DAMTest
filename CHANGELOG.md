@@ -83,6 +83,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `TestAttempt` history table and existing `QuestionStats`.
 - `StatisticsCalculator` — pure, unit-tested statistics logic (10 tests).
 - `TestAttempt` table recording each completed test (excludes smart review).
+- **Settings screen** (`SettingsActivity`). Profile summary (name, email), a
+  daily study-reminder toggle with a configurable hour (`TimePickerDialog`), a
+  haptics toggle, and logout pinned to the bottom of the screen. Backed by a new
+  `SettingsManager` that persists the preferences in SharedPreferences.
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
@@ -136,6 +140,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   references across 8 layouts were repointed to `Widget.Material3`. The visual
   result is unchanged, and the migration provides the M3 color attributes that
   components such as `MaterialSwitch` require for the upcoming settings screen.
+- The daily reminder and answer haptics now honor the user's saved preferences:
+  the reminder is scheduled only when enabled and at the chosen hour (and
+  rescheduled immediately when changed), and haptics respect the toggle.
+  `ReminderScheduler.schedule` takes the hour and a replace flag. Logout, which
+  the bottom-navigation redesign had dropped from the header, now lives in
+  Settings and cancels the reminder on sign-out.
 
 ### Fixed
 - Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
