@@ -51,7 +51,7 @@
     </style>
 
     <!-- Estilo de botón principal (periwinkle, texto Inter, esquinas 12dp) -->
-    <style name="Widget.DAMTest.Button" parent="Widget.MaterialComponents.Button">
+    <style name="Widget.DAMTest.Button" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/brand_primary</item>
         <item name="android:textColor">@color/text_on_dark</item>
         <item name="android:textAppearance">@style/TextAppearance.DAMTest.Button</item>
@@ -61,7 +61,7 @@
     </style>
 
     <!-- Botones de respuesta del quiz -->
-    <style name="Widget.DAMTest.QuizOption" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="Widget.DAMTest.QuizOption" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:textAppearance">@style/TextAppearance.DAMTest.Body</item>
         <item name="android:textColor">@color/text_primary</item>
         <item name="strokeColor">@color/surface_border</item>
@@ -81,7 +81,7 @@
         <item name="android:padding">12dp</item>
     </style>
 
-    <style name="Widget.DAMTest.SegmentedButton" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="Widget.DAMTest.SegmentedButton" parent="Widget.Material3.Button.TextButton">
         <item name="android:textAppearance">@style/TextAppearance.DAMTest.Button</item>
         <item name="android:textColor">@color/segmented_text_color</item>
         <item name="backgroundTint">@color/segmented_bg_color</item>
