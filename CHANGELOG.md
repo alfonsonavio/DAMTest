@@ -103,11 +103,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `minFetchInterval` changed from 0 to 3600 — app is now production-ready
   in terms of Remote Config fetch frequency.
 - Introduced Hilt for dependency injection. The Room database, DAO and
-    `QuizRepository` are now provided as singletons via a Hilt module
-    (`di/AppModule`), and Activities receive dependencies with `@Inject`
-    instead of manual instantiation. `QuizViewModel` uses `@HiltViewModel`
-    with `by viewModels()`, removing the manual `QuizViewModelFactory`
-    (deleted) and the manual singleton in `AppDatabase`.
+  `QuizRepository` are now provided as singletons via a Hilt module
+  (`di/AppModule`), and Activities receive dependencies with `@Inject`
+  instead of manual instantiation. `QuizViewModel` uses `@HiltViewModel`
+  with `by viewModels()`, removing the manual `QuizViewModelFactory`
+  (deleted) and the manual singleton in `AppDatabase`.
 - Made `AuthManager` and `UserProgressRepository` injectable `@Singleton`
   classes (previously global `object`s), with `FirebaseAuth` and
   `FirebaseFirestore` provided via a new `FirebaseModule`. This removes hidden
@@ -127,6 +127,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed leftover template themes (values-v23) and consolidated to a single
   `Theme.DAMTest`. Temporary compatibility color aliases kept until every screen
   is migrated to the new semantic names.
+- **Material 3 migration.** Migrated the whole UI foundation from Material
+  Components (Material 2) to Material 3: `Theme.DAMTest` now extends
+  `Theme.Material3.Light.NoActionBar`, the palette is mapped to M3 color roles
+  (primary/secondary/tertiary containers, surface variant, outline and error
+  roles), the `TextAppearance.DAMTest.*` scale and the custom button styles use
+  their `Material3` parents, and the 18 inline `Widget.MaterialComponents`
+  references across 8 layouts were repointed to `Widget.Material3`. The visual
+  result is unchanged, and the migration provides the M3 color attributes that
+  components such as `MaterialSwitch` require for the upcoming settings screen.
 
 ### Fixed
 - Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
