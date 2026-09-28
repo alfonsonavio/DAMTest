@@ -15,6 +15,7 @@ import com.navio.damtests.QuizRepository
 import com.navio.damtests.R
 import com.navio.damtests.TopicSelectionActivity
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.settings.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -55,8 +56,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             // (Kept simple until we add a global smart-review entry.)
         }
 
-        // Settings button: screen comes in the `settings` branch. No-op for now.
-        btnSettings.setOnClickListener { /* TODO: open Settings (settings branch) */ }
+        // Settings button opens the settings screen.
+        btnSettings.setOnClickListener {
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
