@@ -20,12 +20,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.button.MaterialButton
 import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.data.local.entity.Question
+import com.navio.damtests.settings.SettingsManager
 import com.navio.damtests.ui.viewmodel.QuizViewModel
 import com.navio.damtests.util.HapticFeedbackManager
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class QuizActivity : AppCompatActivity() {
+
+    @Inject lateinit var settingsManager: SettingsManager
 
     private val viewModel: QuizViewModel by viewModels()
     private lateinit var tvQuestion: TextView
@@ -55,7 +59,7 @@ class QuizActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
 
-        haptic      = HapticFeedbackManager(this)
+        haptic      = HapticFeedbackManager(this, settingsManager.hapticsEnabled)
         quizContent = findViewById(R.id.quizContentContainer)
 
         applyLightStatusBar()
