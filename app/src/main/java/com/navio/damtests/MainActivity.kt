@@ -15,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.notifications.ReminderScheduler
+import com.navio.damtests.settings.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var repository: QuizRepository
     @Inject lateinit var authManager: AuthManager
+    @Inject lateinit var settingsManager: SettingsManager
     private lateinit var syncManager: FirebaseSyncManager
 
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -62,8 +64,12 @@ class MainActivity : AppCompatActivity() {
             syncManager.syncQuestions()
         }
 
-        requestNotificationPermissionIfNeeded()
-        ReminderScheduler.schedule(this)
+        // Only schedule the daily reminder if the user has it enabled.
+        // KEEP policy (replace=false) so an existing schedule isn't reset on every launch.
+        if (settingsManager.remindersEnabled) {
+            requestNotificationPermissionIfNeeded()
+            ReminderScheduler.schedule(this, settingsManager.reminderHour)
+        }
     }
 
     private fun setupBottomNavigation() {
