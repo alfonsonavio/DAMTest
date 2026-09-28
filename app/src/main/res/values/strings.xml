@@ -66,6 +66,18 @@
     <string name="logout_title">Cerrar sesión</string>
     <string name="logout_message">¿Seguro que quieres cerrar sesión?</string>
     <string name="logout_confirm">Cerrar sesión</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_back">Volver</string>
+    <string name="settings_section_notifications">Notificaciones</string>
+    <string name="settings_reminder_title">Recordatorio diario</string>
+    <string name="settings_reminder_subtitle">Recibe un aviso para repasar cada día</string>
+    <string name="settings_reminder_hour_label">Hora del recordatorio</string>
+    <string name="settings_section_general">General</string>
+    <string name="settings_haptics_title">Vibración</string>
+    <string name="settings_haptics_subtitle">Vibra al responder en los tests</string>
+    <string name="settings_logout">Cerrar sesión</string>
     <string name="cancel">Cancelar</string>
 
 </resources>
