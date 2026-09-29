@@ -22,7 +22,7 @@
             android:text=""
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#1E293B"
+            android:textColor="@color/text_primary"
             android:gravity="center" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_marginTop="12dp"
             android:text=""
             android:textSize="15sp"
-            android:textColor="#64748B"
+            android:textColor="@color/text_secondary"
             android:gravity="center" />
 
         <com.google.android.material.button.MaterialButton
@@ -43,6 +43,6 @@
             android:text="Entendido"
             android:textSize="15sp"
             app:cornerRadius="16dp"
-            app:backgroundTint="#4F46E5" />
+            app:backgroundTint="@color/brand_primary" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -47,7 +47,7 @@ class TopicSelectionActivity : AppCompatActivity() {
             elevation = 0f
         }
 
-        window.statusBarColor = getColor(R.color.colorPrimary)
+        window.statusBarColor = getColor(R.color.brand_navy)
 
         val rvTopics = findViewById<RecyclerView>(R.id.rvTopics)
         rvTopics.layoutManager = LinearLayoutManager(this)

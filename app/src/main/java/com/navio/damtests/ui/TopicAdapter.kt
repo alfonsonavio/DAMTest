@@ -1,6 +1,5 @@
 package com.navio.damtests.ui
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,18 +49,18 @@ class TopicAdapter(
                 // Smart review is a practice tool — it never shows a score
                 topic.id == "-4" -> {
                     tvStats.text = "Practica tus fallos"
-                    tvStats.setTextColor(Color.parseColor("#94A3B8"))
+                    tvStats.setTextColor(tvStats.context.getColor(R.color.text_muted))
                 }
                 progress == null -> {
                     tvStats.text = "Pendiente de realizar"
-                    tvStats.setTextColor(Color.parseColor("#94A3B8"))
+                    tvStats.setTextColor(tvStats.context.getColor(R.color.text_muted))
                 }
                 else -> {
                     val percent = (progress.lastScore.toFloat() / progress.totalQuestions * 100).toInt()
                     tvStats.text = "Última nota: $percent%"
                     tvStats.setTextColor(
-                        if (percent >= 50) Color.parseColor("#22C55E")
-                        else Color.parseColor("#EF4444")
+                        if (percent >= 50) tvStats.context.getColor(R.color.state_success)
+                        else tvStats.context.getColor(R.color.state_error)
                     )
                 }
             }
