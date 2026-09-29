@@ -1,18 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Va en res/values-night/themes.xml
-     Placeholder del tema oscuro. Se desarrollará en la rama dark-mode.
-     Por ahora hereda del claro (Material 3) para no romper nada y
-     mantener un único nombre de tema. -->
-<resources>
-    <style name="Theme.DAMTest" parent="Theme.Material3.Light.NoActionBar">
+<!-- Va en res/values-night/themes.xml — tema base DAMTest (modo oscuro).
+     Material 3 oscuro. Los @color se resuelven a los valores de
+     values-night/colors.xml automáticamente. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.DAMTest" parent="Theme.Material3.Dark.NoActionBar">
+
+        <!-- Interactivo (periwinkle) como primario M3 -->
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorOnPrimary">@color/text_on_dark</item>
+        <item name="colorPrimaryContainer">@color/brand_primary_bg</item>
+        <item name="colorOnPrimaryContainer">@color/brand_primary_light</item>
+
+        <!-- Acento (frambuesa) como secundario M3 -->
+        <item name="colorSecondary">@color/accent_raspberry</item>
+        <item name="colorOnSecondary">@color/text_on_dark</item>
+        <item name="colorSecondaryContainer">@color/accent_raspberry_bg</item>
+        <item name="colorOnSecondaryContainer">@color/accent_raspberry_light</item>
+
+        <!-- Navy de marca como terciario M3 (aclarado para que se vea sobre oscuro) -->
+        <item name="colorTertiary">@color/brand_navy_light</item>
+        <item name="colorOnTertiary">@color/text_on_dark</item>
+
+        <!-- Superficies -->
         <item name="android:windowBackground">@color/surface_bg</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/surface_border</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/text_muted</item>
+        <item name="colorOutlineVariant">@color/surface_border</item>
+
+        <!-- Errores -->
+        <item name="colorError">@color/state_error</item>
+        <item name="colorOnError">@color/text_on_dark</item>
+        <item name="colorErrorContainer">@color/state_error_bg</item>
+        <item name="colorOnErrorContainer">@color/state_error_text</item>
+
+        <!-- Tipografía por defecto (Inter para todo el texto base) -->
         <item name="fontFamily">@font/inter</item>
         <item name="android:fontFamily">@font/inter</item>
+
+        <!-- Barra de estado: navy (la cabecera sigue navy), con iconos claros -->
         <item name="android:statusBarColor">@color/brand_navy</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Sin ActionBar (usamos toolbars propias) -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
