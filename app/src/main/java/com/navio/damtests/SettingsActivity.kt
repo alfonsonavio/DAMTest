@@ -58,8 +58,12 @@ class SettingsActivity : AppCompatActivity() {
         switch.setOnCheckedChangeListener { _, isChecked ->
             settings.remindersEnabled = isChecked
             updateHourRowState(rowHour, tvHour, isChecked)
-            // Apply immediately
-            if (isChecked) ReminderScheduler.schedule(this) else ReminderScheduler.cancel(this)
+            // Apply immediately (replace=true so a re-enable picks up the current hour)
+            if (isChecked) {
+                ReminderScheduler.schedule(this, settings.reminderHour, replace = true)
+            } else {
+                ReminderScheduler.cancel(this)
+            }
         }
 
         rowHour.setOnClickListener {
@@ -70,7 +74,7 @@ class SettingsActivity : AppCompatActivity() {
                     settings.reminderHour = hour
                     tvHour.text = formatHour(hour)
                     // Reschedule with the new hour
-                    ReminderScheduler.schedule(this)
+                    ReminderScheduler.schedule(this, hour, replace = true)
                 },
                 settings.reminderHour, 0, true
             ).show()
