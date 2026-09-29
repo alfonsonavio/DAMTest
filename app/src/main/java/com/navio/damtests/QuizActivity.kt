@@ -1,7 +1,7 @@
 package com.navio.damtests
 
 import android.content.Intent
-import android.graphics.Color
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -62,7 +62,7 @@ class QuizActivity : AppCompatActivity() {
         haptic      = HapticFeedbackManager(this, settingsManager.hapticsEnabled)
         quizContent = findViewById(R.id.quizContentContainer)
 
-        applyLightStatusBar()
+        applyStatusBar()
 
         subjectId = intent.getStringExtra("SUBJECT_ID") ?: "programacion"
         topicId   = intent.getStringExtra("TOPIC_ID")   ?: "tema_1"
@@ -207,9 +207,9 @@ class QuizActivity : AppCompatActivity() {
                 else                               -> 0
             }
             if (isCorrectBtn) {
-                mBtn.setStrokeColorResource(android.R.color.holo_green_dark)
+                mBtn.setStrokeColorResource(R.color.state_success)
             } else if (isSelectedBtn && !result.isCorrect) {
-                mBtn.setStrokeColorResource(android.R.color.holo_red_dark)
+                mBtn.setStrokeColorResource(R.color.state_error)
             }
         }
 
@@ -217,12 +217,12 @@ class QuizActivity : AppCompatActivity() {
             feedbacks[result.selectedIndex].apply {
                 visibility = View.VISIBLE
                 text       = getString(R.string.ai_analyzing)
-                setTextColor(Color.GRAY)
+                setTextColor(getColor(R.color.text_muted))
             }
             feedbacks[result.correctIndex].apply {
                 visibility = View.VISIBLE
                 text       = getString(R.string.ai_preparing_correction)
-                setTextColor(Color.GRAY)
+                setTextColor(getColor(R.color.text_muted))
             }
 
             lifecycleScope.launch {
@@ -236,23 +236,23 @@ class QuizActivity : AppCompatActivity() {
                     if (parts.size >= 2) {
                         feedbacks[result.selectedIndex].apply {
                             text = "❌ ${parts[0].trim()}"
-                            setTextColor(Color.parseColor("#EF4444"))
+                            setTextColor(getColor(R.color.state_error))
                         }
                         feedbacks[result.correctIndex].apply {
                             text = "✅ ${parts[1].trim()}"
-                            setTextColor(Color.parseColor("#10B981"))
+                            setTextColor(getColor(R.color.state_success))
                         }
                     } else {
                         feedbacks[result.correctIndex].apply {
                             text = "✅ $response"
-                            setTextColor(Color.parseColor("#10B981"))
+                            setTextColor(getColor(R.color.state_success))
                         }
                         feedbacks[result.selectedIndex].visibility = View.GONE
                     }
                 } catch (e: Exception) {
                     feedbacks[result.selectedIndex].apply {
                         text = getString(R.string.ai_connection_error)
-                        setTextColor(Color.parseColor("#EF4444"))
+                        setTextColor(getColor(R.color.state_error))
                     }
                 }
             }
@@ -336,16 +336,18 @@ class QuizActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun applyLightStatusBar() {
-        window.statusBarColor = Color.parseColor("#F8FAFC")
+    private fun applyStatusBar() {
+        window.statusBarColor = getColor(R.color.surface_bg)
+        // Light status bar (dark icons) only in light mode; dark mode gets light icons.
+        val lightBars = (resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.setSystemBarsAppearance(
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            )
+            val mask = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            window.insetsController?.setSystemBarsAppearance(if (lightBars) mask else 0, mask)
         } else {
             @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            window.decorView.systemUiVisibility =
+                if (lightBars) View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR else 0
         }
     }
 }
