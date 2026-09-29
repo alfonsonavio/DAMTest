@@ -1,6 +1,5 @@
 package com.navio.damtests.ui.statistics
 
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -135,8 +134,8 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
                 axisMinimum = 0f
                 axisMaximum = 100f
                 setDrawGridLines(true)
-                gridColor = Color.parseColor("#F1F5F9")
-                textColor = Color.parseColor("#94A3B8")
+                gridColor = ContextCompat.getColor(requireContext(), R.color.surface_border)
+                textColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
                 setDrawAxisLine(false)
             }
             xAxis.apply {

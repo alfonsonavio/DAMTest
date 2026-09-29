@@ -1,6 +1,5 @@
 package com.navio.damtests
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,12 +66,12 @@ class ReviewAdapter(
         holder.tvOptions.text = optionsText.toString().trim()
 
         if (isCorrect) {
-            holder.card.setCardBackgroundColor(Color.parseColor("#DCFCE7"))
-            holder.card.strokeColor = Color.parseColor("#22C55E")
+            holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.state_success_bg))
+            holder.card.strokeColor = holder.card.context.getColor(R.color.state_success)
             holder.btnVerExplicacion.visibility = View.GONE
         } else {
-            holder.card.setCardBackgroundColor(Color.parseColor("#FEE2E2"))
-            holder.card.strokeColor = Color.parseColor("#EF4444")
+            holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.state_error_bg))
+            holder.card.strokeColor = holder.card.context.getColor(R.color.state_error)
             holder.btnVerExplicacion.visibility = View.VISIBLE
             holder.btnVerExplicacion.setOnClickListener { onExplainClick(res) }
         }

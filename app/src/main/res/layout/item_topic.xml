@@ -9,7 +9,7 @@
     app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
     app:strokeWidth="1dp"
-    app:strokeColor="#10000000">
+    app:strokeColor="@color/surface_border">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                 android:text="Tema 1: Introducción"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#1E293B" />
+                android:textColor="@color/text_primary" />
 
             <TextView
                 android:id="@+id/tvTopicStats"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:text="Sin realizar todavía"
                 android:textSize="13sp"
-                android:textColor="#64748B"
+                android:textColor="@color/text_secondary"
                 android:layout_marginTop="4dp" />
         </LinearLayout>
 
@@ -51,7 +51,7 @@
             android:src="@drawable/pdf"
             android:padding="12dp"
             android:scaleType="fitCenter"
-            app:tint="#4F46E5"
+            app:tint="@color/brand_primary"
             android:contentDescription="Ver apuntes PDF" />
 
     </LinearLayout>

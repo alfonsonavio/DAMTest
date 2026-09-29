@@ -29,6 +29,8 @@
     <color name="surface">#1E2024</color>
     <color name="surface_bg">#121417</color>
     <color name="surface_border">#2A2F36</color>
+    <!-- Velo de carga (overlay casi opaco del color de fondo) -->
+    <color name="scrim">#F2121417</color>
 
     <!-- === Texto === -->
     <color name="text_primary">#F1F5F9</color>
