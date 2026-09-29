@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="@color/surface_bg">
 
     <com.google.android.material.card.MaterialCardView
@@ -49,6 +50,9 @@
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="MENÚ"
+            android:textColor="@color/brand_primary"
+            app:strokeColor="@color/brand_primary"
+            app:strokeWidth="1dp"
             app:cornerRadius="16dp" />
 
         <com.google.android.material.button.MaterialButton
