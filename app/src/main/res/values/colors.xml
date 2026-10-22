@@ -68,27 +68,4 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <!-- ============================================================
-         ALIAS TEMPORALES DE COMPATIBILIDAD — ⚠️ BORRAR
-         Mapean nombres viejos a los nuevos para que los layouts y el
-         código actuales compilen sin migrarlos aún. Se eliminan a medida
-         que cada pantalla se rehace en las ramas del rediseño.
-         PENDIENTE: borrar este bloque cuando ningún layout/código los use.
-         ============================================================ -->
-    <color name="colorPrimary">@color/brand_primary</color>
-    <color name="colorPrimaryLight">@color/brand_primary_bg</color>
-    <color name="primary_dark">@color/brand_primary_dark</color>
-    <color name="bg_screen">@color/surface_bg</color>
-    <color name="purple_700">@color/brand_primary_dark</color>
-
-    <!-- Colores de asignatura viejos (usados en código Kotlin) → nuevos -->
-    <color name="bg_prog">@color/subject_prog_bg</color>
-    <color name="bg_db">@color/subject_db_bg</color>
-    <color name="bg_sistemas">@color/subject_sistemas_bg</color>
-    <color name="bg_marcas">@color/subject_marcas_bg</color>
-    <color name="bg_entornos">@color/subject_entornos_bg</color>
-    <color name="bg_digital">@color/subject_digital_bg</color>
-    <color name="bg_ipe">@color/subject_ipe_bg</color>
-    <color name="bg_sostenibilidad">@color/subject_sostenibilidad_bg</color>
-
 </resources>

@@ -44,7 +44,7 @@
             android:layout_gravity="end"
             android:layout_marginTop="8.dp"
             android:text="VER EXPLICACIÓN"
-            android:textColor="@color/primary_dark"
+            android:textColor="@color/brand_primary_dark"
             android:visibility="visible" />
 
     </LinearLayout>
