@@ -11,13 +11,31 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue" alt="MIT License"/></a>
 </p>
 
-> **DAMTest** is an Android quiz app for first-year DAM (Desarrollo de Aplicaciones Multiplataforma) students in Spain. It covers all 8 core subjects of the curriculum, provides AI-powered feedback on wrong answers, and lets students read the official topic notes in-app — all with offline support.
+<p align="center">
+  <a href="https://github.com/alfonsonavio/DAMTest/releases/latest">
+    <img src="https://img.shields.io/github/v/release/alfonsonavio/DAMTest?filter=!*-resources&label=Download%20APK&logo=android&logoColor=white&style=for-the-badge&color=4F46E5" alt="Download the latest APK"/>
+  </a>
+</p>
+
+> **DAMTest** is an Android quiz app for DAM (Desarrollo de Aplicaciones Multiplataforma) students in Spain. It covers the first- and second-year subjects, provides AI-powered feedback on wrong answers, and lets students read the official topic notes in-app — all with offline support.
+
+---
+
+## 📥 Download
+
+Get the latest version from the **[Releases page](https://github.com/alfonsonavio/DAMTest/releases/latest)**: download the `.apk` file on your phone and open it (Android 8.0 or later; you may need to allow installing apps from your browser).
 
 ---
 
 ## ✨ Features
 
-- **8 DAM subjects** — Programación, Base de Datos, Sistemas, Lenguaje de Marcas, Entornos de Desarrollo, Digitalización, IPE, and Sostenibilidad.
+- **1º DAM** — Programación, Base de Datos, Sistemas, Lenguaje de Marcas, Entornos de Desarrollo, Digitalización, IPE and Sostenibilidad.
+- **2º DAM** — Acceso a Datos, Ciberseguridad, Desarrollo de Interfaces, Inglés Profesional, IPE II, Programación de Servicios y Procesos, Programación Multimedia y Dispositivos Móviles and Sistemas de Gestión Empresarial (notes and questions added during the school year).
+- **Accounts and cloud sync** — email or Google sign-in; progress is saved to the user's account.
+- **Smart review** — practice that puts the questions you fail most first.
+- **Resume tests** — a test left half-way can be continued later.
+- **Statistics** — per-course accuracy, evolution chart and topics to review.
+- **Settings** — daily study reminder, haptics and light/dark theme.
 - **Per-topic tests** (10 questions) and **General Test** mode (20 random questions across all topics).
 - **Shuffled answer options** on every attempt to prevent memorisation.
 - **AI explanations** — Gemini 2.5 Flash explains why an answer is wrong, shown in the Review screen.
@@ -135,32 +153,20 @@ Topic ID conventions: `tema_1`, `tema_2`, …, `caso_1`, …, `repaso_1`.
 
 ## 📄 PDF Study Notes
 
-PDF files are hosted as assets in the [GitHub Release v1.0](https://github.com/alfonsonavio/DAMTest/releases/tag/v1.0).
+PDF files are hosted as assets of the [`v1.0.0-resources` release](https://github.com/alfonsonavio/DAMTest/releases/tag/v1.0.0-resources). This release is only a file store: the app always reads from this tag (`Constants.PDF_BASE_URL` and `PdfReleaseRepository`), so new PDFs are **added to it** and become available without a new app version. App versions are published as separate releases (`v1.1.0`, …).
 
 **Naming convention:** `{subjectId}_{topicNumber}.pdf`  
 Example: `base_de_datos_1.pdf`, `programacion_10.pdf`
 
-The base URL is defined in `Constants.kt`. To update it after publishing a new release, change `PDF_BASE_URL` to point to the new tag.
 
 ### Publishing / updating PDFs
 
 ```bash
 # Install the GitHub CLI if not already installed: https://cli.github.com
 
-# Initial release (152 files)
-gh release create v1.0.0 RECURSOS_APP/*.pdf \
-  --repo alfonsonavio/DAMTest \
-  --title "v1.0.0 — Initial Release" \
-  --notes-file CHANGELOG.md
-
-# When new PDFs arrive — add them to an existing release
-gh release upload v1.0.0 RECURSOS_APP/new_subject_1.pdf RECURSOS_APP/new_subject_2.pdf \
+# Add new PDFs to the resources release (or upload them from the release page on GitHub)
+gh release upload v1.0.0-resources RECURSOS_APP/acceso_datos_1.pdf \
   --repo alfonsonavio/DAMTest
-
-# Or bump to v1.1.0 and update Constants.PDF_BASE_URL accordingly
-gh release create v1.1.0 RECURSOS_APP/*.pdf \
-  --repo alfonsonavio/DAMTest \
-  --title "v1.1.0 — Added 8 new topic PDFs"
 ```
 
 ---
