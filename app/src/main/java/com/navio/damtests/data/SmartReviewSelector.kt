@@ -5,7 +5,17 @@ import com.navio.damtests.data.local.entity.QuestionStats
 import kotlin.random.Random
 
 /**
- * Selects questions for the smart-review mode using weighted random sampling.
+ * Selects questions for the smart-review mode: failed questions first.
+ *
+ * 1. Every question failed at least once (timesWrong > 0) is a priority
+ *    candidate. If there are more of them than [limit], they are sampled by
+ *    weight, so the most-failed and longest-unseen ones are favoured.
+ * 2. Any free slots are filled from the remaining questions by weighted
+ *    sampling (novelty and staleness keep the review useful).
+ * 3. The result is shuffled so failed questions are not all at the start.
+ *
+ * Only smart review uses this class; normal tests pick questions at random in
+ * the DAO and are unaffected.
  *
  * Each question gets a weight based on:
  *  - a base weight, so every question keeps a chance (spaced repetition),
@@ -59,32 +69,44 @@ class SmartReviewSelector(private val random: Random = Random.Default) {
         limit: Int,
         now: Long = System.currentTimeMillis()
     ): List<Question> {
-        if (questions.isEmpty()) return emptyList()
-        if (questions.size <= limit) return questions.shuffled(random)
+        if (questions.isEmpty() || limit <= 0) return emptyList()
 
-        // Mutable pools we draw from
-        val pool = questions.toMutableList()
+        val (failed, rest) = questions.partition { isFailed(statsById[it.stableId]) }
+
+        val selected = weightedSample(failed, statsById, limit, now).toMutableList()
+        val freeSlots = limit - selected.size
+        if (freeSlots > 0) selected += weightedSample(rest, statsById, freeSlots, now)
+
+        return selected.shuffled(random)
+    }
+
+    /** A question counts as failed if it was answered wrong at least once. */
+    fun isFailed(stats: QuestionStats?): Boolean = stats != null && stats.timesWrong > 0
+
+    /** Picks up to [count] distinct questions; higher weight = higher probability. */
+    private fun weightedSample(
+        candidates: List<Question>,
+        statsById: Map<String, QuestionStats>,
+        count: Int,
+        now: Long
+    ): List<Question> {
+        if (candidates.size <= count) return candidates
+
+        val pool = candidates.toMutableList()
         val weights = pool.map { weightFor(statsById[it.stableId], now) }.toMutableList()
-        val selected = mutableListOf<Question>()
+        val picked = mutableListOf<Question>()
 
-        repeat(limit) {
-            val totalWeight = weights.sum()
-            if (totalWeight <= 0.0) return@repeat
-
-            // Weighted pick
-            var r = random.nextDouble(totalWeight)
-            var chosenIndex = 0
+        repeat(count) {
+            var r = random.nextDouble(weights.sum())
+            var chosenIndex = pool.lastIndex
             for (i in pool.indices) {
                 r -= weights[i]
                 if (r <= 0.0) { chosenIndex = i; break }
             }
-
-            selected.add(pool[chosenIndex])
-            // Remove chosen so we don't pick it again (sampling without replacement)
-            pool.removeAt(chosenIndex)
+            // Remove the chosen one so it can't be picked again (no replacement)
+            picked += pool.removeAt(chosenIndex)
             weights.removeAt(chosenIndex)
         }
-
-        return selected
+        return picked
     }
 }

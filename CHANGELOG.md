@@ -92,6 +92,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   system automatically. A theme chooser (System / Light / Dark) in Settings,
   persisted in `SettingsManager` and applied app-wide at startup and on change
   via `AppCompatDelegate`.
+- **Smart review from Home.** The "Repaso inteligente" card opens a subject
+  picker that launches that subject's smart review. Only subjects with at least
+  one failed question are listed; with none, a notice explains there is nothing
+  to review yet.
+- `SubjectCatalog` — single source of truth for the 14 subjects (id, name, icon,
+  colour, course), replacing the lists duplicated in Home, Subjects and
+  Statistics.
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
@@ -165,6 +172,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   elevation tint. The review "Menú" button gains a periwinkle outline and a
   subtle fill so it reads as a button distinct from the bottom bar. The 1º/2º
   segmented control track uses an adaptive token instead of a fixed light colour.
+- **Smart review prioritises failed questions.** Every question answered wrong
+  at least once now enters the review first (weighted by failure rate and
+  staleness when there are more than fit), and only the free slots are filled by
+  the general weighting. Previously novelty could swamp them (8 failed questions
+  in a 190-question subject appeared ~1.4 times per review). The topic-list entry
+  follows the same rule and shows a notice for subjects with no failures. Normal
+  tests are unaffected: they still pick questions at random in the DAO.
+- Turning the reminder on in Settings requests the POST_NOTIFICATIONS permission
+  on Android 13+. If it is denied, the switch turns back off and a dialog offers
+  to open the system notification settings.
 
 ### Fixed
 - Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,

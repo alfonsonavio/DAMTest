@@ -148,9 +148,17 @@ class QuizRepository @Inject constructor(
     }
 
     /**
-     * Builds a smart-review test for a subject: [limit] questions chosen by
-     * weighted random sampling, prioritising the ones the user fails most and
-     * hasn't seen recently. Falls back gracefully when there are few questions.
+     * True if the user has failed at least one question of the subject. Smart
+     * review is only offered for those subjects (same rule on Home and on the
+     * topic list).
+     */
+    suspend fun subjectHasFailures(subjectId: String): Boolean =
+        questionsDao.countFailedQuestions(subjectId) > 0
+
+    /**
+     * Builds a smart-review test for a subject: failed questions first (the most
+     * failed and longest-unseen favoured), remaining slots filled by weighted
+     * sampling. See [SmartReviewSelector].
      */
     suspend fun getSmartReviewQuestions(subjectId: String, limit: Int = 20): List<Question> {
         val allQuestions = questionsDao.getAllQuestionsForSubject(subjectId)
