@@ -6,6 +6,8 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
@@ -32,10 +34,30 @@ class SettingsActivity : AppCompatActivity() {
 
         setupProfile()
         setupReminders()
+        setupTheme()
         setupHaptics()
         setupLogout()
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+    }
+
+    private fun setupTheme() {
+        val labels = arrayOf("Sistema", "Claro", "Oscuro")
+        val tvValue = findViewById<TextView>(R.id.tvThemeValue)
+        tvValue.text = labels[settings.themeMode]
+
+        findViewById<LinearLayout>(R.id.rowTheme).setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Tema")
+                .setSingleChoiceItems(labels, settings.themeMode) { dialog, which ->
+                    settings.themeMode = which
+                    tvValue.text = labels[which]
+                    dialog.dismiss()
+                    // Recreates the activities with the chosen theme immediately.
+                    AppCompatDelegate.setDefaultNightMode(settings.nightModeFlag())
+                }
+                .show()
+        }
     }
 
     private fun setupProfile() {
