@@ -118,4 +118,60 @@ class SmartReviewSelectorTest {
             failedPicks > runs * 0.6
         )
     }
+
+    // --- failures first ---
+
+    @Test
+    fun `all failed questions are included when they fit in the limit`() {
+        val failed = (1..8).map { question("f$it") }
+        val unseen = (1..182).map { question("n$it") } // never seen: max novelty
+        val statsById = failed.associate { it.stableId to stats(it.stableId, seen = 3, wrong = 1) }
+
+        val result = selector.select(failed + unseen, statsById, limit = 20, now = 0L)
+
+        assertEquals(20, result.size)
+        assertTrue(
+            "Every failed question must be in the review",
+            result.map { it.stableId }.containsAll(failed.map { it.stableId })
+        )
+    }
+
+    @Test
+    fun `only failed questions are picked when there are more than the limit`() {
+        val failed = (1..35).map { question("f$it") }
+        val others = (1..155).map { question("n$it") }
+        val statsById = failed.associate { it.stableId to stats(it.stableId, seen = 2, wrong = 1) }
+
+        val result = selector.select(failed + others, statsById, limit = 20, now = 0L)
+
+        assertEquals(20, result.size)
+        assertTrue("All picks must be failed questions", result.all { it.stableId.startsWith("f") })
+    }
+
+    @Test
+    fun `most failed questions are favoured among many failed ones`() {
+        val hard = (1..10).map { question("hard$it") } // always failed
+        val soft = (1..30).map { question("soft$it") } // failed once in ten
+        val statsById = buildMap {
+            hard.forEach { put(it.stableId, stats(it.stableId, seen = 10, wrong = 10)) }
+            soft.forEach { put(it.stableId, stats(it.stableId, seen = 10, wrong = 1)) }
+        }
+
+        val sel = SmartReviewSelector(Random(7))
+        var hardPicks = 0
+        repeat(200) {
+            hardPicks += sel.select(hard + soft, statsById, limit = 10, now = 0L)
+                .count { it.stableId.startsWith("hard") }
+        }
+
+        // Uniform sampling would give ~2.5 hard per run (500 total); weighting pushes it up.
+        assertTrue("Hard questions should dominate (was $hardPicks)", hardPicks > 800)
+    }
+
+    @Test
+    fun `isFailed is true only with at least one wrong answer`() {
+        assertTrue(!selector.isFailed(null))
+        assertTrue(!selector.isFailed(stats("q", seen = 5, wrong = 0)))
+        assertTrue(selector.isFailed(stats("q", seen = 5, wrong = 1)))
+    }
 }
