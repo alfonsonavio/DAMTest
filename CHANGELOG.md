@@ -99,6 +99,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SubjectCatalog` — single source of truth for the 14 subjects (id, name, icon,
   colour, course), replacing the lists duplicated in Home, Subjects and
   Statistics.
+- **Resume a test in progress.** The current test is saved after every answer
+  (questions in order, chosen answers with their shuffled options, and score) in
+  `QuizSessionStore`, so leaving the quiz or the app being killed no longer loses
+  it. Only one test is kept. Home's "Continúa donde lo dejaste" card shows it with
+  its progress and resumes it directly; reopening that same test from the topic
+  list or the smart-review picker asks whether to continue or start again
+  (`QuizLauncher`). If its questions are gone after a re-sync, a new test starts
+  instead. The saved test is cleared on finishing and on logout.
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
