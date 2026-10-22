@@ -15,6 +15,7 @@ import com.navio.damtests.QuizRepository
 import com.navio.damtests.R
 import com.navio.damtests.TopicSelectionActivity
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.data.SubjectCatalog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -82,7 +83,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     tvContinueHeader.isVisible = hasHistory
 
                     if (lastProgress != null) {
-                        tvContinueSubject.text = subjectDisplayName(lastProgress.subjectId)
+                        tvContinueSubject.text = SubjectCatalog.nameFor(lastProgress.subjectId)
                         tvContinueDetail.text  = topicDisplayName(lastProgress.topicId)
                         cardContinue.setOnClickListener {
                             startActivity(
@@ -102,18 +103,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             in 13..20 -> "Buenas tardes"
             else      -> "Buenas noches"
         }
-
-    private fun subjectDisplayName(subjectId: String): String = when (subjectId) {
-        "programacion"   -> "Programación"
-        "base_de_datos"  -> "Base de Datos"
-        "sistemas"       -> "Sistemas"
-        "marcas"         -> "Leng. Marcas"
-        "entornos"       -> "Entornos"
-        "digitalizacion" -> "Digitalización"
-        "ipe"            -> "IPE"
-        "sostenibilidad" -> "Sostenibilidad"
-        else             -> subjectId
-    }
 
     private fun topicDisplayName(topicId: String): String = when {
         topicId == "-1" -> "Test general (todo)"
