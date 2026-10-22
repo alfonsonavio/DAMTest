@@ -12,13 +12,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.navio.damtests.QuizActivity
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.R
 import com.navio.damtests.TopicSelectionActivity
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.data.SubjectCatalog
+import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.ui.QuizLauncher
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -34,6 +36,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     @Inject lateinit var repository: QuizRepository
     @Inject lateinit var authManager: AuthManager
+    @Inject lateinit var sessionStore: QuizSessionStore
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,6 +49,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val tvContinueHeader  = view.findViewById<TextView>(R.id.tvContinueHeader)
         val tvContinueSubject = view.findViewById<TextView>(R.id.tvContinueSubject)
         val tvContinueDetail  = view.findViewById<TextView>(R.id.tvContinueDetail)
+        val progressContinue  = view.findViewById<LinearProgressIndicator>(R.id.progressContinue)
         val cardSmartReview   = view.findViewById<MaterialCardView>(R.id.cardSmartReview)
         val btnSettings       = view.findViewById<ImageButton>(R.id.btnSettings)
 
@@ -72,7 +76,25 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     tvAvgScore.text   = String.format("%.1f", average)
                     tvTotalTests.text = totalTests.toString()
 
-                    // Continue where you left off: most recent progress by timestamp
+                    // A test left half-way takes priority: the card resumes it.
+                    val session = sessionStore.load()
+                    if (session != null) {
+                        cardContinue.isVisible = true
+                        tvContinueHeader.isVisible = true
+                        tvContinueSubject.text = SubjectCatalog.nameFor(session.subjectId)
+                        tvContinueDetail.text = "${topicDisplayName(session.topicId)} · " +
+                            "Pregunta ${session.nextQuestionNumber} de ${session.total}"
+                        progressContinue.isVisible = true
+                        progressContinue.max = session.total
+                        progressContinue.progress = session.answeredCount
+                        cardContinue.setOnClickListener {
+                            QuizLauncher.start(requireContext(), session.subjectId, session.topicId, resume = true)
+                        }
+                        return@collect
+                    }
+                    progressContinue.isVisible = false
+
+                    // Otherwise: the most recent progress by timestamp
                     val lastProgress = allProgress
                         .filter { it.lastAttemptTimestamp > 0 }
                         .maxByOrNull { it.lastAttemptTimestamp }
@@ -116,11 +138,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Repaso inteligente")
                 .setItems(available.map { it.name }.toTypedArray()) { _, which ->
-                    startActivity(
-                        Intent(requireContext(), QuizActivity::class.java)
-                            .putExtra("SUBJECT_ID", available[which].id)
-                            .putExtra("TOPIC_ID", "-4")
-                    )
+                    QuizLauncher.open(requireContext(), sessionStore, available[which].id, "-4")
                 }
                 .setNegativeButton("Cancelar", null)
                 .show()

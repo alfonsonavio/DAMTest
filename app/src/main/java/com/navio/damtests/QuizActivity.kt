@@ -85,7 +85,10 @@ class QuizActivity : AppCompatActivity() {
         setupObservers()
         setupClickListeners()
         if (viewModel.questions.value.isEmpty()) {
-            viewModel.loadQuestions(subjectId, topicId)
+            viewModel.loadQuestions(
+                subjectId, topicId,
+                resume = intent.getBooleanExtra(EXTRA_RESUME, false)
+            )
         }
     }
 
@@ -349,5 +352,10 @@ class QuizActivity : AppCompatActivity() {
             window.decorView.systemUiVisibility =
                 if (lightBars) View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR else 0
         }
+    }
+
+    companion object {
+        /** Boolean extra: continue the saved test instead of starting a new one. */
+        const val EXTRA_RESUME = "RESUME"
     }
 }

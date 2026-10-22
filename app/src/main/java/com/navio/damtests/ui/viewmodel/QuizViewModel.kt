@@ -7,13 +7,17 @@ import javax.inject.Inject
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
+import com.navio.damtests.data.session.QuizSession
+import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.data.session.SavedAnswer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class QuizViewModel @Inject constructor(
-    private val repository: QuizRepository
+    private val repository: QuizRepository,
+    private val sessionStore: QuizSessionStore
 ) : ViewModel() {
 
     // --- Public state ---
@@ -49,7 +53,8 @@ class QuizViewModel @Inject constructor(
 
     private val _resultsList = mutableListOf<QuestionResult>()
 
-    /** The topicId this test was launched with (e.g. "-4" for smart review). */
+    /** The subject and topicId this test was launched with (e.g. "-4" for smart review). */
+    private var currentSubjectId: String = ""
     private var currentTopicId: String = ""
 
     // --- Actions ---
@@ -62,8 +67,12 @@ class QuizViewModel @Inject constructor(
      *  - "-2" → topics 1–10 (20 questions)
      *  - "-3" → topics 11–20 (20 questions)
      *  - any other → specific topic (10 questions)
+     *
+     * With [resume] = true it continues the saved test for this subject/topic
+     * instead, falling back to a new test if it can no longer be rebuilt.
      */
-    fun loadQuestions(subjectId: String, topicId: String) {
+    fun loadQuestions(subjectId: String, topicId: String, resume: Boolean = false) {
+        currentSubjectId = subjectId
         currentTopicId = topicId
         viewModelScope.launch {
             _isLoading.value = true
@@ -71,6 +80,13 @@ class QuizViewModel @Inject constructor(
             _score.value = 0
             _currentQuestionIndex.value = 0
             _currentAnswerState.value = null
+
+            if (resume && restoreSession(subjectId, topicId)) {
+                _isLoading.value = false
+                // Every question was already answered: go straight to the results.
+                if (_resultsList.size >= _questions.value.size) finishTest()
+                return@launch
+            }
 
             val limit = if (topicId.startsWith("-")) 20 else 10
 
@@ -114,6 +130,7 @@ class QuizViewModel @Inject constructor(
         viewModelScope.launch {
             repository.recordAnswer(currentQuestion, isCorrect)
         }
+        saveSession()
 
         _currentAnswerState.value = AnswerResult(uiIndex, correctUiIndex, isCorrect)
     }
@@ -123,18 +140,7 @@ class QuizViewModel @Inject constructor(
         val isLastQuestion = _currentQuestionIndex.value >= _questions.value.size - 1
 
         if (isLastQuestion) {
-            // Mark the test finished BEFORE clearing the answer state. Otherwise the
-            // currentAnswerState collector receives null while isTestFinished is still
-            // false and briefly repaints a clean question behind the results dialog.
-            _isTestFinished.value = true
-            _currentAnswerState.value = null
-
-            // Smart review (-4) is practice only — it does not save a score.
-            if (currentTopicId != "-4") {
-                _questions.value.firstOrNull()?.let {
-                    saveFinalProgress(it.subjectId, it.topicId)
-                }
-            }
+            finishTest()
         } else {
             _currentAnswerState.value = null
             _currentQuestionIndex.value += 1
@@ -144,6 +150,63 @@ class QuizViewModel @Inject constructor(
     fun getResults(): List<QuestionResult> = _resultsList.toList()
 
     // --- Private helpers ---
+
+    private fun finishTest() {
+        // Mark the test finished BEFORE clearing the answer state. Otherwise the
+        // currentAnswerState collector receives null while isTestFinished is still
+        // false and briefly repaints a clean question behind the results dialog.
+        _isTestFinished.value = true
+        _currentAnswerState.value = null
+        sessionStore.clear()
+
+        // Smart review (-4) is practice only — it does not save a score.
+        if (currentTopicId != "-4") {
+            _questions.value.firstOrNull()?.let {
+                saveFinalProgress(it.subjectId, it.topicId)
+            }
+        }
+    }
+
+    /** Saves the test in progress after every answer, so it can be resumed. */
+    private fun saveSession() {
+        val questions = _questions.value
+        // Questions without a stable id couldn't be found again on resume.
+        if (questions.isEmpty() || questions.any { it.stableId.isBlank() }) return
+
+        sessionStore.save(
+            QuizSession(
+                subjectId   = currentSubjectId,
+                topicId     = currentTopicId,
+                questionIds = questions.map { it.stableId },
+                answers     = _resultsList.map {
+                    SavedAnswer(it.question.stableId, it.userSelectedIndex, it.shuffledOptions, it.isCorrect)
+                },
+                score       = _score.value
+            )
+        )
+    }
+
+    /**
+     * Rebuilds the saved test into the current state. Returns false (and drops
+     * the saved test) if there is none for this subject/topic or its questions
+     * are no longer in the database.
+     */
+    private suspend fun restoreSession(subjectId: String, topicId: String): Boolean {
+        val session = sessionStore.load()?.takeIf { it.isFor(subjectId, topicId) } ?: return false
+        val questions = repository.getQuestionsInOrder(session.questionIds)
+        if (questions == null || session.answeredCount > questions.size) {
+            sessionStore.clear()
+            return false
+        }
+
+        _questions.value = questions
+        session.answers.forEachIndexed { i, a ->
+            _resultsList.add(QuestionResult(questions[i], a.selectedIndex, a.shuffledOptions, a.isCorrect))
+        }
+        _score.value = session.score
+        _currentQuestionIndex.value = session.answeredCount.coerceAtMost(questions.lastIndex)
+        return true
+    }
 
     private fun saveFinalProgress(subjectId: String, topicId: String) {
         viewModelScope.launch {

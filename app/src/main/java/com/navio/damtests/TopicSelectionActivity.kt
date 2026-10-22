@@ -14,6 +14,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.navio.damtests.auth.AuthUiHelper
+import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.ui.QuizLauncher
 import com.navio.damtests.ui.TopicAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,6 +29,7 @@ import java.io.FileOutputStream
 class TopicSelectionActivity : AppCompatActivity() {
 
     @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var sessionStore: QuizSessionStore
     private lateinit var adapter: TopicAdapter
     private val httpClient = OkHttpClient()
 
@@ -97,6 +100,12 @@ class TopicSelectionActivity : AppCompatActivity() {
 
     private fun onTopicSelected(subjectId: String, topicId: String) {
         lifecycleScope.launch {
+            // The test left half-way: ask whether to continue it or start again.
+            if (sessionStore.load()?.isFor(subjectId, topicId) == true) {
+                QuizLauncher.open(this@TopicSelectionActivity, sessionStore, subjectId, topicId)
+                return@launch
+            }
+
             // Smart review: same rule as on Home — only with failed questions.
             if (topicId == "-4" && !repository.subjectHasFailures(subjectId)) {
                 AuthUiHelper.showInfo(
@@ -111,11 +120,7 @@ class TopicSelectionActivity : AppCompatActivity() {
             val hasQuestions  = isGeneralTest || repository.hasQuestions(subjectId, topicId)
 
             if (hasQuestions) {
-                startActivity(
-                    Intent(this@TopicSelectionActivity, QuizActivity::class.java)
-                        .putExtra("SUBJECT_ID", subjectId)
-                        .putExtra("TOPIC_ID", topicId)
-                )
+                QuizLauncher.start(this@TopicSelectionActivity, subjectId, topicId, resume = false)
             } else {
                 AlertDialog.Builder(this@TopicSelectionActivity)
                     .setTitle(R.string.no_questions_title)

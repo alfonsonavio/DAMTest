@@ -160,6 +160,16 @@
                             android:textColor="#C7D2FE"
                             android:textAppearance="@style/TextAppearance.DAMTest.Secondary"
                             android:layout_marginTop="2dp" />
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/progressContinue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:visibility="gone"
+                            app:indicatorColor="@color/text_on_dark"
+                            app:trackColor="@color/brand_primary_light"
+                            app:trackCornerRadius="4dp"
+                            app:trackThickness="4dp" />
                     </LinearLayout>
                     <TextView
                         android:layout_width="44dp"
