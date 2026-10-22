@@ -107,6 +107,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   list or the smart-review picker asks whether to continue or start again
   (`QuizLauncher`). If its questions are gone after a re-sync, a new test starts
   instead. The saved test is cleared on finishing and on logout.
+- **Real second-year subjects.** The 2º placeholders are replaced by the actual
+  curriculum: Acceso a Datos (`acceso_datos`), Ciberseguridad (`ciberseguridad`),
+  Desarrollo de Interfaces (`interfaces`), Inglés Profesional (`ingles`), IPE II
+  (`ipe2`), Programación de Servicios y Procesos (`servicios`), Programación
+  Multimedia y Dispositivos Móviles (`multimedia`) and Sistemas de Gestión
+  Empresarial (`gestion`), each with its own icon. EIE is removed.
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
@@ -187,6 +193,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in a 190-question subject appeared ~1.4 times per review). The topic-list entry
   follows the same rule and shows a notice for subjects with no failures. Normal
   tests are unaffected: they still pick questions at random in the DAO.
+- A subject now opens when it has questions **or** at least one PDF, so PDFs can
+  be published before the questions. General tests and smart review are listed
+  only once the subject has questions.
 - Turning the reminder on in Settings requests the POST_NOTIFICATIONS permission
   on Android 13+. If it is denied, the switch turns back off and a dialog offers
   to open the system notification settings.
