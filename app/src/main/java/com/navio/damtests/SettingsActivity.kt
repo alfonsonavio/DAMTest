@@ -1,12 +1,19 @@
 package com.navio.damtests
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.navio.damtests.auth.AuthManager
@@ -27,6 +34,21 @@ class SettingsActivity : AppCompatActivity() {
 
     @Inject lateinit var settings: SettingsManager
     @Inject lateinit var authManager: AuthManager
+
+    private lateinit var switchReminders: MaterialSwitch
+
+    // Android 13+: asked when the user turns the reminder on. If denied, the
+    // switch goes back off, since the reminder could not be shown anyway.
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            ReminderScheduler.schedule(this, settings.reminderHour, replace = true)
+        } else {
+            switchReminders.isChecked = false
+            showNotificationsBlocked()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +92,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupReminders() {
         val switch = findViewById<MaterialSwitch>(R.id.switchReminders)
+        switchReminders = switch
         val rowHour = findViewById<LinearLayout>(R.id.rowReminderHour)
         val tvHour = findViewById<TextView>(R.id.tvReminderHour)
 
@@ -82,7 +105,11 @@ class SettingsActivity : AppCompatActivity() {
             updateHourRowState(rowHour, tvHour, isChecked)
             // Apply immediately (replace=true so a re-enable picks up the current hour)
             if (isChecked) {
-                ReminderScheduler.schedule(this, settings.reminderHour, replace = true)
+                if (hasNotificationPermission()) {
+                    ReminderScheduler.schedule(this, settings.reminderHour, replace = true)
+                } else {
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
             } else {
                 ReminderScheduler.cancel(this)
             }
@@ -100,6 +127,30 @@ class SettingsActivity : AppCompatActivity() {
                 },
                 settings.reminderHour, 0, true
             ).show()
+        }
+    }
+
+    private fun hasNotificationPermission(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+
+    /**
+     * Explains why the reminder stayed off. If Android no longer shows the
+     * permission dialog (denied before), the user can enable it from the
+     * app's notification settings.
+     */
+    private fun showNotificationsBlocked() {
+        AuthUiHelper.showConfirm(
+            context = this,
+            title = "Notificaciones desactivadas",
+            message = "Para recibir el recordatorio diario, permite las notificaciones de DAMTest en los ajustes del sistema.",
+            confirmText = "Abrir ajustes"
+        ) {
+            startActivity(
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+            )
         }
     }
 
@@ -122,9 +173,8 @@ class SettingsActivity : AppCompatActivity() {
                 authManager.signOut()
                 ReminderScheduler.cancel(this)
                 startActivity(
-                    android.content.Intent(this, LoginActivity::class.java)
-                        .addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK or
-                                android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                    Intent(this, LoginActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
             }
         }

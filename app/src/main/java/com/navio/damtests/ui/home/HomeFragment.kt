@@ -11,10 +11,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.navio.damtests.QuizActivity
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.R
 import com.navio.damtests.TopicSelectionActivity
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.auth.AuthUiHelper
+import com.navio.damtests.data.SubjectCatalog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -48,14 +52,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         tvGreeting.text = greetingForTimeOfDay()
         tvName.text     = authManager.displayName
 
-        // Smart review shortcut → launches smart review for… well, it needs a subject.
-        // For now it opens Subjects so the user picks; refined later.
-        cardSmartReview.setOnClickListener {
-            // Placeholder: smart review is per-subject, so send the user to pick one.
-            // (Kept simple until we add a global smart-review entry.)
-        }
+        // Smart review is per subject: ask which one, then launch it.
+        cardSmartReview.setOnClickListener { pickSubjectForSmartReview() }
 
-        // Settings button: screen comes in the `settings` branch. No-op for now.
+        // Settings button opens the settings screen.
         btnSettings.setOnClickListener {
             startActivity(Intent(requireContext(), com.navio.damtests.SettingsActivity::class.java))
         }
@@ -82,7 +82,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     tvContinueHeader.isVisible = hasHistory
 
                     if (lastProgress != null) {
-                        tvContinueSubject.text = subjectDisplayName(lastProgress.subjectId)
+                        tvContinueSubject.text = SubjectCatalog.nameFor(lastProgress.subjectId)
                         tvContinueDetail.text  = topicDisplayName(lastProgress.topicId)
                         cardContinue.setOnClickListener {
                             startActivity(
@@ -96,24 +96,43 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    /**
+     * Lets the user choose a subject and launches its smart review (topicId "-4").
+     * Only subjects with at least one failed question are offered.
+     */
+    private fun pickSubjectForSmartReview() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val available = SubjectCatalog.all.filter { repository.subjectHasFailures(it.id) }
+
+            if (available.isEmpty()) {
+                AuthUiHelper.showInfo(
+                    requireContext(),
+                    "Repaso inteligente",
+                    "Aún no tienes fallos que repasar. Haz algún test y vuelve."
+                )
+                return@launch
+            }
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Repaso inteligente")
+                .setItems(available.map { it.name }.toTypedArray()) { _, which ->
+                    startActivity(
+                        Intent(requireContext(), QuizActivity::class.java)
+                            .putExtra("SUBJECT_ID", available[which].id)
+                            .putExtra("TOPIC_ID", "-4")
+                    )
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+    }
+
     private fun greetingForTimeOfDay(): String =
         when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
             in 6..12  -> "Buenos días"
             in 13..20 -> "Buenas tardes"
             else      -> "Buenas noches"
         }
-
-    private fun subjectDisplayName(subjectId: String): String = when (subjectId) {
-        "programacion"   -> "Programación"
-        "base_de_datos"  -> "Base de Datos"
-        "sistemas"       -> "Sistemas"
-        "marcas"         -> "Leng. Marcas"
-        "entornos"       -> "Entornos"
-        "digitalizacion" -> "Digitalización"
-        "ipe"            -> "IPE"
-        "sostenibilidad" -> "Sostenibilidad"
-        else             -> subjectId
-    }
 
     private fun topicDisplayName(topicId: String): String = when {
         topicId == "-1" -> "Test general (todo)"
