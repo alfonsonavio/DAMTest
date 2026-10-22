@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.navio.damtests.QuizRepository
+import com.navio.damtests.PdfReleaseRepository
 import com.navio.damtests.R
 import com.navio.damtests.TopicSelectionActivity
 import com.navio.damtests.auth.AuthUiHelper
@@ -73,12 +74,14 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
     }
 
     /**
-     * Opens the subject's topics if it has content; otherwise shows a
-     * "coming soon" dialog. Content is checked live against the local cache.
+     * Opens the subject's topics if it has questions or at least one PDF;
+     * otherwise shows a "coming soon" dialog. Questions are checked against the
+     * local cache and PDFs against the resources release.
      */
     private fun openSubjectIfAvailable(subject: Subject) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val hasContent = repository.subjectHasContent(subject.id)
+            val hasContent = repository.subjectHasContent(subject.id) ||
+                PdfReleaseRepository.getTopicIdsWithPdf(subject.id).isNotEmpty()
             if (hasContent) {
                 startActivity(
                     Intent(requireContext(), TopicSelectionActivity::class.java)
@@ -88,7 +91,7 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
                 AuthUiHelper.showInfo(
                     requireContext(),
                     "Próximamente",
-                    "Las preguntas de ${subject.name} estarán disponibles muy pronto."
+                    "El contenido de ${subject.name} estará disponible muy pronto."
                 )
             }
         }
