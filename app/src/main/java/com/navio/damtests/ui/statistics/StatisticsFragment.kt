@@ -19,6 +19,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.R
+import com.navio.damtests.data.SubjectCatalog
 import com.navio.damtests.data.statistics.EvolutionPoint
 import com.navio.damtests.data.statistics.StatisticsData
 import com.navio.damtests.data.statistics.SubjectAccuracy
@@ -156,7 +157,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
         bySubject.forEach { item ->
             val row = inflater.inflate(R.layout.item_subject_bar, container, false)
-            row.findViewById<TextView>(R.id.tvSubjectName).text = subjectDisplayName(item.subjectId)
+            row.findViewById<TextView>(R.id.tvSubjectName).text = SubjectCatalog.nameFor(item.subjectId)
             row.findViewById<TextView>(R.id.tvSubjectPercent).text = "${item.accuracy}%"
             val bar = row.findViewById<ProgressBar>(R.id.progressSubject)
             bar.progress = item.accuracy
@@ -187,37 +188,15 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         weakest.forEach { topic ->
             val row = inflater.inflate(R.layout.item_weak_topic, container, false)
             row.findViewById<TextView>(R.id.tvWeakTopic).text =
-                "${subjectDisplayName(topic.subjectId)} · ${topicDisplayName(topic.topicId)}"
+                "${SubjectCatalog.nameFor(topic.subjectId)} · ${topicDisplayName(topic.topicId)}"
             row.findViewById<TextView>(R.id.tvWeakDetail).text =
                 "Fallas el ${topic.failurePercent}% de las preguntas"
             container.addView(row)
         }
     }
 
-    private fun subjectIdsForCourse(course: Int): List<String> = if (course == 1) {
-        listOf("programacion", "base_de_datos", "sistemas", "marcas",
-            "entornos", "digitalizacion", "ipe", "sostenibilidad")
-    } else {
-        listOf("acceso_datos", "interfaces", "multimedia", "servicios", "gestion", "eie")
-    }
-
-    private fun subjectDisplayName(subjectId: String): String = when (subjectId) {
-        "programacion"   -> "Programación"
-        "base_de_datos"  -> "Base de Datos"
-        "sistemas"       -> "Sistemas"
-        "marcas"         -> "Leng. Marcas"
-        "entornos"       -> "Entornos"
-        "digitalizacion" -> "Digitalización"
-        "ipe"            -> "IPE"
-        "sostenibilidad" -> "Sostenibilidad"
-        "acceso_datos"   -> "Acceso a Datos"
-        "interfaces"     -> "Desarrollo de Interfaces"
-        "multimedia"     -> "Prog. Multimedia"
-        "servicios"      -> "Prog. Servicios"
-        "gestion"        -> "Gestión Empresarial"
-        "eie"            -> "EIE"
-        else             -> subjectId
-    }
+    private fun subjectIdsForCourse(course: Int): List<String> =
+        SubjectCatalog.all.filter { it.course == course }.map { it.id }
 
     private fun topicDisplayName(topicId: String): String = when {
         topicId == "-1" -> "Test general"
