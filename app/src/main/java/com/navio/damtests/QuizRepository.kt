@@ -111,10 +111,14 @@ class QuizRepository @Inject constructor(
             Topic(id, title, subjectId)
         }.toMutableList()
 
-        topics.add(Topic("-2", "TEST GENERAL (TEMAS 1-10)",  subjectId))
-        topics.add(Topic("-3", "TEST GENERAL (TEMAS 11-20)", subjectId))
-        topics.add(Topic("-1", "TEST GENERAL (TODO)",        subjectId))
-        topics.add(Topic("-4", "REPASO INTELIGENTE",         subjectId))
+        // General tests and smart review need questions: a subject with only
+        // PDFs so far lists just its topics.
+        if (dbTopicIds.isNotEmpty()) {
+            topics.add(Topic("-2", "TEST GENERAL (TEMAS 1-10)",  subjectId))
+            topics.add(Topic("-3", "TEST GENERAL (TEMAS 11-20)", subjectId))
+            topics.add(Topic("-1", "TEST GENERAL (TODO)",        subjectId))
+            topics.add(Topic("-4", "REPASO INTELIGENTE",         subjectId))
+        }
         return topics
     }
 
