@@ -87,6 +87,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   daily study-reminder toggle with a configurable hour (`TimePickerDialog`), a
   haptics toggle, and logout pinned to the bottom of the screen. Backed by a new
   `SettingsManager` that persists the preferences in SharedPreferences.
+- **Dark mode.** A graphite-based Material 3 dark theme (`values-night`) that
+  redefines every semantic color token, so all token-based screens adapt to the
+  system automatically. A theme chooser (System / Light / Dark) in Settings,
+  persisted in `SettingsManager` and applied app-wide at startup and on change
+  via `AppCompatDelegate`.
 
 ### Changed
 - `LoginActivity` is now the launcher Activity; `MainActivity` requires an
@@ -146,6 +151,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ReminderScheduler.schedule` takes the hour and a replace flag. Logout, which
   the bottom-navigation redesign had dropped from the header, now lives in
   Settings and cancels the reminder on sign-out.
+- Replaced hardcoded colors with semantic tokens across every remaining screen
+  (auth, dialogs, list items, quiz, review, subjects, topics and the statistics
+  chart) so they all follow the active theme. The quiz and topic-selection
+  status bars and the topic-selection toolbar now use brand navy, and the
+  subjects, statistics and review screens reserve the status-bar inset so titles
+  no longer collide with the system bar.
+- Bottom navigation hides the Material 3 active-indicator pill (only the icon and
+  label take the periwinkle tint) and keeps its shadow without the dark-mode
+  elevation tint. The review "Menú" button gains a periwinkle outline and a
+  subtle fill so it reads as a button distinct from the bottom bar. The 1º/2º
+  segmented control track uses an adaptive token instead of a fixed light colour.
 
 ### Fixed
 - Quiz resets on Activity recreation (screen off on aggressive OEM battery optimization,
