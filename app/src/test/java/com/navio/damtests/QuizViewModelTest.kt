@@ -2,9 +2,14 @@ package com.navio.damtests
 
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
+import com.navio.damtests.data.session.QuizSession
+import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.data.session.SavedAnswer
 import com.navio.damtests.ui.viewmodel.QuizViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.verify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -33,6 +38,7 @@ class QuizViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var repository: QuizRepository
+    private lateinit var sessionStore: QuizSessionStore
     private lateinit var viewModel: QuizViewModel
 
     private fun question(
@@ -40,6 +46,7 @@ class QuizViewModelTest {
         correct: Int = 0
     ) = Question(
         id = id,
+        stableId = "q$id",
         subjectId = "programacion",
         topicId = "tema_1",
         text = "Pregunta $id",
@@ -50,7 +57,8 @@ class QuizViewModelTest {
     @Before
     fun setUp() {
         repository = mockk(relaxed = true)
-        viewModel = QuizViewModel(repository)
+        sessionStore = mockk(relaxed = true)
+        viewModel = QuizViewModel(repository, sessionStore)
     }
 
     @Test
@@ -199,5 +207,83 @@ class QuizViewModelTest {
 
         // Smart review is practice-only — no attempt, no progress
         coVerify(exactly = 0) { repository.recordTestAttempt(any(), any(), any(), any()) }
+    }
+
+    // --- Resuming a test in progress ---
+
+    private fun savedSession(answered: Int, score: Int) = QuizSession(
+        subjectId = "programacion",
+        topicId = "tema_1",
+        questionIds = listOf("q1", "q2", "q3"),
+        answers = (1..answered).map { SavedAnswer("q$it", 0, listOf("A$it", "B$it", "C$it", "D$it"), true) },
+        score = score
+    )
+
+    @Test
+    fun `checkAnswer saves the test in progress`() = runTest {
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
+
+        verify {
+            sessionStore.save(match {
+                it.topicId == "tema_1" && it.questionIds == listOf("q1", "q2") &&
+                    it.answeredCount == 1 && it.score == 1
+            })
+        }
+    }
+
+    @Test
+    fun `finishing the test clears the saved session`() = runTest {
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
+        viewModel.goToNextQuestion()
+
+        verify { sessionStore.clear() }
+    }
+
+    @Test
+    fun `resume restores position, score and answers`() = runTest {
+        every { sessionStore.load() } returns savedSession(answered = 2, score = 2)
+        coEvery { repository.getQuestionsInOrder(listOf("q1", "q2", "q3")) } returns
+            listOf(question(1), question(2), question(3))
+
+        viewModel.loadQuestions("programacion", "tema_1", resume = true)
+
+        assertEquals(3, viewModel.questions.value.size)
+        assertEquals(2, viewModel.currentQuestionIndex.value)
+        assertEquals(2, viewModel.score.value)
+        assertEquals(2, viewModel.getResults().size)
+        assertFalse(viewModel.isTestFinished.value)
+        coVerify(exactly = 0) { repository.getQuestionsByTopic(any(), any(), any()) }
+    }
+
+    @Test
+    fun `resume starts a new test when saved questions are gone`() = runTest {
+        every { sessionStore.load() } returns savedSession(answered = 1, score = 1)
+        coEvery { repository.getQuestionsInOrder(any()) } returns null
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(7))
+
+        viewModel.loadQuestions("programacion", "tema_1", resume = true)
+
+        assertEquals(listOf("q7"), viewModel.questions.value.map { it.stableId })
+        assertEquals(0, viewModel.currentQuestionIndex.value)
+        verify { sessionStore.clear() }
+    }
+
+    @Test
+    fun `resume of a test with every question answered finishes it`() = runTest {
+        every { sessionStore.load() } returns savedSession(answered = 3, score = 3)
+        coEvery { repository.getQuestionsInOrder(any()) } returns
+            listOf(question(1), question(2), question(3))
+        coEvery { repository.getProgress(any(), any()) } returns null
+
+        viewModel.loadQuestions("programacion", "tema_1", resume = true)
+
+        assertTrue(viewModel.isTestFinished.value)
+        coVerify { repository.updateProgress(any()) }
     }
 }

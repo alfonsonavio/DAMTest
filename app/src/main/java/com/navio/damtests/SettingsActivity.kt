@@ -18,6 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
+import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.notifications.ReminderScheduler
 import com.navio.damtests.settings.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +35,7 @@ class SettingsActivity : AppCompatActivity() {
 
     @Inject lateinit var settings: SettingsManager
     @Inject lateinit var authManager: AuthManager
+    @Inject lateinit var sessionStore: QuizSessionStore
 
     private lateinit var switchReminders: MaterialSwitch
 
@@ -132,7 +134,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun hasNotificationPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
 
     /**
@@ -172,6 +174,7 @@ class SettingsActivity : AppCompatActivity() {
             ) {
                 authManager.signOut()
                 ReminderScheduler.cancel(this)
+                sessionStore.clear() // the saved test belongs to this user
                 startActivity(
                     Intent(this, LoginActivity::class.java)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)

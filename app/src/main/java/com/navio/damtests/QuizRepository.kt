@@ -148,6 +148,16 @@ class QuizRepository @Inject constructor(
     }
 
     /**
+     * Returns the questions with the given stable ids in that same order, or null
+     * if any is missing (e.g. the bank changed after a re-sync), in which case a
+     * saved test can no longer be resumed.
+     */
+    suspend fun getQuestionsInOrder(stableIds: List<String>): List<Question>? {
+        val byId = questionsDao.getQuestionsByStableIds(stableIds).associateBy { it.stableId }
+        return stableIds.map { byId[it] ?: return null }
+    }
+
+    /**
      * True if the user has failed at least one question of the subject. Smart
      * review is only offered for those subjects (same rule on Home and on the
      * topic list).

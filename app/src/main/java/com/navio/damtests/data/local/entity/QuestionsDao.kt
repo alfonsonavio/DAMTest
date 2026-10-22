@@ -78,6 +78,10 @@ interface QuestionsDao {
     @Query("SELECT COUNT(*) FROM question_stats WHERE subjectId = :subjectId AND timesWrong > 0")
     suspend fun countFailedQuestions(subjectId: String): Int
 
+    /** Questions by stable id (unordered) — used to rebuild a resumed test. */
+    @Query("SELECT * FROM questions WHERE stableId IN (:stableIds)")
+    suspend fun getQuestionsByStableIds(stableIds: List<String>): List<Question>
+
     /** All tema_* questions for a subject (no limit) — used to weight smart review. */
     @Query("SELECT * FROM questions WHERE subjectId = :subjectId AND topicId LIKE 'tema_%'")
     suspend fun getAllQuestionsForSubject(subjectId: String): List<Question>
