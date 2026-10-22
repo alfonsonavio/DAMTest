@@ -20,7 +20,7 @@
             android:text="Explicación"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#1E293B" />
+            android:textColor="@color/text_primary" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                 android:text="Analizando la pregunta..."
                 android:textSize="15sp"
                 android:lineSpacingExtra="4dp"
-                android:textColor="#64748B" />
+                android:textColor="@color/text_secondary" />
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.button.MaterialButton
@@ -48,7 +48,7 @@
             android:text="ENTENDIDO"
             android:textSize="16sp"
             app:cornerRadius="16dp"
-            app:backgroundTint="#4F46E5" />
+            app:backgroundTint="@color/brand_primary" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

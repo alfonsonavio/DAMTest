@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F8FAFC">
+    android:fitsSystemWindows="true"
+    android:background="@color/surface_bg">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:cardCornerRadius="24dp"
-        app:cardBackgroundColor="#1E293B"
+        app:cardBackgroundColor="@color/brand_navy"
         app:cardElevation="0dp">
 
         <TextView
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content"
             android:padding="24dp"
             android:text="Resultado: 15 / 20"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_on_dark"
             android:textSize="22sp"
             android:textStyle="bold"
             android:gravity="center" />
@@ -38,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:background="#FFFFFF"
+        android:background="@color/surface"
         android:elevation="8dp">
 
         <com.google.android.material.button.MaterialButton
@@ -49,6 +50,10 @@
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
             android:text="MENÚ"
+            android:textColor="@color/brand_primary"
+            app:backgroundTint="@color/surface_border"
+            app:strokeColor="@color/brand_primary"
+            app:strokeWidth="1dp"
             app:cornerRadius="16dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -57,7 +62,7 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:text="REPETIR"
-            app:backgroundTint="#10B981"
+            app:backgroundTint="@color/state_success"
             app:cornerRadius="16dp" />
     </LinearLayout>
 </LinearLayout>

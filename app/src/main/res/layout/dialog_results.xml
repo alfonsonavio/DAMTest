@@ -20,7 +20,7 @@
             android:text="¡Test Finalizado!"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#1E293B" />
+            android:textColor="@color/text_primary" />
 
         <TextView
             android:id="@+id/tvDialogMessage"
@@ -29,7 +29,7 @@
             android:layout_marginTop="12dp"
             android:text="Has acertado 4 preguntas."
             android:textSize="16sp"
-            android:textColor="#64748B" />
+            android:textColor="@color/text_secondary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDialogReview"
@@ -38,7 +38,7 @@
             android:layout_marginTop="24dp"
             android:text="VER REVISIÓN"
             app:cornerRadius="16dp"
-            app:backgroundTint="#4F46E5" />
+            app:backgroundTint="@color/brand_primary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDialogExit"
@@ -47,6 +47,6 @@
             android:layout_height="60dp"
             android:layout_marginTop="8dp"
             android:text="SALIR"
-            android:textColor="#EF4444" />
+            android:textColor="@color/state_error" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

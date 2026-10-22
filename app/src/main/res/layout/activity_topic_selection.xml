@@ -9,7 +9,7 @@
         android:id="@+id/toolbar_topics"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/brand_navy"
         android:elevation="4dp"
         app:titleTextColor="@android:color/white" />
 
