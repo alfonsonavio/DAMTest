@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-10-22
+
+Redesigned app (Material 3, dark mode, bottom navigation) with accounts and
+cloud progress sync, statistics, settings, smarter review, resumable tests and
+the real second-year subjects.
+
 ### Added
 - **Firebase Authentication** — users must log in before accessing the app.
   Supports email/password registration and Google Sign-In.
@@ -254,5 +260,6 @@ First public release. Covers the full first-year and second-year DAM curriculum.
 
 ---
 
-[Unreleased]: https://github.com/alfonsonavio/DAMTest/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/alfonsonavio/DAMTest/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/alfonsonavio/DAMTest/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/alfonsonavio/DAMTest/releases/tag/v1.0.0
