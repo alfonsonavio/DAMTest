@@ -1,7 +1,9 @@
 package com.navio.damtests
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import com.navio.damtests.notifications.NotificationHelper
+import com.navio.damtests.settings.SettingsManager
 import dagger.hilt.android.HiltAndroidApp
 
 /**
@@ -17,6 +19,8 @@ class DamTestApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // Apply the saved theme (light / dark / system) before any Activity is shown.
+        AppCompatDelegate.setDefaultNightMode(SettingsManager(this).nightModeFlag())
         NotificationHelper(this).ensureChannel()
     }
 }
