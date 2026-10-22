@@ -150,4 +150,13 @@ class QuizRepositoryTest {
         assertTrue(ids.contains("tema_1"))
         assertTrue(ids.contains("tema_20"))
     }
+
+    @Test
+    fun `getUniqueTopicsForSubject with only pdfs lists no general tests`() = runTest {
+        coEvery { dao.getUniqueTopicIds("acceso_datos") } returns emptyList()
+
+        val topics = repository.getUniqueTopicsForSubject("acceso_datos", setOf("tema_1"))
+
+        assertEquals(listOf("tema_1"), topics.map { it.id })
+    }
 }
