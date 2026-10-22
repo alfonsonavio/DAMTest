@@ -74,6 +74,10 @@ interface QuestionsDao {
     @Query("SELECT * FROM question_stats")
     suspend fun getAllQuestionStats(): List<QuestionStats>
 
+    /** How many questions of a subject were failed at least once (smart review). */
+    @Query("SELECT COUNT(*) FROM question_stats WHERE subjectId = :subjectId AND timesWrong > 0")
+    suspend fun countFailedQuestions(subjectId: String): Int
+
     /** All tema_* questions for a subject (no limit) — used to weight smart review. */
     @Query("SELECT * FROM questions WHERE subjectId = :subjectId AND topicId LIKE 'tema_%'")
     suspend fun getAllQuestionsForSubject(subjectId: String): List<Question>

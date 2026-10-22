@@ -98,18 +98,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     /**
      * Lets the user choose a subject and launches its smart review (topicId "-4").
-     * Only subjects with downloaded questions are offered; the others would give
-     * an empty review.
+     * Only subjects with at least one failed question are offered.
      */
     private fun pickSubjectForSmartReview() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val available = SubjectCatalog.all.filter { repository.subjectHasContent(it.id) }
+            val available = SubjectCatalog.all.filter { repository.subjectHasFailures(it.id) }
 
             if (available.isEmpty()) {
                 AuthUiHelper.showInfo(
                     requireContext(),
                     "Repaso inteligente",
-                    "Todavía no hay preguntas descargadas. Abre la app con conexión para sincronizarlas."
+                    "Aún no tienes fallos que repasar. Haz algún test y vuelve."
                 )
                 return@launch
             }

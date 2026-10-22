@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.ui.TopicAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -96,6 +97,16 @@ class TopicSelectionActivity : AppCompatActivity() {
 
     private fun onTopicSelected(subjectId: String, topicId: String) {
         lifecycleScope.launch {
+            // Smart review: same rule as on Home — only with failed questions.
+            if (topicId == "-4" && !repository.subjectHasFailures(subjectId)) {
+                AuthUiHelper.showInfo(
+                    this@TopicSelectionActivity,
+                    "Repaso inteligente",
+                    "Aún no tienes fallos que repasar en esta asignatura. Haz algún test y vuelve."
+                )
+                return@launch
+            }
+
             val isGeneralTest = topicId.startsWith("-")
             val hasQuestions  = isGeneralTest || repository.hasQuestions(subjectId, topicId)
 
