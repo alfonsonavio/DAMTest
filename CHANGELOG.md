@@ -134,8 +134,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Status bar is now navy and the home header reserves the status-bar inset via
   padding, so content no longer overlaps the system clock.
 - Removed leftover template themes (values-v23) and consolidated to a single
-  `Theme.DAMTest`. Temporary compatibility color aliases kept until every screen
-  is migrated to the new semantic names.
+  `Theme.DAMTest`.
+- Removed the temporary compatibility color aliases (`colorPrimary`, `bg_screen`,
+  `primary_dark`, `purple_700` and the `bg_*` subject colors) used during the
+  redesign. Every layout and class now references the semantic design-system
+  tokens directly.
 - **Material 3 migration.** Migrated the whole UI foundation from Material
   Components (Material 2) to Material 3: `Theme.DAMTest` now extends
   `Theme.Material3.Light.NoActionBar`, the palette is mapped to M3 color roles
