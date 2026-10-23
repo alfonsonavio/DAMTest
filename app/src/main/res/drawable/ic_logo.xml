@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Full logo (rounded tile + glyph) for in-app use, e.g. the login screen.
+     The launcher uses the adaptive icon instead. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M26,0 L82,0 A26,26 0 0 1 108,26 L108,82 A26,26 0 0 1 82,108 L26,108 A26,26 0 0 1 0,82 L0,26 A26,26 0 0 1 26,0 Z"
+        android:fillColor="#1E293B" />
+    <path
+        android:pathData="M38,38 L24,54 L38,70"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M70,38 L84,54 L70,70"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M44,55 L51,62 L64,46"
+        android:strokeColor="#818CF8"
+        android:strokeWidth="8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>
