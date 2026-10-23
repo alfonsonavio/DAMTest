@@ -43,7 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   offline or be cancelled when the quiz screen closes; Firestore queues them.
 - The detailed AI explanation (review) explained the wrong option most of the
   time: it received the position of the answer in the shuffled order but listed
-  the options in their original order.
+  the options in their original order. It now gets the options as shown and
+  refers to them by the same letters (a–d) the review screen uses.
+- The quiz progress bar stopped at the start after rotating the phone.
 - Leaving the app or rotating the phone during a test reshuffled the options,
   so an answered question was highlighted in the wrong place and the vibration
   and the AI request were repeated. The question state now lives in the

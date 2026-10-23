@@ -155,6 +155,9 @@ class QuizActivity : AppCompatActivity() {
     private fun refreshCountAndProgress(index: Int, total: Int) {
         val pos = index + 1
         tvCount.text         = "$pos de $total"
+        // Set the max every time: after a rotation the bar is a new view whose
+        // max would otherwise stay at the default 100.
+        progressBar.max      = total
         progressBar.progress = pos
         btnNext.text = if (pos == total) getString(R.string.finish_test)
         else getString(R.string.next_question)
