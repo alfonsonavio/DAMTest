@@ -5,11 +5,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import com.navio.damtests.QuizRepository
+import com.navio.damtests.ai.FastExplainer
+import com.navio.damtests.shuffle
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.data.session.QuizSession
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.session.SavedAnswer
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,7 +20,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class QuizViewModel @Inject constructor(
     private val repository: QuizRepository,
-    private val sessionStore: QuizSessionStore
+    private val sessionStore: QuizSessionStore,
+    private val fastExplainer: FastExplainer
 ) : ViewModel() {
 
     // --- Public state ---
@@ -33,6 +37,10 @@ class QuizViewModel @Inject constructor(
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    /** True when a test was asked for but there are no questions for it. */
+    private val _noQuestions = MutableStateFlow(false)
+    val noQuestions: StateFlow<Boolean> = _noQuestions
 
     private val _isTestFinished = MutableStateFlow(false)
     val isTestFinished: StateFlow<Boolean> = _isTestFinished
@@ -50,6 +58,36 @@ class QuizViewModel @Inject constructor(
         val correctIndex: Int,
         val isCorrect: Boolean
     )
+
+    /**
+     * The question on screen with its options in the order they are shown.
+     * The shuffle lives here, not in the Activity, so leaving the app or
+     * rotating the phone never reshuffles a question (which used to misplace
+     * the highlighted answer and repeat the vibration and the AI request).
+     */
+    data class CurrentQuestion(
+        val index: Int,
+        val question: Question,
+        val options: List<String>
+    )
+
+    private val _currentQuestion = MutableStateFlow<CurrentQuestion?>(null)
+    val currentQuestion: StateFlow<CurrentQuestion?> = _currentQuestion
+
+    /** Instant AI feedback for a wrong answer to the current question. */
+    sealed class AiFeedback {
+        object Loading : AiFeedback()
+        /** [wrong] is null when the model did not return the two-part format. */
+        data class Ready(val wrong: String?, val correct: String) : AiFeedback()
+        object Error : AiFeedback()
+    }
+
+    private val _aiFeedback = MutableStateFlow<AiFeedback?>(null)
+    val aiFeedback: StateFlow<AiFeedback?> = _aiFeedback
+    private var aiJob: Job? = null
+
+    /** Options already shown per question index, so a question keeps its order. */
+    private val optionsByIndex = mutableMapOf<Int, List<String>>()
 
     private val _resultsList = mutableListOf<QuestionResult>()
 
@@ -80,8 +118,11 @@ class QuizViewModel @Inject constructor(
             _score.value = 0
             _currentQuestionIndex.value = 0
             _currentAnswerState.value = null
+            optionsByIndex.clear()
+            clearAiFeedback()
 
             if (resume && restoreSession(subjectId, topicId)) {
+                showQuestion(_currentQuestionIndex.value)
                 _isLoading.value = false
                 // Every question was already answered: go straight to the results.
                 if (_resultsList.size >= _questions.value.size) finishTest()
@@ -98,6 +139,8 @@ class QuizViewModel @Inject constructor(
                 else  -> repository.getQuestionsByTopic(subjectId, topicId, limit)
             }.distinctBy { it.text }  // prevent duplicates if Room has stale rows
 
+            showQuestion(0)
+            _noQuestions.value = _questions.value.isEmpty()
             _isLoading.value = false
         }
     }
@@ -108,10 +151,10 @@ class QuizViewModel @Inject constructor(
      * @param selectedText   Text of the button the user tapped (as shown on screen).
      * @param shuffledOptions All four options as displayed on screen.
      */
-    fun checkAnswer(selectedText: String, shuffledOptions: List<String>) {
-        val currentQuestion = _questions.value.getOrNull(_currentQuestionIndex.value) ?: return
+    fun checkAnswer(selectedText: String, shuffledOptions: List<String>): AnswerResult? {
+        val currentQuestion = _questions.value.getOrNull(_currentQuestionIndex.value) ?: return null
         // Ignore extra taps after the answer is already recorded
-        if (_currentAnswerState.value != null) return
+        if (_currentAnswerState.value != null) return null
 
         val correctText = when (currentQuestion.correctOptionIndex) {
             0    -> currentQuestion.optionA
@@ -132,7 +175,10 @@ class QuizViewModel @Inject constructor(
         }
         saveSession()
 
-        _currentAnswerState.value = AnswerResult(uiIndex, correctUiIndex, isCorrect)
+        val result = AnswerResult(uiIndex, correctUiIndex, isCorrect)
+        _currentAnswerState.value = result
+        if (!isCorrect) requestAiFeedback(currentQuestion.text, selectedText, correctText)
+        return result
     }
 
     /** Advances to the next question, or finishes the test if this was the last one. */
@@ -142,8 +188,10 @@ class QuizViewModel @Inject constructor(
         if (isLastQuestion) {
             finishTest()
         } else {
+            clearAiFeedback()
             _currentAnswerState.value = null
             _currentQuestionIndex.value += 1
+            showQuestion(_currentQuestionIndex.value)
         }
     }
 
@@ -151,19 +199,55 @@ class QuizViewModel @Inject constructor(
 
     // --- Private helpers ---
 
+    /** Publishes the question at [index] with a stable option order. */
+    private fun showQuestion(index: Int) {
+        val question = _questions.value.getOrNull(index) ?: run {
+            _currentQuestion.value = null
+            return
+        }
+        val options = _resultsList.getOrNull(index)?.shuffledOptions
+            ?: optionsByIndex.getOrPut(index) { question.shuffle().shuffledOptions }
+        _currentQuestion.value = CurrentQuestion(index, question, options)
+    }
+
+    private fun requestAiFeedback(question: String, chosen: String, correct: String) {
+        aiJob?.cancel()
+        _aiFeedback.value = AiFeedback.Loading
+        aiJob = viewModelScope.launch {
+            _aiFeedback.value = try {
+                val response = fastExplainer.explicarRapido(question, chosen, correct)
+                val parts = response.split("|")
+                if (parts.size >= 2) AiFeedback.Ready(parts[0].trim(), parts[1].trim())
+                else AiFeedback.Ready(null, response.trim())
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                AiFeedback.Error
+            }
+        }
+    }
+
+    /** Drops the AI feedback, cancelling a request still in flight. */
+    private fun clearAiFeedback() {
+        aiJob?.cancel()
+        aiJob = null
+        _aiFeedback.value = null
+    }
+
     private fun finishTest() {
         // Mark the test finished BEFORE clearing the answer state. Otherwise the
         // currentAnswerState collector receives null while isTestFinished is still
         // false and briefly repaints a clean question behind the results dialog.
         _isTestFinished.value = true
+        clearAiFeedback()
         _currentAnswerState.value = null
         sessionStore.clear()
 
         // Smart review (-4) is practice only — it does not save a score.
-        if (currentTopicId != "-4") {
-            _questions.value.firstOrNull()?.let {
-                saveFinalProgress(it.subjectId, it.topicId)
-            }
+        // The score belongs to the test that was launched (e.g. "-1" for the
+        // full general test), not to the topic of its first question.
+        if (currentTopicId != "-4" && _questions.value.isNotEmpty()) {
+            saveFinalProgress(currentSubjectId, currentTopicId)
         }
     }
 
