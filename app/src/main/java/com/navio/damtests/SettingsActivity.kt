@@ -14,14 +14,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
-import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.auth.LogoutManager
 import com.navio.damtests.notifications.ReminderScheduler
 import com.navio.damtests.settings.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
@@ -35,7 +37,7 @@ class SettingsActivity : AppCompatActivity() {
 
     @Inject lateinit var settings: SettingsManager
     @Inject lateinit var authManager: AuthManager
-    @Inject lateinit var sessionStore: QuizSessionStore
+    @Inject lateinit var logoutManager: LogoutManager
 
     private lateinit var switchReminders: MaterialSwitch
 
@@ -134,7 +136,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun hasNotificationPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
 
     /**
@@ -171,13 +173,35 @@ class SettingsActivity : AppCompatActivity() {
                 title = getString(R.string.logout_title),
                 message = getString(R.string.logout_message),
                 confirmText = getString(R.string.logout_confirm)
-            ) {
-                authManager.signOut()
-                ReminderScheduler.cancel(this)
-                sessionStore.clear() // the saved test belongs to this user
+            ) { logout() }
+        }
+    }
+
+    /**
+     * Backs everything up to the cloud before signing out. If the backup can't
+     * be confirmed (e.g. no connection), the user stays signed in and nothing
+     * local is deleted.
+     */
+    private fun logout() {
+        val loading = AuthUiHelper.showLoading(
+            this,
+            getString(R.string.logout_saving_title),
+            getString(R.string.logout_saving_message)
+        )
+        lifecycleScope.launch {
+            val signedOut = logoutManager.backupAndSignOut()
+            loading.dismiss()
+            if (signedOut) {
+                ReminderScheduler.cancel(this@SettingsActivity)
                 startActivity(
-                    Intent(this, LoginActivity::class.java)
+                    Intent(this@SettingsActivity, LoginActivity::class.java)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            } else {
+                AuthUiHelper.showInfo(
+                    this@SettingsActivity,
+                    getString(R.string.logout_failed_title),
+                    getString(R.string.logout_failed_message)
                 )
             }
         }
