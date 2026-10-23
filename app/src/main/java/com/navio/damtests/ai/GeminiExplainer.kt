@@ -1,11 +1,14 @@
 package com.navio.damtests.ai
 
+import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
+import com.navio.damtests.RemoteConfigManager
 import com.navio.damtests.data.local.entity.Question
 
 /**
  * Generates AI-powered explanations for incorrectly answered questions
- * using the Gemini 2.5 Flash model.
+ * using Gemini. The model name is read from Remote Config
+ * ([RemoteConfigManager.KEY_GEMINI_MODEL]).
  *
  * The API key is injected at construction time and sourced from
  * [com.navio.damtests.RemoteConfigManager] — never hardcoded or stored in source control.
@@ -15,7 +18,10 @@ import com.navio.damtests.data.local.entity.Question
 class GeminiExplainer(apiKey: String) {
 
     private val generativeModel = GenerativeModel(
-        modelName = "gemini-2.5-flash",
+        modelName = RemoteConfigManager.getStringOr(
+            RemoteConfigManager.KEY_GEMINI_MODEL,
+            RemoteConfigManager.DEFAULT_GEMINI_MODEL
+        ),
         apiKey = apiKey
     )
 
@@ -57,6 +63,7 @@ class GeminiExplainer(apiKey: String) {
             val response = generativeModel.generateContent(prompt)
             response.text ?: "No hay explicación disponible en este momento."
         } catch (e: Exception) {
+            Log.e("GeminiExplainer", "generateContent failed", e)
             "Error al obtener la explicación: ${e.localizedMessage}"
         }
     }
