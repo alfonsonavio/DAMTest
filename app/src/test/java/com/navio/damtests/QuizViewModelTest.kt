@@ -8,10 +8,12 @@ import com.navio.damtests.data.session.SavedAnswer
 import com.navio.damtests.ui.viewmodel.QuizViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.verify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -197,6 +199,38 @@ class QuizViewModelTest {
     }
 
     @Test
+    fun `finishing a test records the attempt before saving progress`() = runTest {
+        val questions = listOf(question(1))
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns questions
+        coEvery { repository.getProgress(any(), any()) } returns null
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
+        viewModel.goToNextQuestion() // finishes
+
+        coVerifyOrder {
+            repository.recordTestAttempt("programacion", "tema_1", any(), any())
+            repository.updateProgress(any())
+        }
+    }
+
+    @Test
+    fun `attempt is recorded even if saving progress never completes`() = runTest {
+        // Simulates the old bug: the progress save hangs (slow or offline cloud)
+        // and the user leaves the screen. The attempt must already be recorded.
+        val questions = listOf(question(1))
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns questions
+        coEvery { repository.getProgress(any(), any()) } returns null
+        coEvery { repository.updateProgress(any()) } coAnswers { awaitCancellation() }
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
+        viewModel.goToNextQuestion() // finishes; progress save hangs
+
+        coVerify(exactly = 1) { repository.recordTestAttempt("programacion", "tema_1", any(), any()) }
+    }
+
+    @Test
     fun `finishing smart review does NOT record an attempt`() = runTest {
         val questions = listOf(question(1))
         coEvery { repository.getSmartReviewQuestions(any(), any()) } returns questions
@@ -229,7 +263,7 @@ class QuizViewModelTest {
         verify {
             sessionStore.save(match {
                 it.topicId == "tema_1" && it.questionIds == listOf("q1", "q2") &&
-                    it.answeredCount == 1 && it.score == 1
+                        it.answeredCount == 1 && it.score == 1
             })
         }
     }
@@ -249,7 +283,7 @@ class QuizViewModelTest {
     fun `resume restores position, score and answers`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 2, score = 2)
         coEvery { repository.getQuestionsInOrder(listOf("q1", "q2", "q3")) } returns
-            listOf(question(1), question(2), question(3))
+                listOf(question(1), question(2), question(3))
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
 
@@ -278,7 +312,7 @@ class QuizViewModelTest {
     fun `resume of a test with every question answered finishes it`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 3, score = 3)
         coEvery { repository.getQuestionsInOrder(any()) } returns
-            listOf(question(1), question(2), question(3))
+                listOf(question(1), question(2), question(3))
         coEvery { repository.getProgress(any(), any()) } returns null
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
