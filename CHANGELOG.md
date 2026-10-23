@@ -11,15 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.2] — 2026-10-23
 
-### Fixed
-- Finishing a test and leaving the results quickly (or finishing it offline)
-  lost the attempt: it was missing from the "Tests" count and the evolution
-  chart. The attempt is now recorded locally before anything touches the
-  network.
-- Topic progress uploads no longer wait for the server, so they can't hang
-  offline or be cancelled when the quiz screen closes; Firestore queues them.
-
 ### Added
+- **New logo** — `< ✓ >` (code brackets around a check) on the navy brand
+  colour: adaptive launcher icon with monochrome variant, login logo and a
+  proper single-colour notification icon.
 - **Statistics cloud sync** — test attempts and per-question stats are now
   stored in Firestore (`users/{uid}/attempts`, `users/{uid}/questionStats`), so
   Statistics survive reinstalls and device changes. New data is uploaded as it
@@ -30,6 +25,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   write is confirmed. Only then is the user's local data wiped. Without a
   confirmed backup (e.g. no connection) nothing is deleted and the user stays
   signed in. Everything is restored on the next login.
+- **New version notice** — when `latest_version_code` in Remote Config is newer
+  than the installed version, a dialog (at most once a day) links to the latest
+  release.
+- **Delete account** (Settings) — deletes the user's Firestore data, then the
+  account, then the local copy. Requires a recent sign-in; if anything fails
+  before the data is deleted, nothing is deleted.
+- **Report a question** (review screen) — wrong answer, typos or other problem,
+  with an optional comment, sent to the Firestore `reports` collection.
+
+### Fixed
+- Finishing a test and leaving the results quickly (or finishing it offline)
+  lost the attempt: it was missing from the "Tests" count and the evolution
+  chart. The attempt is now recorded locally before anything touches the
+  network.
+- Topic progress uploads no longer wait for the server, so they can't hang
+  offline or be cancelled when the quiz screen closes; Firestore queues them.
+- The detailed AI explanation (review) explained the wrong option most of the
+  time: it received the position of the answer in the shuffled order but listed
+  the options in their original order.
+- Leaving the app or rotating the phone during a test reshuffled the options,
+  so an answered question was highlighted in the wrong place and the vibration
+  and the AI request were repeated. The question state now lives in the
+  ViewModel.
+- The results dialog could appear twice after returning to the app.
+- The instant AI explanation of a question could appear on the next one if the
+  user moved on before it arrived.
+- General tests are saved under their own id (e.g. "-1") instead of the topic
+  of their first question, which overwrote that topic's score and never showed
+  a score on the general test rows.
+- "Test general (temas 1-10 / 11-20)" is only offered when the subject has
+  questions in both halves; a test with no questions now says so instead of
+  staying on "Cargando…" forever.
+- First launch: subjects no longer show "Próximamente" while the questions are
+  still downloading; the app waits for the download.
+- PDF list: stored on disk and refreshed at most once a day, with timeouts, so
+  GitHub's 60-requests-per-hour limit (e.g. a whole class on one Wi-Fi) or a slow
+  network no longer hides the PDFs. Interrupted PDF downloads are discarded
+  instead of being kept as a broken file.
+- Internal ids ("caso_1", "repaso_1", "MARCAS") replaced by readable names on
+  Home, Statistics and the topic screen title.
+- The topic list keeps its scroll position when coming back from a test.
+- Statistics refresh when the screen is shown again and when a background sync
+  finishes; the "Tests" figure now matches Home and Subjects.
+- One reusable Groq client (it created a new, never-closed one per wrong answer)
+  with request logging turned off.
+- Texts: "1 test" / "1 pregunta" singulars, a reminder that mentioned a streak
+  the app doesn't have, and friendly messages instead of raw AI error text.
 
 ## [1.1.1] — 2026-10-23
 
