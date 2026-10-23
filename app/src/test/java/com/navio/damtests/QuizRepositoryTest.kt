@@ -131,15 +131,34 @@ class QuizRepositoryTest {
     }
 
     @Test
-    fun `getUniqueTopicsForSubject always adds three general test entries`() = runTest {
-        coEvery { dao.getUniqueTopicIds("programacion") } returns listOf("tema_1", "tema_2")
+    fun `subject with up to 10 topics only gets the full general test`() = runTest {
+        coEvery { dao.getUniqueTopicIds("sistemas") } returns listOf("tema_1", "tema_2", "tema_10")
 
-        val topics = repository.getUniqueTopicsForSubject("programacion")
+        val ids = repository.getUniqueTopicsForSubject("sistemas").map { it.id }
 
-        val ids = topics.map { it.id }
         assertTrue(ids.contains("-1"))
-        assertTrue(ids.contains("-2"))
-        assertTrue(ids.contains("-3"))
+        assertTrue(ids.contains("-4"))
+        assertFalse(ids.contains("-2"))
+        assertFalse(ids.contains("-3"))
+    }
+
+    @Test
+    fun `subject with topics on both halves gets the 1-10 and 11-20 tests`() = runTest {
+        coEvery { dao.getUniqueTopicIds("programacion") } returns listOf("tema_1", "tema_12")
+
+        val ids = repository.getUniqueTopicsForSubject("programacion").map { it.id }
+
+        assertTrue(ids.containsAll(listOf("-1", "-2", "-3", "-4")))
+    }
+
+    @Test
+    fun `subject without tema topics gets no general test`() = runTest {
+        coEvery { dao.getUniqueTopicIds("ipe") } returns listOf("caso_1")
+
+        val ids = repository.getUniqueTopicsForSubject("ipe").map { it.id }
+
+        assertFalse(ids.contains("-1"))
+        assertTrue(ids.contains("-4"))
     }
 
     @Test
