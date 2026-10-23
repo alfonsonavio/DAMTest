@@ -12,6 +12,14 @@ object RemoteConfigManager {
     const val KEY_GEMINI = "gemini_api_key"
     const val KEY_GROQ   = "groq_api_key"
 
+    // AI model names — editable from the Firebase console, no app update needed.
+    // Defaults are used on first launch or if the fetch fails.
+    const val KEY_GROQ_MODEL   = "groq_model"
+    const val KEY_GEMINI_MODEL = "gemini_model"
+
+    const val DEFAULT_GROQ_MODEL   = "openai/gpt-oss-120b"
+    const val DEFAULT_GEMINI_MODEL = "gemini-3.5-flash"
+
     suspend fun fetchAndActivate() {
         try {
             val config = FirebaseRemoteConfig.getInstance()
@@ -31,6 +39,8 @@ object RemoteConfigManager {
             Log.d(TAG, "fetch+activate done. activated=$activated")
             Log.d(TAG, "groq_api_key present: ${config.getString(KEY_GROQ).isNotEmpty()}")
             Log.d(TAG, "gemini_api_key present: ${config.getString(KEY_GEMINI).isNotEmpty()}")
+            Log.d(TAG, "groq_model: ${getStringOr(KEY_GROQ_MODEL, DEFAULT_GROQ_MODEL)}")
+            Log.d(TAG, "gemini_model: ${getStringOr(KEY_GEMINI_MODEL, DEFAULT_GEMINI_MODEL)}")
         } catch (e: Exception) {
             Log.e(TAG, "Remote Config fetch failed: ${e.message}")
         }
@@ -38,4 +48,8 @@ object RemoteConfigManager {
 
     fun getString(key: String): String =
         FirebaseRemoteConfig.getInstance().getString(key)
+
+    /** Returns the Remote Config value for [key], or [default] if it is missing or blank. */
+    fun getStringOr(key: String, default: String): String =
+        FirebaseRemoteConfig.getInstance().getString(key).ifBlank { default }
 }
