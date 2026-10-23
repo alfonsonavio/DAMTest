@@ -36,16 +36,35 @@
             android:textSize="14sp"
             android:lineSpacingExtra="6dp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnVerExplicacion"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="8.dp"
-            android:text="VER EXPLICACIÓN"
-            android:textColor="@color/brand_primary_dark"
-            android:visibility="visible" />
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReportar"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REPORTAR"
+                android:textColor="@color/text_secondary" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnVerExplicacion"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VER EXPLICACIÓN"
+                android:textColor="@color/brand_primary_dark"
+                android:visibility="visible" />
+        </LinearLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -11,7 +11,8 @@ import com.navio.damtests.ui.viewmodel.QuestionResult
 
 class ReviewAdapter(
     private val results: List<QuestionResult>,
-    private val onExplainClick: (QuestionResult) -> Unit
+    private val onExplainClick: (QuestionResult) -> Unit,
+    private val onReportClick: (QuestionResult) -> Unit
 ) : RecyclerView.Adapter<ReviewAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -19,6 +20,7 @@ class ReviewAdapter(
         val tvOptions: TextView  = view.findViewById(R.id.tvReviewOptions)
         val card: MaterialCardView = view.findViewById(R.id.cardReview)
         val btnVerExplicacion: Button = view.findViewById(R.id.btnVerExplicacion)
+        val btnReportar: Button = view.findViewById(R.id.btnReportar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -39,6 +41,7 @@ class ReviewAdapter(
         val isCorrect = res.isCorrect
 
         holder.tvQuestion.text = "${position + 1}. ${q.text}"
+        holder.btnReportar.setOnClickListener { onReportClick(res) }
 
         // The correct answer text (from original option order)
         val correctText = when (q.correctOptionIndex) {

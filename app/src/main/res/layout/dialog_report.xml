@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="¿Qué le pasa a esta pregunta?"
+        android:textAppearance="@style/TextAppearance.DAMTest.Body"
+        android:textColor="@color/text_secondary" />
+
+    <RadioGroup
+        android:id="@+id/rgReportReason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <RadioButton
+            android:id="@+id/rbWrongAnswer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="La respuesta correcta está mal" />
+
+        <RadioButton
+            android:id="@+id/rbTypo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="El enunciado o las opciones tienen errores" />
+
+        <RadioButton
+            android:id="@+id/rbOther"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Otro problema" />
+    </RadioGroup>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Comentario (opcional)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etReportComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLength="500"
+            android:minLines="2" />
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

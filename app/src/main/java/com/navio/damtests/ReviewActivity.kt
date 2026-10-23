@@ -4,18 +4,27 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
+import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import com.navio.damtests.ai.GeminiExplainer
+import com.navio.damtests.data.ReportRepository
 import com.navio.damtests.ui.viewmodel.QuestionResult
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ReviewActivity : AppCompatActivity() {
+
+    @Inject lateinit var reportRepository: ReportRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +48,11 @@ class ReviewActivity : AppCompatActivity() {
 
         val rv = findViewById<RecyclerView>(R.id.rvReview)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = ReviewAdapter(results) { result -> showAiExplanation(result) }
+        rv.adapter = ReviewAdapter(
+            results,
+            onExplainClick = { result -> showAiExplanation(result) },
+            onReportClick  = { result -> showReportDialog(result) }
+        )
 
         findViewById<MaterialButton>(R.id.btnBackToMenu).setOnClickListener {
             startActivity(
@@ -84,10 +97,39 @@ class ReviewActivity : AppCompatActivity() {
                     return@launch
                 }
                 tvMessage.text = GeminiExplainer(apiKey)
-                    .explicarFallo(result.question, result.userSelectedIndex)
+                    .explicarFallo(
+                        result.question,
+                        result.shuffledOptions.getOrElse(result.userSelectedIndex) { "" }
+                    )
             } catch (e: Exception) {
-                tvMessage.text = getString(R.string.ai_error, e.message)
+                tvMessage.text = getString(R.string.ai_error)
             }
         }
+    }
+
+    /** Lets the user flag a question with a wrong answer or typos. */
+    private fun showReportDialog(result: QuestionResult) {
+        val view = layoutInflater.inflate(R.layout.dialog_report, null)
+        val reasons  = view.findViewById<RadioGroup>(R.id.rgReportReason)
+        val comment  = view.findViewById<TextInputEditText>(R.id.etReportComment)
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Reportar pregunta")
+            .setView(view)
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Enviar") { _, _ ->
+                val reason = when (reasons.checkedRadioButtonId) {
+                    R.id.rbWrongAnswer -> "respuesta_incorrecta"
+                    R.id.rbTypo        -> "errata"
+                    else               -> "otro"
+                }
+                reportRepository.reportQuestion(
+                    result.question,
+                    reason,
+                    comment.text?.toString()?.trim().orEmpty()
+                )
+                Toast.makeText(this, "Gracias, revisaremos la pregunta", Toast.LENGTH_SHORT).show()
+            }
+            .show()
     }
 }

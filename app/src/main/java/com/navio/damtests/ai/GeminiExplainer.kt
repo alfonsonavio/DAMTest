@@ -29,10 +29,14 @@ class GeminiExplainer(apiKey: String) {
      * Returns a short, clear explanation of why the correct answer is correct
      * and why the student's selected answer was wrong.
      *
-     * @param pregunta  The question that was answered incorrectly.
-     * @param respuestaUsuario  The 0-based index of the option the student chose.
+     * @param pregunta      The question that was answered incorrectly.
+     * @param selectedText  Text of the option the student chose. The options are
+     *   shuffled on screen, so the position the student tapped does NOT match
+     *   the order (optionA..D) used in the prompt; the text is mapped back here.
      */
-    suspend fun explicarFallo(pregunta: Question, respuestaUsuario: Int): String {
+    suspend fun explicarFallo(pregunta: Question, selectedText: String): String {
+        val options = listOf(pregunta.optionA, pregunta.optionB, pregunta.optionC, pregunta.optionD)
+        val respuestaUsuario = options.indexOf(selectedText)
         val contexto = if (!pregunta.contextText.isNullOrEmpty())
             "Enunciado/Contexto del caso:\n${pregunta.contextText}\n\n"
         else ""
@@ -64,7 +68,7 @@ class GeminiExplainer(apiKey: String) {
             response.text ?: "No hay explicación disponible en este momento."
         } catch (e: Exception) {
             Log.e("GeminiExplainer", "generateContent failed", e)
-            "Error al obtener la explicación: ${e.localizedMessage}"
+            "No se ha podido generar la explicación ahora mismo. Comprueba tu conexión e inténtalo de nuevo."
         }
     }
 }
