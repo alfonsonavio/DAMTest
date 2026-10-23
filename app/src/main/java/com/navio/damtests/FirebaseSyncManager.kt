@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.google.firebase.database.FirebaseDatabase
 import com.navio.damtests.data.local.entity.Question
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.tasks.await
 
 /**
@@ -25,6 +27,7 @@ class FirebaseSyncManager(private val context: Context, private val repository: 
     private val database = FirebaseDatabase.getInstance().reference
 
     suspend fun syncQuestions() {
+        _syncing.value = true
         try {
             val versionsSnapshot = database.child("versiones").get().await()
 
@@ -54,6 +57,8 @@ class FirebaseSyncManager(private val context: Context, private val repository: 
             Log.d(TAG, "Sync completed: $downloaded downloaded, $upToDate up to date.")
         } catch (e: Exception) {
             Log.e(TAG, "Sync failed: ${e.message}")
+        } finally {
+            _syncing.value = false
         }
     }
 
@@ -88,6 +93,15 @@ class FirebaseSyncManager(private val context: Context, private val repository: 
 
     companion object {
         private const val TAG = "FirebaseSyncManager"
+
+        private val _syncing = MutableStateFlow(false)
+
+        /**
+         * True while questions are being downloaded. On a first launch the
+         * local cache is still empty, so screens use this to wait for the
+         * download instead of reporting a subject as "coming soon".
+         */
+        val syncing: StateFlow<Boolean> = _syncing
         private const val PREFS_NAME = "sync_prefs"
     }
 }

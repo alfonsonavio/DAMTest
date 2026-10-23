@@ -2,9 +2,13 @@ package com.navio.damtests.auth
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.navio.damtests.R
 
@@ -28,6 +32,35 @@ object AuthUiHelper {
             onOk?.invoke()
         }
         dialog.show()
+    }
+
+    /**
+     * Shows a non-cancellable styled dialog with a spinner while something runs.
+     * The caller dismisses the returned dialog when done.
+     */
+    fun showLoading(context: Context, title: String, message: String): AlertDialog {
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_info, null)
+        val dialog = AlertDialog.Builder(context).setView(view).setCancelable(false).create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        view.findViewById<TextView>(R.id.tvInfoTitle).text = title
+        val tvMessage = view.findViewById<TextView>(R.id.tvInfoMessage)
+        tvMessage.text = message
+        view.findViewById<MaterialButton>(R.id.btnInfoOk).visibility = View.GONE
+
+        // Spinner between the title and the message
+        val container = tvMessage.parent as ViewGroup
+        val spinner = CircularProgressIndicator(context).apply {
+            isIndeterminate = true
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = (16 * context.resources.displayMetrics.density).toInt() }
+        }
+        container.addView(spinner, container.indexOfChild(tvMessage))
+
+        dialog.show()
+        return dialog
     }
 
     /** Shows a styled confirmation dialog (used for logout). */

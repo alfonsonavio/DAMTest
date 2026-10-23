@@ -20,13 +20,20 @@ class StatisticsCalculator {
         private const val WEAK_TOPIC_MIN_FAILURE = 40 // only show topics failed ≥40%
     }
 
+    /**
+     * @param completedTests number of tests to show in the "Tests" KPI. Callers
+     *   pass the count from topic progress, the same figure Home and Subjects
+     *   show, which also covers tests taken before the attempt history existed.
+     *   Defaults to the number of [attempts].
+     */
     fun calculate(
         attempts: List<TestAttempt>,
-        stats: List<QuestionStats>
+        stats: List<QuestionStats>,
+        completedTests: Int? = null
     ): StatisticsData {
         return StatisticsData(
             globalAccuracy = globalAccuracy(stats),
-            totalTests     = attempts.size,
+            totalTests     = maxOf(completedTests ?: 0, attempts.size),
             evolution      = evolution(attempts),
             bySubject      = bySubject(stats),
             weakestTopics  = weakestTopics(stats)

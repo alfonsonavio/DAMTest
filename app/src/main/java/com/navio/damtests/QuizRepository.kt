@@ -1,6 +1,7 @@
 package com.navio.damtests
 
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.auth.UserProgressRepository
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionsDao
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class QuizRepository @Inject constructor(
     private val questionsDao: QuestionsDao,
     private val authManager: AuthManager,
-    private val userProgressRepository: UserProgressRepository
+    private val userProgressRepository: UserProgressRepository,
+    private val statsSyncRepository: StatsSyncRepository
 ) {
 
     private val statisticsCalculator = StatisticsCalculator()
@@ -114,10 +116,22 @@ class QuizRepository @Inject constructor(
         // General tests and smart review need questions: a subject with only
         // PDFs so far lists just its topics.
         if (dbTopicIds.isNotEmpty()) {
-            topics.add(Topic("-2", "TEST GENERAL (TEMAS 1-10)",  subjectId))
-            topics.add(Topic("-3", "TEST GENERAL (TEMAS 11-20)", subjectId))
-            topics.add(Topic("-1", "TEST GENERAL (TODO)",        subjectId))
-            topics.add(Topic("-4", "REPASO INTELIGENTE",         subjectId))
+            val temaNumbers = dbTopicIds
+                .filter { it.startsWith("tema_") }
+                .mapNotNull { it.removePrefix("tema_").toIntOrNull() }
+            // The 1-10 / 11-20 split only makes sense when there are questions
+            // on both sides; otherwise one of them would be empty (and the test
+            // would never load) or identical to the full general test.
+            val hasFirstHalf  = temaNumbers.any { it in 1..10 }
+            val hasSecondHalf = temaNumbers.any { it in 11..20 }
+            if (hasFirstHalf && hasSecondHalf) {
+                topics.add(Topic("-2", "TEST GENERAL (TEMAS 1-10)",  subjectId))
+                topics.add(Topic("-3", "TEST GENERAL (TEMAS 11-20)", subjectId))
+            }
+            if (temaNumbers.isNotEmpty()) {
+                topics.add(Topic("-1", "TEST GENERAL (TODO)", subjectId))
+            }
+            topics.add(Topic("-4", "REPASO INTELIGENTE", subjectId))
         }
         return topics
     }
@@ -149,6 +163,9 @@ class QuizRepository @Inject constructor(
             )
         }
         questionsDao.saveQuestionStats(updated)
+        authManager.currentUid?.let { uid ->
+            statsSyncRepository.saveQuestionStats(uid, updated)
+        }
     }
 
     /**
@@ -194,14 +211,16 @@ class QuizRepository @Inject constructor(
         score: Int,
         totalQuestions: Int
     ) {
-        questionsDao.insertTestAttempt(
-            TestAttempt(
-                subjectId = subjectId,
-                topicId = topicId,
-                score = score,
-                totalQuestions = totalQuestions
-            )
+        val attempt = TestAttempt(
+            subjectId = subjectId,
+            topicId = topicId,
+            score = score,
+            totalQuestions = totalQuestions
         )
+        questionsDao.insertTestAttempt(attempt)
+        authManager.currentUid?.let { uid ->
+            statsSyncRepository.saveAttempt(uid, attempt)
+        }
     }
 
     /**
@@ -213,6 +232,10 @@ class QuizRepository @Inject constructor(
         val attempts = questionsDao.getAttemptsForSubjects(subjectIds)
         val stats    = questionsDao.getAllQuestionStats()
             .filter { it.subjectId in subjectIds }
-        return statisticsCalculator.calculate(attempts, stats)
+        // Same "tests done" figure as Home and Subjects (topic progress)
+        val completedTests = questionsDao.getAllProgressOnce()
+            .filter { it.subjectId in subjectIds }
+            .sumOf { it.attemptsCount }
+        return statisticsCalculator.calculate(attempts, stats, completedTests)
     }
 }

@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.navio.damtests.auth.AuthUiHelper
+import com.navio.damtests.data.SubjectCatalog
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.ui.QuizLauncher
 import com.navio.damtests.ui.TopicAdapter
@@ -24,6 +25,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Locale
 
 @AndroidEntryPoint
 class TopicSelectionActivity : AppCompatActivity() {
@@ -47,7 +49,7 @@ class TopicSelectionActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
-            title     = subjectId.replace("_", " ").uppercase()
+            title     = SubjectCatalog.nameFor(subjectId).uppercase(Locale("es", "ES"))
             elevation = 0f
         }
 
@@ -58,7 +60,7 @@ class TopicSelectionActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             // Fetch PDF list and DB topics in parallel via both sources
-            pdfTopicIds = PdfReleaseRepository.getTopicIdsWithPdf(subjectId)
+            pdfTopicIds = PdfReleaseRepository.getTopicIdsWithPdf(this@TopicSelectionActivity, subjectId)
 
             val sortedTopics = repository
                 .getUniqueTopicsForSubject(subjectId, pdfTopicIds)
@@ -81,16 +83,20 @@ class TopicSelectionActivity : AppCompatActivity() {
                     }
                 ))
 
+            // One adapter for the screen's lifetime: progress updates refresh its
+            // rows instead of replacing it, so the list keeps its scroll position
+            // when coming back from a test.
+            adapter = TopicAdapter(
+                topics       = sortedTopics,
+                pdfTopicIds  = pdfTopicIds,
+                onTopicClick = { topic -> onTopicSelected(subjectId, topic.id) },
+                onPdfClick   = { topic -> openPdf(subjectId, topic.id) }
+            )
+            rvTopics.adapter = adapter
+
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 repository.getProgressFlow(subjectId).collect { progressList ->
-                    adapter = TopicAdapter(
-                        topics       = sortedTopics,
-                        progressList = progressList,
-                        pdfTopicIds  = pdfTopicIds,
-                        onTopicClick = { topic -> onTopicSelected(subjectId, topic.id) },
-                        onPdfClick   = { topic -> openPdf(subjectId, topic.id) }
-                    )
-                    rvTopics.adapter = adapter
+                    adapter.updateProgress(progressList)
                 }
             }
         }
@@ -150,21 +156,28 @@ class TopicSelectionActivity : AppCompatActivity() {
         Toast.makeText(this, R.string.downloading_pdf, Toast.LENGTH_SHORT).show()
 
         lifecycleScope.launch(Dispatchers.IO) {
+            // Download to a temporary file and rename it only when complete, so
+            // an interrupted download is never kept (and reopened) as the PDF.
+            val partial = File(destination.parentFile, "${destination.name}.part")
             try {
-                val url      = "${Constants.PDF_BASE_URL}$fileName"
-                val response = httpClient.newCall(Request.Builder().url(url).build()).execute()
-                if (response.isSuccessful) {
-                    response.body?.bytes()?.let { bytes ->
-                        FileOutputStream(destination).use { it.write(bytes) }
+                val url = "${Constants.PDF_BASE_URL}$fileName"
+                httpClient.newCall(Request.Builder().url(url).build()).execute().use { response ->
+                    val body = response.body
+                    if (response.isSuccessful && body != null) {
+                        body.byteStream().use { input ->
+                            FileOutputStream(partial).use { output -> input.copyTo(output) }
+                        }
+                        if (!partial.renameTo(destination)) error("Could not save $fileName")
                         withContext(Dispatchers.Main) { showPdf(destination) }
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@TopicSelectionActivity,
-                            R.string.pdf_not_found, Toast.LENGTH_SHORT).show()
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@TopicSelectionActivity,
+                                R.string.pdf_not_found, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             } catch (e: Exception) {
+                partial.delete()
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@TopicSelectionActivity,
                         R.string.network_error, Toast.LENGTH_SHORT).show()

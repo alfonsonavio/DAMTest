@@ -17,6 +17,11 @@ object RemoteConfigManager {
     const val KEY_GROQ_MODEL   = "groq_model"
     const val KEY_GEMINI_MODEL = "gemini_model"
 
+    // Latest published version, set by hand in the Firebase console on each
+    // release, so installed copies can tell the user an update exists.
+    const val KEY_LATEST_VERSION_CODE = "latest_version_code"
+    const val KEY_LATEST_VERSION_NAME = "latest_version_name"
+
     const val DEFAULT_GROQ_MODEL   = "openai/gpt-oss-120b"
     const val DEFAULT_GEMINI_MODEL = "gemini-3.5-flash"
 
@@ -48,6 +53,10 @@ object RemoteConfigManager {
 
     fun getString(key: String): String =
         FirebaseRemoteConfig.getInstance().getString(key)
+
+    /** Numeric Remote Config value; 0 when missing or not a number. */
+    fun getLong(key: String): Long =
+        FirebaseRemoteConfig.getInstance().getLong(key)
 
     /** Returns the Remote Config value for [key], or [default] if it is missing or blank. */
     fun getStringOr(key: String, default: String): String =
