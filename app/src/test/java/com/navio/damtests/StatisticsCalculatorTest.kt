@@ -58,6 +58,24 @@ class StatisticsCalculatorTest {
     }
 
     @Test
+    fun `total tests uses the progress count when given`() {
+        val attempts = listOf(attempt("prog", "tema_1", 8, 10, 100L))
+        // 13 tests in topic progress, only 1 of them in the attempt history
+        val result = calc.calculate(attempts, emptyList(), completedTests = 13)
+        assertEquals(13, result.totalTests)
+    }
+
+    @Test
+    fun `total tests never drops below the attempt history`() {
+        val attempts = listOf(
+            attempt("prog", "tema_1", 8, 10, 100L),
+            attempt("prog", "tema_2", 5, 10, 200L)
+        )
+        val result = calc.calculate(attempts, emptyList(), completedTests = 1)
+        assertEquals(2, result.totalTests)
+    }
+
+    @Test
     fun `evolution is chronological and capped at 10 points`() {
         val attempts = (1..15).map { attempt("prog", "tema_1", it, 20, it.toLong()) }
         val result = calc.calculate(attempts, emptyList())
