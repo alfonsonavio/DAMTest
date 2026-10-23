@@ -51,7 +51,8 @@ class SubjectAdapter(
 
                 val avg = if (totalQuestions > 0) (totalScore.toDouble() / totalQuestions * 10) else 0.0
 
-                stats.text = "${numTests} tests | ${String.format("%.1f", avg)} media"
+                val testsLabel = if (numTests == 1) "1 test" else "$numTests tests"
+                stats.text = "$testsLabel | ${String.format("%.1f", avg)} media"
             }
         }
     }
