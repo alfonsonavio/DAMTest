@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] — 2026-10-23
+
+### Fixed
+- Finishing a test and leaving the results quickly (or finishing it offline)
+  lost the attempt: it was missing from the "Tests" count and the evolution
+  chart. The attempt is now recorded locally before anything touches the
+  network.
+- Topic progress uploads no longer wait for the server, so they can't hang
+  offline or be cancelled when the quiz screen closes; Firestore queues them.
+
+### Added
+- **Statistics cloud sync** — test attempts and per-question stats are now
+  stored in Firestore (`users/{uid}/attempts`, `users/{uid}/questionStats`), so
+  Statistics survive reinstalls and device changes. New data is uploaded as it
+  happens; on startup the app merges the cloud and local history (full merge
+  the first time on a device, then only what changed).
+- **Safe logout** — before signing out, all progress, statistics and the test in
+  progress are compared with the server copy, missing data is uploaded and every
+  write is confirmed. Only then is the user's local data wiped. Without a
+  confirmed backup (e.g. no connection) nothing is deleted and the user stays
+  signed in. Everything is restored on the next login.
+
 ## [1.1.1] — 2026-10-23
 
 ### Fixed
