@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] — 2026-10-23
+
+### Fixed
+- AI explanations stopped working because the hardcoded models were retired
+  (Groq `llama-3.3-70b-versatile`, Gemini `gemini-2.5-flash`).
+
+### Changed
+- AI model names are now read from Firebase Remote Config (`groq_model`,
+  `gemini_model`), so a retired model can be replaced from the console without
+  an app update. Defaults: `openai/gpt-oss-120b` and `gemini-3.5-flash`.
+
 ## [1.1.0] — 2026-10-22
 
 Redesigned app (Material 3, dark mode, bottom navigation) with accounts and
