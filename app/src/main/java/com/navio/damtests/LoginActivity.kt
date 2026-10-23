@@ -16,6 +16,8 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
+import com.navio.damtests.auth.SessionBackupRepository
+import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.auth.UserProgressRepository
 import com.navio.damtests.data.local.entity.QuestionsDao
 import kotlinx.coroutines.launch
@@ -26,6 +28,8 @@ class LoginActivity : AppCompatActivity() {
     @Inject lateinit var authManager: AuthManager
     @Inject lateinit var userProgressRepository: UserProgressRepository
     @Inject lateinit var questionsDao: QuestionsDao
+    @Inject lateinit var statsSyncRepository: StatsSyncRepository
+    @Inject lateinit var sessionBackupRepository: SessionBackupRepository
 
     private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
@@ -167,6 +171,11 @@ class LoginActivity : AppCompatActivity() {
             } catch (_: Exception) {
                 // Sync failure shouldn't block login
             }
+            // Restore statistics and the test in progress before opening the app,
+            // so everything is already there on the first screen. Both handle
+            // their own errors; statistics retry on the next app start.
+            statsSyncRepository.sync(uid)
+            sessionBackupRepository.restore(uid)
         }
         goToMain()
     }
