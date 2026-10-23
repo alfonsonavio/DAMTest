@@ -97,10 +97,7 @@ class ReviewActivity : AppCompatActivity() {
                     return@launch
                 }
                 tvMessage.text = GeminiExplainer(apiKey)
-                    .explicarFallo(
-                        result.question,
-                        result.shuffledOptions.getOrElse(result.userSelectedIndex) { "" }
-                    )
+                    .explicarFallo(result.question, result.shuffledOptions, result.userSelectedIndex)
             } catch (e: Exception) {
                 tvMessage.text = getString(R.string.ai_error)
             }

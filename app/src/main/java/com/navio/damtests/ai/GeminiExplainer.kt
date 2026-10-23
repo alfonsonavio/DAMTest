@@ -29,17 +29,25 @@ class GeminiExplainer(apiKey: String) {
      * Returns a short, clear explanation of why the correct answer is correct
      * and why the student's selected answer was wrong.
      *
+     * The options are given exactly as the student saw them (shuffled, lettered
+     * a–d like on the review screen), so the explanation refers to the same
+     * letters the student sees instead of the internal option order.
+     *
      * @param pregunta      The question that was answered incorrectly.
-     * @param selectedText  Text of the option the student chose. The options are
-     *   shuffled on screen, so the position the student tapped does NOT match
-     *   the order (optionA..D) used in the prompt; the text is mapped back here.
+     * @param shownOptions  The four options in the order shown on screen.
+     * @param selectedIndex Position (0-3) in [shownOptions] the student chose.
      */
-    suspend fun explicarFallo(pregunta: Question, selectedText: String): String {
-        val options = listOf(pregunta.optionA, pregunta.optionB, pregunta.optionC, pregunta.optionD)
-        val respuestaUsuario = options.indexOf(selectedText)
+    suspend fun explicarFallo(pregunta: Question, shownOptions: List<String>, selectedIndex: Int): String {
+        val correctText = listOf(pregunta.optionA, pregunta.optionB, pregunta.optionC, pregunta.optionD)
+            .getOrElse(pregunta.correctOptionIndex) { pregunta.optionA }
+        val correctIndex = shownOptions.indexOf(correctText)
+        val letter = { index: Int -> LETTERS.getOrElse(index) { "?" } }
+
         val contexto = if (!pregunta.contextText.isNullOrEmpty())
             "Enunciado/Contexto del caso:\n${pregunta.contextText}\n\n"
         else ""
+
+        val opciones = shownOptions.mapIndexed { i, text -> "${letter(i)}) $text" }.joinToString("\n            ")
 
         val prompt = """
             Actúa como un profesor experto en DAM (Desarrollo de Aplicaciones Multiplataforma).
@@ -47,18 +55,16 @@ class GeminiExplainer(apiKey: String) {
 
             ${contexto}Pregunta: ${pregunta.text}
 
-            Opciones:
-            0: ${pregunta.optionA}
-            1: ${pregunta.optionB}
-            2: ${pregunta.optionC}
-            3: ${pregunta.optionD}
+            Opciones (en el orden en que las ve el alumno):
+            $opciones
 
-            El alumno marcó la opción $respuestaUsuario, pero la respuesta correcta es la opción ${pregunta.correctOptionIndex}.
+            El alumno marcó la opción ${letter(selectedIndex)}), pero la respuesta correcta es la opción ${letter(correctIndex)}).
 
             Explica de forma breve y clara:
-            1. Por qué la respuesta correcta (opción ${pregunta.correctOptionIndex}) es la correcta.
-            2. Por qué la opción elegida ($respuestaUsuario) es incorrecta.
+            1. Por qué la respuesta correcta, la ${letter(correctIndex)}), es la correcta.
+            2. Por qué la opción elegida, la ${letter(selectedIndex)}), es incorrecta.
 
+            Cuando nombres una opción, usa siempre su letra (a, b, c o d) tal y como aparece arriba; nunca uses números.
             Sé pedagógico y conciso. No uses listas con guiones ni formato Markdown, solo texto plano.
             Termina con una frase de ánimo breve.
         """.trimIndent()
@@ -70,5 +76,9 @@ class GeminiExplainer(apiKey: String) {
             Log.e("GeminiExplainer", "generateContent failed", e)
             "No se ha podido generar la explicación ahora mismo. Comprueba tu conexión e inténtalo de nuevo."
         }
+    }
+
+    private companion object {
+        val LETTERS = listOf("a", "b", "c", "d")
     }
 }
