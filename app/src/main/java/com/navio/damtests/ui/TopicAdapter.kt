@@ -11,11 +11,19 @@ import com.navio.damtests.data.local.entity.TopicProgress
 
 class TopicAdapter(
     private val topics: List<Topic>,
-    private val progressList: List<TopicProgress>,
     private val pdfTopicIds: Set<String>,
     private val onTopicClick: (Topic) -> Unit,
     private val onPdfClick: (Topic) -> Unit
 ) : RecyclerView.Adapter<TopicAdapter.TopicViewHolder>() {
+
+    private var progressList: List<TopicProgress> = emptyList()
+
+    /** Refreshes the scores shown, keeping the list (and its scroll) in place. */
+    @android.annotation.SuppressLint("NotifyDataSetChanged")
+    fun updateProgress(progress: List<TopicProgress>) {
+        progressList = progress
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopicViewHolder {
         val view = LayoutInflater.from(parent.context)
