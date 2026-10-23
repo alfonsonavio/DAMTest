@@ -9,7 +9,8 @@ import com.aallam.openai.client.OpenAIHost
 import com.navio.damtests.RemoteConfigManager
 
 /**
- * Provides immediate in-quiz AI feedback using Groq (llama-3.3-70b-versatile).
+ * Provides immediate in-quiz AI feedback using Groq.
+ * The model name is read from Remote Config ([RemoteConfigManager.KEY_GROQ_MODEL]).
  *
  * Returns two explanations separated by '|':
  *   Left  → why the chosen option is wrong (2-3 sentences)
@@ -48,7 +49,12 @@ class FastExplainer {
 
         val response = client.chatCompletion(
             ChatCompletionRequest(
-                model    = ModelId("llama-3.3-70b-versatile"),
+                model    = ModelId(
+                    RemoteConfigManager.getStringOr(
+                        RemoteConfigManager.KEY_GROQ_MODEL,
+                        RemoteConfigManager.DEFAULT_GROQ_MODEL
+                    )
+                ),
                 messages = listOf(
                     ChatMessage(role = ChatRole.System, content = systemPrompt),
                     ChatMessage(role = ChatRole.User,   content = userContent)
