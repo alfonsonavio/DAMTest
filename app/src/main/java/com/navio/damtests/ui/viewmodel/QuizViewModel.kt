@@ -210,7 +210,19 @@ class QuizViewModel @Inject constructor(
 
     private fun saveFinalProgress(subjectId: String, topicId: String) {
         viewModelScope.launch {
-            val previous        = repository.getProgress(subjectId, topicId)
+            // Local writes first: the user may leave the screen right after the
+            // results dialog, which cancels viewModelScope. Recording the attempt
+            // before anything that touches the network guarantees it reaches
+            // Statistics even if the coroutine is cancelled afterwards.
+            // Reached only for non-smart-review tests (guarded in finishTest).
+            repository.recordTestAttempt(
+                subjectId = subjectId,
+                topicId = topicId,
+                score = _score.value,
+                totalQuestions = _questions.value.size
+            )
+
+            val previous         = repository.getProgress(subjectId, topicId)
             val newAttemptsCount = (previous?.attemptsCount ?: 0) + 1
 
             repository.updateProgress(
@@ -222,15 +234,6 @@ class QuizViewModel @Inject constructor(
                     attemptsCount         = newAttemptsCount,
                     lastAttemptTimestamp  = System.currentTimeMillis()
                 )
-            )
-
-            // Also append to the immutable attempt history (powers statistics).
-            // Reached only for non-smart-review tests (guarded in goToNextQuestion).
-            repository.recordTestAttempt(
-                subjectId = subjectId,
-                topicId = topicId,
-                score = _score.value,
-                totalQuestions = _questions.value.size
             )
         }
     }
