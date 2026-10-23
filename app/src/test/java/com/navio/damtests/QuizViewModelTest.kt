@@ -1,5 +1,6 @@
 package com.navio.damtests
 
+import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.data.session.QuizSession
@@ -41,6 +42,7 @@ class QuizViewModelTest {
 
     private lateinit var repository: QuizRepository
     private lateinit var sessionStore: QuizSessionStore
+    private lateinit var fastExplainer: FastExplainer
     private lateinit var viewModel: QuizViewModel
 
     private fun question(
@@ -60,7 +62,8 @@ class QuizViewModelTest {
     fun setUp() {
         repository = mockk(relaxed = true)
         sessionStore = mockk(relaxed = true)
-        viewModel = QuizViewModel(repository, sessionStore)
+        fastExplainer = mockk(relaxed = true)
+        viewModel = QuizViewModel(repository, sessionStore, fastExplainer)
     }
 
     @Test
@@ -263,7 +266,7 @@ class QuizViewModelTest {
         verify {
             sessionStore.save(match {
                 it.topicId == "tema_1" && it.questionIds == listOf("q1", "q2") &&
-                        it.answeredCount == 1 && it.score == 1
+                    it.answeredCount == 1 && it.score == 1
             })
         }
     }
@@ -283,7 +286,7 @@ class QuizViewModelTest {
     fun `resume restores position, score and answers`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 2, score = 2)
         coEvery { repository.getQuestionsInOrder(listOf("q1", "q2", "q3")) } returns
-                listOf(question(1), question(2), question(3))
+            listOf(question(1), question(2), question(3))
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
 
@@ -312,12 +315,107 @@ class QuizViewModelTest {
     fun `resume of a test with every question answered finishes it`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 3, score = 3)
         coEvery { repository.getQuestionsInOrder(any()) } returns
-                listOf(question(1), question(2), question(3))
+            listOf(question(1), question(2), question(3))
         coEvery { repository.getProgress(any(), any()) } returns null
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
 
         assertTrue(viewModel.isTestFinished.value)
         coVerify { repository.updateProgress(any()) }
+    }
+
+    // --- Stable question state (survives leaving the app / rotating) ---
+
+    @Test
+    fun `current question keeps the same option order until the next question`() = runTest {
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        val first = viewModel.currentQuestion.value!!
+        assertEquals(0, first.index)
+        assertEquals(setOf("A1", "B1", "C1", "D1"), first.options.toSet())
+
+        // Answering does not reshuffle the question on screen
+        viewModel.checkAnswer(first.options[0], first.options)
+        assertEquals(first.options, viewModel.currentQuestion.value!!.options)
+
+        viewModel.goToNextQuestion()
+        val second = viewModel.currentQuestion.value!!
+        assertEquals(1, second.index)
+        assertEquals(setOf("A2", "B2", "C2", "D2"), second.options.toSet())
+    }
+
+    @Test
+    fun `resumed question shows the options exactly as they were answered`() = runTest {
+        every { sessionStore.load() } returns savedSession(answered = 2, score = 2)
+        coEvery { repository.getQuestionsInOrder(any()) } returns listOf(question(1), question(2), question(3))
+
+        viewModel.loadQuestions("programacion", "tema_1", resume = true)
+
+        assertEquals(2, viewModel.currentQuestion.value!!.index)
+        assertEquals(listOf("A1", "B1", "C1", "D1"), viewModel.getResults()[0].shuffledOptions)
+    }
+
+    @Test
+    fun `wrong answer asks the AI once and correct answer never does`() = runTest {
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
+        coEvery { fastExplainer.explicarRapido(any(), any(), any()) } returns "Mal | Bien"
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        viewModel.checkAnswer("B1", listOf("A1", "B1", "C1", "D1")) // wrong
+        viewModel.checkAnswer("C1", listOf("A1", "B1", "C1", "D1")) // ignored
+
+        coVerify(exactly = 1) { fastExplainer.explicarRapido("Pregunta 1", "B1", "A1") }
+        assertEquals(QuizViewModel.AiFeedback.Ready("Mal", "Bien"), viewModel.aiFeedback.value)
+
+        viewModel.goToNextQuestion()
+        viewModel.checkAnswer("A2", listOf("A2", "B2", "C2", "D2")) // correct
+        coVerify(exactly = 1) { fastExplainer.explicarRapido(any(), any(), any()) }
+    }
+
+    @Test
+    fun `moving to the next question clears the AI feedback`() = runTest {
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
+        coEvery { fastExplainer.explicarRapido(any(), any(), any()) } returns "Mal | Bien"
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        viewModel.checkAnswer("B1", listOf("A1", "B1", "C1", "D1"))
+        viewModel.goToNextQuestion()
+
+        assertEquals(null, viewModel.aiFeedback.value)
+    }
+
+    @Test
+    fun `AI failure is reported as an error state`() = runTest {
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
+        coEvery { fastExplainer.explicarRapido(any(), any(), any()) } throws RuntimeException("offline")
+        viewModel.loadQuestions("programacion", "tema_1")
+
+        viewModel.checkAnswer("B1", listOf("A1", "B1", "C1", "D1"))
+
+        assertEquals(QuizViewModel.AiFeedback.Error, viewModel.aiFeedback.value)
+    }
+
+    @Test
+    fun `a test with no questions is reported instead of loading forever`() = runTest {
+        coEvery { repository.getQuestionsForRange(any(), any(), any(), any()) } returns emptyList()
+
+        viewModel.loadQuestions("sistemas", "-3")
+
+        assertTrue(viewModel.noQuestions.value)
+        assertFalse(viewModel.isLoading.value)
+    }
+
+    @Test
+    fun `a general test is saved under its own id, not its first question's topic`() = runTest {
+        coEvery { repository.getRandomQuestionsForGeneralTest(any(), any()) } returns listOf(question(1))
+        coEvery { repository.getProgress(any(), any()) } returns null
+        viewModel.loadQuestions("programacion", "-1")
+
+        viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
+        viewModel.goToNextQuestion() // finishes
+
+        coVerify { repository.recordTestAttempt("programacion", "-1", any(), any()) }
+        coVerify { repository.updateProgress(match { it.topicId == "-1" }) }
     }
 }

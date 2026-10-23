@@ -18,8 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.button.MaterialButton
-import com.navio.damtests.ai.FastExplainer
-import com.navio.damtests.data.local.entity.Question
+import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.settings.SettingsManager
 import com.navio.damtests.ui.viewmodel.QuizViewModel
 import com.navio.damtests.util.HapticFeedbackManager
@@ -46,9 +45,11 @@ class QuizActivity : AppCompatActivity() {
     private lateinit var btnContextInfo: Button
     private lateinit var btnNext: Button
 
-    private var currentShuffledQuestion: ShuffledQuestion? = null
-    private val groq = FastExplainer()
     private lateinit var haptic: HapticFeedbackManager
+    private var resultsDialog: AlertDialog? = null
+    private var noQuestionsShown = false
+    /** Last question index drawn, so the slide-in animation runs once per question. */
+    private var renderedIndex = -1
     private lateinit var quizContent: View
 
     // Subject and topic received from TopicSelectionActivity
@@ -97,23 +98,10 @@ class QuizActivity : AppCompatActivity() {
     private fun setupObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.questions.collect { questions ->
-                    if (questions.isNotEmpty()) {
-                        progressBar.max = questions.size
-                        refreshCountAndProgress(viewModel.currentQuestionIndex.value, questions.size)
-                        updateUI(questions[viewModel.currentQuestionIndex.value])
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.currentQuestionIndex.collect { index ->
-                    val questions = viewModel.questions.value
-                    if (questions.isNotEmpty()) {
-                        refreshCountAndProgress(index, questions.size)
-                        updateUI(questions[index])
+                viewModel.currentQuestion.collect { current ->
+                    if (current != null) {
+                        refreshCountAndProgress(current.index, viewModel.questions.value.size)
+                        updateUI(current)
                     }
                 }
             }
@@ -124,6 +112,14 @@ class QuizActivity : AppCompatActivity() {
                 viewModel.isLoading.collect { loading ->
                     setAnswerButtonsEnabled(!loading)
                     if (loading) tvQuestion.text = getString(R.string.loading)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.noQuestions.collect { empty ->
+                    if (empty) showNoQuestions()
                 }
             }
         }
@@ -146,6 +142,12 @@ class QuizActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.aiFeedback.collect { feedback -> showAiFeedback(feedback) }
+            }
+        }
     }
 
     // --- UI helpers ---
@@ -158,50 +160,39 @@ class QuizActivity : AppCompatActivity() {
         else getString(R.string.next_question)
     }
 
-    private fun updateUI(question: Question) {
-        val shuffled = question.shuffle()
-        currentShuffledQuestion = shuffled
+    private fun updateUI(current: QuizViewModel.CurrentQuestion) {
+        // Slide the question content in from the right, once per question
+        if (current.index != renderedIndex) {
+            quizContent.startAnimation(
+                AnimationUtils.loadAnimation(this, R.anim.slide_in_right)
+            )
+            renderedIndex = current.index
+        }
 
-        // Slide the question content in from the right
-        quizContent.startAnimation(
-            AnimationUtils.loadAnimation(this, R.anim.slide_in_right)
-        )
+        val question = current.question
+        tvQuestion.text = question.text
+        btnA.text       = current.options[0]
+        btnB.text       = current.options[1]
+        btnC.text       = current.options[2]
+        btnD.text       = current.options[3]
 
-        tvQuestion.text = shuffled.originalQuestion.text
-        btnA.text       = shuffled.shuffledOptions[0]
-        btnB.text       = shuffled.shuffledOptions[1]
-        btnC.text       = shuffled.shuffledOptions[2]
-        btnD.text       = shuffled.shuffledOptions[3]
-
-        if (!question.contextText.isNullOrEmpty()) {
+        val contextText = question.contextText
+        if (!contextText.isNullOrEmpty()) {
             btnContextInfo.visibility = View.VISIBLE
-            btnContextInfo.setOnClickListener { showContextDialog(question.contextText) }
+            btnContextInfo.setOnClickListener { showContextDialog(contextText) }
         } else {
             btnContextInfo.visibility = View.GONE
         }
     }
 
+    /** Paints the answer outlines. Safe to call again after the app comes back. */
     private fun highlightAnswer(result: QuizViewModel.AnswerResult) {
-        val buttons   = listOf(btnA, btnB, btnC, btnD)
-        val feedbacks = listOf(tvFeedbackA, tvFeedbackB, tvFeedbackC, tvFeedbackD)
-
-        // Haptic feedback: soft tick if correct, stronger double buzz if wrong
-        if (result.isCorrect) haptic.correct() else haptic.wrong()
-
+        val buttons = listOf(btnA, btnB, btnC, btnD)
         setAnswerButtonsEnabled(false)
-
-        val shuffled    = currentShuffledQuestion ?: return
-        val question    = shuffled.originalQuestion
-        val correctText = when (question.correctOptionIndex) {
-            0    -> question.optionA
-            1    -> question.optionB
-            2    -> question.optionC
-            else -> question.optionD
-        }
 
         buttons.forEachIndexed { index, button ->
             val mBtn          = button as MaterialButton
-            val isCorrectBtn  = mBtn.text == correctText
+            val isCorrectBtn  = index == result.correctIndex
             val isSelectedBtn = index == result.selectedIndex
 
             mBtn.strokeWidth = when {
@@ -216,52 +207,42 @@ class QuizActivity : AppCompatActivity() {
             }
         }
 
-        if (!result.isCorrect) {
-            feedbacks[result.selectedIndex].apply {
-                visibility = View.VISIBLE
-                text       = getString(R.string.ai_analyzing)
-                setTextColor(getColor(R.color.text_muted))
-            }
-            feedbacks[result.correctIndex].apply {
-                visibility = View.VISIBLE
-                text       = getString(R.string.ai_preparing_correction)
-                setTextColor(getColor(R.color.text_muted))
-            }
+        btnNext.visibility = View.VISIBLE
+    }
 
-            lifecycleScope.launch {
-                try {
-                    val response = groq.explicarRapido(
-                        pregunta = question.text,
-                        elegida  = buttons[result.selectedIndex].text.toString(),
-                        correcta = buttons[result.correctIndex].text.toString()
-                    )
-                    val parts = response.split("|")
-                    if (parts.size >= 2) {
-                        feedbacks[result.selectedIndex].apply {
-                            text = "❌ ${parts[0].trim()}"
-                            setTextColor(getColor(R.color.state_error))
-                        }
-                        feedbacks[result.correctIndex].apply {
-                            text = "✅ ${parts[1].trim()}"
-                            setTextColor(getColor(R.color.state_success))
-                        }
-                    } else {
-                        feedbacks[result.correctIndex].apply {
-                            text = "✅ $response"
-                            setTextColor(getColor(R.color.state_success))
-                        }
-                        feedbacks[result.selectedIndex].visibility = View.GONE
-                    }
-                } catch (e: Exception) {
-                    feedbacks[result.selectedIndex].apply {
-                        text = getString(R.string.ai_connection_error)
-                        setTextColor(getColor(R.color.state_error))
-                    }
+    /** Shows the instant AI explanation under the chosen and the correct option. */
+    private fun showAiFeedback(feedback: QuizViewModel.AiFeedback?) {
+        val result = viewModel.currentAnswerState.value
+        if (feedback == null || result == null || result.isCorrect) return
+
+        val feedbacks = listOf(tvFeedbackA, tvFeedbackB, tvFeedbackC, tvFeedbackD)
+        val wrongView   = feedbacks.getOrNull(result.selectedIndex) ?: return
+        val correctView = feedbacks.getOrNull(result.correctIndex) ?: return
+
+        when (feedback) {
+            QuizViewModel.AiFeedback.Loading -> {
+                wrongView.show(getString(R.string.ai_analyzing), R.color.text_muted)
+                correctView.show(getString(R.string.ai_preparing_correction), R.color.text_muted)
+            }
+            is QuizViewModel.AiFeedback.Ready -> {
+                if (feedback.wrong != null) {
+                    wrongView.show("❌ ${feedback.wrong}", R.color.state_error)
+                } else {
+                    wrongView.visibility = View.GONE
                 }
+                correctView.show("✅ ${feedback.correct}", R.color.state_success)
+            }
+            QuizViewModel.AiFeedback.Error -> {
+                wrongView.show(getString(R.string.ai_connection_error), R.color.state_error)
+                correctView.visibility = View.GONE
             }
         }
+    }
 
-        btnNext.visibility = View.VISIBLE
+    private fun TextView.show(message: String, colorRes: Int) {
+        visibility = View.VISIBLE
+        text = message
+        setTextColor(getColor(colorRes))
     }
 
     private fun resetAnswerUI() {
@@ -285,9 +266,11 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun processAnswer(uiIndex: Int) {
-        val shuffled     = currentShuffledQuestion ?: return
-        val selectedText = listOf(btnA, btnB, btnC, btnD)[uiIndex].text.toString()
-        viewModel.checkAnswer(selectedText, shuffled.shuffledOptions)
+        val current = viewModel.currentQuestion.value ?: return
+        val result  = viewModel.checkAnswer(current.options[uiIndex], current.options) ?: return
+        // Vibrate here, on the tap itself, so it never repeats when the
+        // answer is repainted after the app comes back to the foreground.
+        if (result.isCorrect) haptic.correct() else haptic.wrong()
     }
 
     private fun setAnswerButtonsEnabled(enabled: Boolean) {
@@ -297,6 +280,9 @@ class QuizActivity : AppCompatActivity() {
     // --- Dialogs ---
 
     private fun showResultsDialog(score: Int) {
+        // The finished state is re-delivered whenever the screen comes back:
+        // show the dialog only once.
+        if (resultsDialog?.isShowing == true) return
         val dialogView = layoutInflater.inflate(R.layout.dialog_results, null)
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
@@ -305,7 +291,7 @@ class QuizActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         dialogView.findViewById<TextView>(R.id.tvDialogMessage).text =
-            getString(R.string.quiz_result_message, score)
+            resources.getQuantityString(R.plurals.quiz_result_message, score, score)
 
         dialogView.findViewById<Button>(R.id.btnDialogReview).setOnClickListener {
             dialog.dismiss()
@@ -315,7 +301,14 @@ class QuizActivity : AppCompatActivity() {
             dialog.dismiss()
             finish()
         }
+        resultsDialog = dialog
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        resultsDialog?.dismiss()
+        resultsDialog = null
+        super.onDestroy()
     }
 
     private fun showReviewScreen() {
@@ -329,6 +322,17 @@ class QuizActivity : AppCompatActivity() {
                 .putParcelableArrayListExtra("RESULTS", ArrayList(results))
         )
         finish()
+    }
+
+    /** Safety net: never leave the user on an endless "Cargando…" screen. */
+    private fun showNoQuestions() {
+        if (noQuestionsShown) return
+        noQuestionsShown = true
+        AuthUiHelper.showInfo(
+            this,
+            getString(R.string.no_questions_title),
+            getString(R.string.no_questions_yet)
+        ) { finish() }
     }
 
     private fun showContextDialog(text: String) {
