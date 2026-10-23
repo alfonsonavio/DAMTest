@@ -28,6 +28,9 @@ class AuthManager @Inject constructor(
     val displayName: String get() = auth.currentUser?.displayName ?: "Usuario"
     val email: String get() = auth.currentUser?.email ?: ""
 
+    /** When the current user last signed in (epoch ms), or null if unknown. */
+    val lastSignInAt: Long? get() = auth.currentUser?.metadata?.lastSignInTimestamp
+
     // --- Email / Password ---
 
     suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser> {
@@ -81,4 +84,10 @@ class AuthManager @Inject constructor(
     // --- Session ---
 
     fun signOut() = auth.signOut()
+
+    /** Permanently deletes the signed-in Firebase account. Throws on failure. */
+    suspend fun deleteCurrentUser() {
+        val user = auth.currentUser ?: error("No signed-in user")
+        user.delete().await()
+    }
 }

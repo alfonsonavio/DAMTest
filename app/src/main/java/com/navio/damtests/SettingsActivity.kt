@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.navio.damtests.auth.AccountDeletionManager
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.auth.LogoutManager
@@ -38,6 +39,7 @@ class SettingsActivity : AppCompatActivity() {
     @Inject lateinit var settings: SettingsManager
     @Inject lateinit var authManager: AuthManager
     @Inject lateinit var logoutManager: LogoutManager
+    @Inject lateinit var accountDeletionManager: AccountDeletionManager
 
     private lateinit var switchReminders: MaterialSwitch
 
@@ -63,6 +65,7 @@ class SettingsActivity : AppCompatActivity() {
         setupTheme()
         setupHaptics()
         setupLogout()
+        setupDeleteAccount()
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
     }
@@ -136,7 +139,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun hasNotificationPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
 
     /**
@@ -205,6 +208,68 @@ class SettingsActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    private fun setupDeleteAccount() {
+        findViewById<LinearLayout>(R.id.rowDeleteAccount).setOnClickListener {
+            AuthUiHelper.showConfirm(
+                context = this,
+                title = "Eliminar cuenta",
+                message = "Se borrarán tu cuenta y todos tus datos: progreso, estadísticas " +
+                    "y el test que tengas a medias. Esta acción no se puede deshacer.",
+                confirmText = "Eliminar"
+            ) { deleteAccount() }
+        }
+    }
+
+    private fun deleteAccount() {
+        val loading = AuthUiHelper.showLoading(
+            this,
+            "Eliminando tu cuenta",
+            "Estamos borrando tu cuenta y todos tus datos."
+        )
+        lifecycleScope.launch {
+            val result = accountDeletionManager.deleteAccount()
+            loading.dismiss()
+            when (result) {
+                AccountDeletionManager.Result.DELETED -> {
+                    ReminderScheduler.cancel(this@SettingsActivity)
+                    AuthUiHelper.showInfo(
+                        this@SettingsActivity,
+                        "Cuenta eliminada",
+                        "Tu cuenta y todos tus datos se han borrado."
+                    ) { goToLogin() }
+                }
+                AccountDeletionManager.Result.DATA_DELETED_ACCOUNT_PENDING -> {
+                    ReminderScheduler.cancel(this@SettingsActivity)
+                    AuthUiHelper.showInfo(
+                        this@SettingsActivity,
+                        "Casi listo",
+                        "Tus datos se han borrado, pero no se ha podido eliminar la cuenta. " +
+                            "Inicia sesión de nuevo y repite la eliminación para terminar."
+                    ) { goToLogin() }
+                }
+                AccountDeletionManager.Result.NEEDS_RECENT_LOGIN -> AuthUiHelper.showInfo(
+                    this@SettingsActivity,
+                    "Vuelve a iniciar sesión",
+                    "Por seguridad, para eliminar la cuenta tienes que haber iniciado sesión " +
+                        "hace poco. Cierra sesión, vuelve a entrar y repite la eliminación. " +
+                        "No se ha borrado nada."
+                )
+                AccountDeletionManager.Result.FAILED -> AuthUiHelper.showInfo(
+                    this@SettingsActivity,
+                    "No se ha podido eliminar",
+                    "No se ha borrado nada. Comprueba tu conexión e inténtalo de nuevo."
+                )
+            }
+        }
+    }
+
+    private fun goToLogin() {
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
     }
 
     private fun updateHourRowState(row: View, tvHour: TextView, enabled: Boolean) {
