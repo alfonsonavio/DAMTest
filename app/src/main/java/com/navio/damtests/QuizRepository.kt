@@ -1,6 +1,7 @@
 package com.navio.damtests
 
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.auth.UserProgressRepository
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionsDao
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class QuizRepository @Inject constructor(
     private val questionsDao: QuestionsDao,
     private val authManager: AuthManager,
-    private val userProgressRepository: UserProgressRepository
+    private val userProgressRepository: UserProgressRepository,
+    private val statsSyncRepository: StatsSyncRepository
 ) {
 
     private val statisticsCalculator = StatisticsCalculator()
@@ -149,6 +151,9 @@ class QuizRepository @Inject constructor(
             )
         }
         questionsDao.saveQuestionStats(updated)
+        authManager.currentUid?.let { uid ->
+            statsSyncRepository.saveQuestionStats(uid, updated)
+        }
     }
 
     /**
@@ -194,14 +199,16 @@ class QuizRepository @Inject constructor(
         score: Int,
         totalQuestions: Int
     ) {
-        questionsDao.insertTestAttempt(
-            TestAttempt(
-                subjectId = subjectId,
-                topicId = topicId,
-                score = score,
-                totalQuestions = totalQuestions
-            )
+        val attempt = TestAttempt(
+            subjectId = subjectId,
+            topicId = topicId,
+            score = score,
+            totalQuestions = totalQuestions
         )
+        questionsDao.insertTestAttempt(attempt)
+        authManager.currentUid?.let { uid ->
+            statsSyncRepository.saveAttempt(uid, attempt)
+        }
     }
 
     /**

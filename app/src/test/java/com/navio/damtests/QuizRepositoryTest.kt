@@ -1,6 +1,7 @@
 package com.navio.damtests
 
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.auth.UserProgressRepository
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionsDao
@@ -28,6 +29,7 @@ class QuizRepositoryTest {
     private lateinit var dao: QuestionsDao
     private lateinit var authManager: AuthManager
     private lateinit var userProgressRepository: UserProgressRepository
+    private lateinit var statsSyncRepository: StatsSyncRepository
     private lateinit var repository: QuizRepository
 
     private fun question(id: Int, topic: String = "tema_1") = Question(
@@ -44,7 +46,8 @@ class QuizRepositoryTest {
         dao = mockk(relaxed = true)
         authManager = mockk(relaxed = true)
         userProgressRepository = mockk(relaxed = true)
-        repository = QuizRepository(dao, authManager, userProgressRepository)
+        statsSyncRepository = mockk(relaxed = true)
+        repository = QuizRepository(dao, authManager, userProgressRepository, statsSyncRepository)
     }
 
     @Test
@@ -158,5 +161,42 @@ class QuizRepositoryTest {
         val topics = repository.getUniqueTopicsForSubject("acceso_datos", setOf("tema_1"))
 
         assertEquals(listOf("tema_1"), topics.map { it.id })
+    }
+
+    // --- Statistics cloud sync ---
+
+    @Test
+    fun `recordTestAttempt saves locally and uploads when user is logged in`() = runTest {
+        every { authManager.currentUid } returns "user123"
+
+        repository.recordTestAttempt("programacion", "tema_1", score = 7, totalQuestions = 10)
+
+        coVerify(exactly = 1) { dao.insertTestAttempt(match { it.subjectId == "programacion" && it.score == 7 }) }
+        coVerify(exactly = 1) { statsSyncRepository.saveAttempt("user123", match { it.topicId == "tema_1" }) }
+    }
+
+    @Test
+    fun `recordTestAttempt does not upload when no user is logged in`() = runTest {
+        every { authManager.currentUid } returns null
+
+        repository.recordTestAttempt("programacion", "tema_1", score = 7, totalQuestions = 10)
+
+        coVerify(exactly = 1) { dao.insertTestAttempt(any()) }
+        coVerify(exactly = 0) { statsSyncRepository.saveAttempt(any(), any()) }
+    }
+
+    @Test
+    fun `recordAnswer uploads the updated question stats when user is logged in`() = runTest {
+        every { authManager.currentUid } returns "user123"
+        coEvery { dao.getQuestionStats("programacion_tema_1_p1") } returns null
+        val q = question(1).copy(stableId = "programacion_tema_1_p1")
+
+        repository.recordAnswer(q, wasCorrect = false)
+
+        coVerify(exactly = 1) {
+            statsSyncRepository.saveQuestionStats("user123", match {
+                it.stableId == "programacion_tema_1_p1" && it.timesSeen == 1 && it.timesWrong == 1
+            })
+        }
     }
 }
