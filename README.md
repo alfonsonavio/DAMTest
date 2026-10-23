@@ -5,6 +5,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/alfonsonavio/DAMTest/actions/workflows/android-ci.yml"><img src="https://github.com/alfonsonavio/DAMTest/actions/workflows/android-ci.yml/badge.svg" alt="Android CI"/></a>
   <a href="https://developer.android.com/about/versions/oreo"><img src="https://img.shields.io/badge/Android-API%2026%2B-green?logo=android" alt="API 26+"/></a>
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.x-7F52FF?logo=kotlin" alt="Kotlin"/></a>
   <a href="https://firebase.google.com"><img src="https://img.shields.io/badge/Firebase-Realtime%20DB-FFCA28?logo=firebase&logoColor=black" alt="Firebase"/></a>
