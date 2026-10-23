@@ -83,4 +83,26 @@ class UserProgressRepositoryTest {
 
         assertEquals(2, merged.size)
     }
+
+    // --- Backup before logout ---
+
+    @Test
+    fun `progressToUpload includes topics the cloud does not have`() {
+        val local = listOf(progress("tema_1", 5, 1000), progress("tema_2", 6, 2000))
+        val cloud = listOf(progress("tema_1", 5, 1000))
+
+        val toUpload = repository.progressToUpload(local, cloud)
+
+        assertEquals(listOf("tema_2"), toUpload.map { it.topicId })
+    }
+
+    @Test
+    fun `progressToUpload includes local records newer than the cloud and skips older ones`() {
+        val local = listOf(progress("tema_1", 9, 3000), progress("tema_2", 1, 1000))
+        val cloud = listOf(progress("tema_1", 5, 1000), progress("tema_2", 8, 2000))
+
+        val toUpload = repository.progressToUpload(local, cloud)
+
+        assertEquals(listOf("tema_1"), toUpload.map { it.topicId })
+    }
 }

@@ -10,6 +10,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.navio.damtests.FirebaseSyncManager
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.PdfReleaseRepository
 import com.navio.damtests.R
@@ -20,7 +21,9 @@ import com.navio.damtests.data.local.entity.Subject
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.ui.SubjectAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 /**
@@ -80,8 +83,21 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
      */
     private fun openSubjectIfAvailable(subject: Subject) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val hasContent = repository.subjectHasContent(subject.id) ||
-                PdfReleaseRepository.getTopicIdsWithPdf(subject.id).isNotEmpty()
+            var hasContent = subjectHasContent(subject)
+
+            // First launch: the questions may still be downloading. Wait for
+            // the download instead of wrongly saying the subject is coming soon.
+            if (!hasContent && FirebaseSyncManager.syncing.value) {
+                val loading = AuthUiHelper.showLoading(
+                    requireContext(),
+                    "Descargando preguntas",
+                    "Es la primera vez que abres la app: estamos descargando las preguntas. Solo tarda unos segundos."
+                )
+                withTimeoutOrNull(SYNC_WAIT_MS) { FirebaseSyncManager.syncing.first { !it } }
+                loading.dismiss()
+                hasContent = subjectHasContent(subject)
+            }
+
             if (hasContent) {
                 startActivity(
                     Intent(requireContext(), TopicSelectionActivity::class.java)
@@ -95,5 +111,13 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
                 )
             }
         }
+    }
+
+    private suspend fun subjectHasContent(subject: Subject): Boolean =
+        repository.subjectHasContent(subject.id) ||
+            PdfReleaseRepository.getTopicIdsWithPdf(requireContext(), subject.id).isNotEmpty()
+
+    private companion object {
+        const val SYNC_WAIT_MS = 60_000L
     }
 }

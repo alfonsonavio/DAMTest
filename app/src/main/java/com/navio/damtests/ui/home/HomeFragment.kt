@@ -19,6 +19,7 @@ import com.navio.damtests.TopicSelectionActivity
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.data.SubjectCatalog
+import com.navio.damtests.data.TopicNames
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.ui.QuizLauncher
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,7 +83,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         cardContinue.isVisible = true
                         tvContinueHeader.isVisible = true
                         tvContinueSubject.text = SubjectCatalog.nameFor(session.subjectId)
-                        tvContinueDetail.text = "${topicDisplayName(session.topicId)} · " +
+                        tvContinueDetail.text = "${TopicNames.displayName(session.topicId)} · " +
                             "Pregunta ${session.nextQuestionNumber} de ${session.total}"
                         progressContinue.isVisible = true
                         progressContinue.max = session.total
@@ -105,7 +106,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                     if (lastProgress != null) {
                         tvContinueSubject.text = SubjectCatalog.nameFor(lastProgress.subjectId)
-                        tvContinueDetail.text  = topicDisplayName(lastProgress.topicId)
+                        tvContinueDetail.text  = TopicNames.displayName(lastProgress.topicId)
                         cardContinue.setOnClickListener {
                             startActivity(
                                 Intent(requireContext(), TopicSelectionActivity::class.java)
@@ -151,13 +152,4 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             in 13..20 -> "Buenas tardes"
             else      -> "Buenas noches"
         }
-
-    private fun topicDisplayName(topicId: String): String = when {
-        topicId == "-1" -> "Test general (todo)"
-        topicId == "-2" -> "Test general (temas 1-10)"
-        topicId == "-3" -> "Test general (temas 11-20)"
-        topicId == "-4" -> "Repaso inteligente"
-        topicId.startsWith("tema_") -> "Tema ${topicId.removePrefix("tema_")}"
-        else -> topicId
-    }
 }

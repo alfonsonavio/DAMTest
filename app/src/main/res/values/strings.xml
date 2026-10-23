@@ -7,7 +7,10 @@
     <string name="previous">Previous</string>
 
     <string name="loading">Cargando…</string>
-    <string name="quiz_result_message">Has acertado %1$d preguntas.</string>
+    <plurals name="quiz_result_message">
+        <item quantity="one">Has acertado %1$d pregunta.</item>
+        <item quantity="other">Has acertado %1$d preguntas.</item>
+    </plurals>
     <string name="review_final_score">Resultado final: %1$d / %2$d</string>
     <string name="context_dialog_title">Enunciado del Caso</string>
     <string name="close">Cerrar</string>
@@ -19,10 +22,10 @@
     <string name="network_error">Error de red. Comprueba tu conexión.</string>
     <string name="pdf_open_error">No se pudo abrir el PDF.</string>
     <string name="ai_key_not_available">Explicación no disponible. Comprueba tu conexión e inténtalo de nuevo.</string>
-    <string name="ai_error">Error al obtener la explicación: %1$s</string>
+    <string name="ai_error">No se ha podido generar la explicación ahora mismo. Comprueba tu conexión e inténtalo de nuevo.</string>
     <string name="ai_analyzing">⏳ Analizando tu respuesta…</string>
     <string name="ai_preparing_correction">⏳ Preparando corrección…</string>
-    <string name="ai_connection_error">❌ Error al conectar con la IA</string>
+    <string name="ai_connection_error">❌ No se ha podido cargar la explicación. Comprueba tu conexión.</string>
     <string name="no_questions_title">Sin preguntas disponibles</string>
     <string name="no_questions_yet">Las preguntas de este tema aún no están disponibles, pero puedes consultar los apuntes en PDF.</string>
 
@@ -66,6 +69,10 @@
     <string name="logout_title">Cerrar sesión</string>
     <string name="logout_message">¿Seguro que quieres cerrar sesión?</string>
     <string name="logout_confirm">Cerrar sesión</string>
+    <string name="logout_saving_title">Guardando tus datos</string>
+    <string name="logout_saving_message">Estamos comprobando que todo tu progreso y tus estadísticas están guardados en la nube.</string>
+    <string name="logout_failed_title">No se ha podido cerrar sesión</string>
+    <string name="logout_failed_message">No hemos podido confirmar que todos tus datos están guardados en la nube, así que no se ha borrado nada. Comprueba tu conexión a internet e inténtalo de nuevo.</string>
 
     <!-- Settings -->
     <string name="settings_title">Ajustes</string>

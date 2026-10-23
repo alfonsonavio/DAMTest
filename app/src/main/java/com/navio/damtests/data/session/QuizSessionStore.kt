@@ -33,6 +33,12 @@ class QuizSessionStore @Inject constructor(
 
     fun clear() = prefs.edit { remove(KEY_SESSION) }
 
+    /** Raw saved test, for the cloud backup made on logout. */
+    fun exportJson(): String? = prefs.getString(KEY_SESSION, null)
+
+    /** Restores a saved test from the cloud backup made on logout. */
+    fun importJson(json: String) = prefs.edit { putString(KEY_SESSION, json) }
+
     private companion object {
         const val PREFS_NAME = "quiz_session"
         const val KEY_SESSION = "current"

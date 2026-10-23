@@ -65,6 +65,10 @@ interface QuestionsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveQuestionStats(stats: QuestionStats)
 
+    /** Bulk save, used when stats are restored from the cloud. */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveQuestionStatsList(stats: List<QuestionStats>)
+
     @Query("SELECT * FROM question_stats WHERE stableId = :stableId")
     suspend fun getQuestionStats(stableId: String): QuestionStats?
 
@@ -89,6 +93,10 @@ interface QuestionsDao {
     @Insert
     suspend fun insertTestAttempt(attempt: TestAttempt)
 
+    /** Bulk insert, used when attempts are restored from the cloud. */
+    @Insert
+    suspend fun insertTestAttempts(attempts: List<TestAttempt>)
+
     /** All attempts for a set of subjects (a course), newest last. */
     @Query("SELECT * FROM test_attempts WHERE subjectId IN (:subjectIds) ORDER BY timestamp ASC")
     suspend fun getAttemptsForSubjects(subjectIds: List<String>): List<TestAttempt>
@@ -96,4 +104,27 @@ interface QuestionsDao {
     /** All attempts, newest last. */
     @Query("SELECT * FROM test_attempts ORDER BY timestamp ASC")
     suspend fun getAllAttempts(): List<TestAttempt>
+
+    // --- Logout ---
+
+    @Query("DELETE FROM topic_progress")
+    suspend fun deleteAllProgress()
+
+    @Query("DELETE FROM question_stats")
+    suspend fun deleteAllQuestionStats()
+
+    @Query("DELETE FROM test_attempts")
+    suspend fun deleteAllAttempts()
+
+    /**
+     * Removes everything that belongs to the signed-in user (progress, answer
+     * stats and attempt history). Questions are shared content and are kept.
+     * Only call after the data has been confirmed in the cloud.
+     */
+    @Transaction
+    suspend fun clearUserData() {
+        deleteAllProgress()
+        deleteAllQuestionStats()
+        deleteAllAttempts()
+    }
 }
