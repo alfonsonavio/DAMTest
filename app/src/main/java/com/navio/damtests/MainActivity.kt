@@ -14,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.notifications.ReminderScheduler
 import com.navio.damtests.settings.SettingsManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,8 +26,8 @@ import javax.inject.Inject
  * the BottomNavigationView; the actual screens live in HomeFragment,
  * SubjectsFragment and StatisticsFragment.
  *
- * App-level concerns (question sync, remote config, notification permission and
- * reminder scheduling) stay here because they should run once per session, not
+ * App-level concerns (question sync, statistics sync, remote config, notification
+ * permission and reminder scheduling) stay here because they should run once per session, not
  * per fragment.
  */
 @AndroidEntryPoint
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var repository: QuizRepository
     @Inject lateinit var authManager: AuthManager
     @Inject lateinit var settingsManager: SettingsManager
+    @Inject lateinit var statsSyncRepository: StatsSyncRepository
     private lateinit var syncManager: FirebaseSyncManager
 
     private val notificationPermissionLauncher = registerForActivityResult(
@@ -62,6 +64,12 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             Log.d(TAG, "Starting Firebase question sync…")
             syncManager.syncQuestions()
+        }
+        authManager.currentUid?.let { uid ->
+            lifecycleScope.launch {
+                Log.d(TAG, "Starting statistics sync…")
+                statsSyncRepository.sync(uid)
+            }
         }
 
         // Only schedule the daily reminder if the user has it enabled.
