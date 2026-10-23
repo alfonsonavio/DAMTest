@@ -26,7 +26,7 @@ class ReminderWorker(
         private val REMINDER_MESSAGES = listOf(
             "¿Un test rápido?" to "Dedica 5 minutos a repasar y mantén el ritmo.",
             "Hora de practicar" to "Un test al día te acerca a aprobar tu examen de DAM.",
-            "No pierdas la racha" to "Vuelve a DAMTest y sigue mejorando tus notas.",
+            "Sigue con el ritmo" to "Vuelve a DAMTest y sigue mejorando tus notas.",
             "Repaso pendiente" to "Tus preguntas falladas te esperan en el repaso inteligente.",
             "¡A por ello!" to "Un poco de práctica hoy es mucho menos estudio mañana."
         )
