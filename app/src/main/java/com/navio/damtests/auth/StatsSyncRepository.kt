@@ -14,6 +14,8 @@ import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.TestAttempt
 import com.navio.damtests.data.sync.StatsMerger
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -42,6 +44,11 @@ class StatsSyncRepository @Inject constructor(
 ) {
 
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    private val _syncedAt = MutableStateFlow(0L)
+
+    /** Changes every time a sync finishes, so open screens can refresh. */
+    val syncedAt: StateFlow<Long> = _syncedAt
 
     private fun userDoc(uid: String) = firestore.collection("users").document(uid)
     private fun attempts(uid: String) = userDoc(uid).collection("attempts")
@@ -92,10 +99,11 @@ class StatsSyncRepository @Inject constructor(
             }
 
             prefs.edit { putLong(lastSyncKey(uid), syncStartedAt) }
+            _syncedAt.value = System.currentTimeMillis()
             Log.d(
                 TAG, "Stats sync (${if (isFirstSync) "full" else "incremental"}) done: " +
-                        "attempts ↓${attemptsPlan.toLocal.size} ↑${attemptsPlan.toCloud.size}, " +
-                        "questionStats ↓${statsPlan.toLocal.size} ↑${statsPlan.toCloud.size}"
+                    "attempts ↓${attemptsPlan.toLocal.size} ↑${attemptsPlan.toCloud.size}, " +
+                    "questionStats ↓${statsPlan.toLocal.size} ↑${statsPlan.toCloud.size}"
             )
         } catch (e: Exception) {
             // Offline or Firestore error: keep lastSync untouched so it retries next launch.
@@ -114,7 +122,7 @@ class StatsSyncRepository @Inject constructor(
         since: Long?
     ): List<DocumentSnapshot> {
         val query: Query = if (since == null) collection
-        else collection.whereGreaterThan(timestampField, since)
+                           else collection.whereGreaterThan(timestampField, since)
         return query.get(Source.SERVER).await().documents
     }
 
@@ -147,7 +155,7 @@ class StatsSyncRepository @Inject constructor(
         statsToUpload: List<QuestionStats>
     ): List<Task<Void>> {
         val writes = attemptsToUpload.map { a -> attempts(uid).document(StatsMerger.attemptKey(a)) to a.toMap() } +
-                statsToUpload.map { s -> questionStats(uid).document(s.stableId) to s.toMap() }
+                     statsToUpload.map { s -> questionStats(uid).document(s.stableId) to s.toMap() }
 
         return writes.chunked(MAX_BATCH_WRITES).map { chunk ->
             val batch = firestore.batch()

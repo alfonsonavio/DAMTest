@@ -10,7 +10,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -19,12 +21,15 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.R
+import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.data.SubjectCatalog
+import com.navio.damtests.data.TopicNames
 import com.navio.damtests.data.statistics.EvolutionPoint
 import com.navio.damtests.data.statistics.StatisticsData
 import com.navio.damtests.data.statistics.SubjectAccuracy
 import com.navio.damtests.data.statistics.WeakTopic
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,8 +42,10 @@ import javax.inject.Inject
 class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
     @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var statsSyncRepository: StatsSyncRepository
 
     private var selectedCourse = 1
+    private var loadJob: Job? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,11 +59,18 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
             }
         }
 
-        loadStatistics(view)
+        // Reload whenever the screen is shown again (e.g. back from a test) and
+        // whenever a background statistics sync brings new data.
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                statsSyncRepository.syncedAt.collect { loadStatistics(view) }
+            }
+        }
     }
 
     private fun loadStatistics(view: View) {
-        viewLifecycleOwner.lifecycleScope.launch {
+        loadJob?.cancel() // a newer load (e.g. a quick 1º/2º switch) wins
+        loadJob = viewLifecycleOwner.lifecycleScope.launch {
             val subjectIds = subjectIdsForCourse(selectedCourse)
             val data = repository.getStatistics(subjectIds)
             render(view, data)
@@ -188,7 +202,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         weakest.forEach { topic ->
             val row = inflater.inflate(R.layout.item_weak_topic, container, false)
             row.findViewById<TextView>(R.id.tvWeakTopic).text =
-                "${SubjectCatalog.nameFor(topic.subjectId)} · ${topicDisplayName(topic.topicId)}"
+                "${SubjectCatalog.nameFor(topic.subjectId)} · ${TopicNames.displayName(topic.topicId)}"
             row.findViewById<TextView>(R.id.tvWeakDetail).text =
                 "Fallas el ${topic.failurePercent}% de las preguntas"
             container.addView(row)
@@ -197,12 +211,4 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
     private fun subjectIdsForCourse(course: Int): List<String> =
         SubjectCatalog.all.filter { it.course == course }.map { it.id }
-
-    private fun topicDisplayName(topicId: String): String = when {
-        topicId == "-1" -> "Test general"
-        topicId == "-2" -> "Test general (1-10)"
-        topicId == "-3" -> "Test general (11-20)"
-        topicId.startsWith("tema_") -> "Tema ${topicId.removePrefix("tema_")}"
-        else -> topicId
-    }
 }
