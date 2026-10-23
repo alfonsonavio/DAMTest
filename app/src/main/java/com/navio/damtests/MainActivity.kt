@@ -17,6 +17,7 @@ import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.notifications.ReminderScheduler
 import com.navio.damtests.settings.SettingsManager
+import com.navio.damtests.update.UpdateChecker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             Log.d(TAG, "Starting Remote Config fetch…")
             RemoteConfigManager.fetchAndActivate()
+            UpdateChecker.maybePrompt(this@MainActivity)
         }
         lifecycleScope.launch {
             Log.d(TAG, "Starting Firebase question sync…")
