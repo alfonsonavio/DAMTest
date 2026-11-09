@@ -18,6 +18,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.navio.damtests.ai.GeminiExplainer
 import com.navio.damtests.data.ReportRepository
+import com.navio.damtests.data.exam.Exam
+import com.navio.damtests.data.exam.ExamRange
+import com.navio.damtests.exam.ExamActivity
 import com.navio.damtests.ui.viewmodel.QuestionResult
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -46,8 +49,10 @@ class ReviewActivity : AppCompatActivity() {
             intent.getParcelableArrayListExtra("RESULTS") ?: emptyList()
         }
 
+        // Exams show their mark; the other tests, correct answers out of total
         findViewById<TextView>(R.id.tvReviewScore).text =
-            getString(R.string.review_final_score, score, total)
+            intent.getStringExtra(EXTRA_SCORE_TEXT)
+                ?: getString(R.string.review_final_score, score, total)
 
         val rv = findViewById<RecyclerView>(R.id.rvReview)
         rv.layoutManager = LinearLayoutManager(this)
@@ -77,11 +82,21 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         findViewById<MaterialButton>(R.id.btnRepeatTest).setOnClickListener {
-            startActivity(
-                Intent(this, QuizActivity::class.java)
-                    .putExtra("SUBJECT_ID", subjectId)
-                    .putExtra("TOPIC_ID", topicId)
-            )
+            val examRange = ExamRange.fromAttemptTopicId(topicId)
+            if (examRange != null) {
+                // Same exam again: same topics, size and penalty, new questions
+                ExamActivity.start(
+                    this, subjectId, examRange,
+                    intent.getIntExtra(ExamActivity.EXTRA_SIZE, Exam.SIZES[1]),
+                    intent.getBooleanExtra(ExamActivity.EXTRA_PENALTY, false)
+                )
+            } else {
+                startActivity(
+                    Intent(this, QuizActivity::class.java)
+                        .putExtra("SUBJECT_ID", subjectId)
+                        .putExtra("TOPIC_ID", topicId)
+                )
+            }
             finish()
         }
     }
@@ -142,5 +157,10 @@ class ReviewActivity : AppCompatActivity() {
                 Toast.makeText(this, "Gracias, revisaremos la pregunta", Toast.LENGTH_SHORT).show()
             }
             .show()
+    }
+
+    companion object {
+        /** Optional header text replacing "Resultado final: x / y" (exam mark). */
+        const val EXTRA_SCORE_TEXT = "SCORE_TEXT"
     }
 }

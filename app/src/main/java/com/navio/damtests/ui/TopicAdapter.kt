@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.navio.damtests.R
+import com.navio.damtests.data.exam.Exam
 import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.data.local.entity.Topic
 import com.navio.damtests.data.local.entity.TopicProgress
@@ -58,6 +59,11 @@ class TopicAdapter(
                 // Smart review is a practice tool — it never shows a score
                 topic.id == "-4" -> {
                     tvStats.text = "Practica tus fallos"
+                    tvStats.setTextColor(tvStats.context.getColor(R.color.text_muted))
+                }
+                // The exam is configured each time: it has no single score
+                topic.id == Exam.TOPIC_ID -> {
+                    tvStats.text = "Con tiempo · corrección al entregar"
                     tvStats.setTextColor(tvStats.context.getColor(R.color.text_muted))
                 }
                 // Favourites are practice too
