@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.ai.FastExplainer
+import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.shuffle
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
@@ -15,6 +16,9 @@ import com.navio.damtests.data.session.SavedAnswer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -74,6 +78,20 @@ class QuizViewModel @Inject constructor(
     private val _currentQuestion = MutableStateFlow<CurrentQuestion?>(null)
     val currentQuestion: StateFlow<CurrentQuestion?> = _currentQuestion
 
+    /** Whether the question on screen is marked as favourite. */
+    val isCurrentFavorite: StateFlow<Boolean> by lazy {
+        combine(_currentQuestion, repository.getFavoriteIds()) { current, ids ->
+            current != null && current.question.stableId in ids
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+    }
+
+    /** Marks or unmarks the question on screen as favourite. */
+    fun toggleFavorite() {
+        val question = _currentQuestion.value?.question ?: return
+        val favorite = !isCurrentFavorite.value
+        viewModelScope.launch { repository.setFavorite(question, favorite) }
+    }
+
     /** Instant AI feedback for a wrong answer to the current question. */
     sealed class AiFeedback {
         object Loading : AiFeedback()
@@ -104,6 +122,8 @@ class QuizViewModel @Inject constructor(
      *  - "-1" → all topics (full general test, 20 questions)
      *  - "-2" → topics 1–10 (20 questions)
      *  - "-3" → topics 11–20 (20 questions)
+     *  - "-4" → smart review (20 questions)
+     *  - "-5" → favourite questions (20 questions); subjectId "all" mixes every subject
      *  - any other → specific topic (10 questions)
      *
      * With [resume] = true it continues the saved test for this subject/topic
@@ -136,6 +156,7 @@ class QuizViewModel @Inject constructor(
                 "-2"  -> repository.getQuestionsForRange(subjectId, 1,  10, limit)
                 "-3"  -> repository.getQuestionsForRange(subjectId, 11, 20, limit)
                 "-4"  -> repository.getSmartReviewQuestions(subjectId, limit)
+                Favorites.TOPIC_ID -> repository.getFavoriteQuestions(subjectId, limit)
                 else  -> repository.getQuestionsByTopic(subjectId, topicId, limit)
             }.distinctBy { it.text }  // prevent duplicates if Room has stale rows
 
@@ -243,13 +264,13 @@ class QuizViewModel @Inject constructor(
         _currentAnswerState.value = null
         sessionStore.clear()
 
-        // Smart review (-4) is practice only — it saves no score or progress,
-        // only the attempt that keeps the study streak going.
+        // Smart review (-4) and favourites (-5) are practice only — they save no
+        // score or progress, only the attempt that keeps the study streak going.
         // The score belongs to the test that was launched (e.g. "-1" for the
         // full general test), not to the topic of its first question.
         if (_questions.value.isNotEmpty()) {
-            if (currentTopicId == "-4") {
-                recordPracticeAttempt(currentSubjectId)
+            if (currentTopicId == "-4" || currentTopicId == Favorites.TOPIC_ID) {
+                recordPracticeAttempt(currentSubjectId, currentTopicId)
             } else {
                 saveFinalProgress(currentSubjectId, currentTopicId)
             }
@@ -298,14 +319,15 @@ class QuizViewModel @Inject constructor(
     }
 
     /**
-     * Smart review saves no score or progress, but it still counts as a study
-     * day for the streak, so the attempt is recorded (statistics ignore "-4").
+     * Practice tests (smart review "-4", favourites "-5") save no score or
+     * progress, but they still count as a study day for the streak, so the
+     * attempt is recorded (statistics ignore both ids).
      */
-    private fun recordPracticeAttempt(subjectId: String) {
+    private fun recordPracticeAttempt(subjectId: String, topicId: String) {
         viewModelScope.launch {
             repository.recordTestAttempt(
                 subjectId = subjectId,
-                topicId = "-4",
+                topicId = topicId,
                 score = _score.value,
                 totalQuestions = _questions.value.size
             )

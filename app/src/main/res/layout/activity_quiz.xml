@@ -38,6 +38,14 @@
                 android:layout_marginHorizontal="16dp"
                 android:progressDrawable="@drawable/custom_progress_bar" />
 
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Añadir a favoritas"
+                android:src="@drawable/ic_star_outline" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnContextInfo"
                 style="@style/Widget.Material3.Button.TextButton"

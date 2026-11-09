@@ -43,6 +43,14 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/btnFavorito"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Añadir a favoritas"
+                android:src="@drawable/ic_star_outline" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnReportar"
                 style="@style/Widget.Material3.Button.TextButton"
