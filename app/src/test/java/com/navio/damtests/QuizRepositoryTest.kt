@@ -3,6 +3,7 @@ package com.navio.damtests
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.auth.UserProgressRepository
+import com.navio.damtests.data.exam.ExamRange
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.TopicProgress
@@ -279,5 +280,27 @@ class QuizRepositoryTest {
         val ids = repository.getUniqueTopicsForSubject("programacion", emptySet()).map { it.id }
 
         assertTrue(ids.indexOf("-5") == ids.indexOf("-4") + 1)
+    }
+
+    // --- Exam mode ---
+
+    @Test
+    fun `subjects with tema topics list the exam mode`() = runTest {
+        coEvery { dao.getUniqueTopicIds("programacion") } returns listOf("tema_1")
+
+        val ids = repository.getUniqueTopicsForSubject("programacion").map { it.id }
+
+        assertTrue(ids.contains("-6"))
+    }
+
+    @Test
+    fun `exam of topics 11-20 counts and draws only those topics`() = runTest {
+        val secondHalf = (11..20).map { "tema_$it" }
+        coEvery { dao.countQuestionsForTopicList("programacion", secondHalf) } returns 25
+        coEvery { dao.getRandomQuestionsForTopicList("programacion", secondHalf, 20) } returns
+                (1..20).map { question(it) }
+
+        assertEquals(25, repository.countExamQuestions("programacion", ExamRange.SECOND_HALF))
+        assertEquals(20, repository.getExamQuestions("programacion", ExamRange.SECOND_HALF, 20).size)
     }
 }
