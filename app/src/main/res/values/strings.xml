@@ -57,6 +57,7 @@
     <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
     <string name="error_register">Error al crear la cuenta. Inténtalo de nuevo</string>
     <string name="error_google_signin">Error al iniciar sesión con Google</string>
+    <string name="error_google_no_account">No hay ninguna cuenta de Google en este dispositivo. Añade una en los ajustes del móvil o inicia sesión con tu correo.</string>
     <string name="error_email_for_reset">Introduce tu email primero</string>
     <string name="error_reset_email">No se pudo enviar el email de recuperación</string>
     <string name="error_generic">Algo salió mal. Inténtalo de nuevo</string>
