@@ -218,4 +218,22 @@ class QuizRepositoryTest {
             })
         }
     }
+
+    // --- Study streak ---
+
+    @Test
+    fun `getStreak counts consecutive study days from the attempt history`() = runTest {
+        // Noon of today and the two previous days, in the device's time zone
+        val zone = java.time.ZoneId.systemDefault()
+        val today = java.time.LocalDate.now(zone)
+        fun noon(daysAgo: Long) =
+            today.minusDays(daysAgo).atTime(12, 0).atZone(zone).toInstant().toEpochMilli()
+        val now = noon(0)
+        coEvery { dao.getAttemptTimestamps() } returns listOf(noon(2), noon(1), now)
+
+        val streak = repository.getStreak(now)
+
+        assertEquals(3, streak.days)
+        assertTrue(streak.studiedToday)
+    }
 }
