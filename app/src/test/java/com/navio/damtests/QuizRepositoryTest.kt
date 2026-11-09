@@ -236,4 +236,48 @@ class QuizRepositoryTest {
         assertEquals(3, streak.days)
         assertTrue(streak.studiedToday)
     }
+
+    // --- Favourites ---
+
+    @Test
+    fun `setFavorite saves locally and uploads when user is logged in`() = runTest {
+        every { authManager.currentUid } returns "user123"
+        val q = question(1).copy(stableId = "programacion_tema_1_p1")
+
+        repository.setFavorite(q, favorite = true, now = 5000)
+
+        coVerify(exactly = 1) {
+            dao.saveFavorite(match { it.stableId == "programacion_tema_1_p1" && it.isFavorite && it.updatedAt == 5000L })
+        }
+        coVerify(exactly = 1) { statsSyncRepository.saveFavorite("user123", match { it.isFavorite }) }
+    }
+
+    @Test
+    fun `setFavorite ignores questions without a stable id`() = runTest {
+        every { authManager.currentUid } returns "user123"
+
+        repository.setFavorite(question(1).copy(stableId = ""), favorite = true)
+
+        coVerify(exactly = 0) { dao.saveFavorite(any()) }
+        coVerify(exactly = 0) { statsSyncRepository.saveFavorite(any(), any()) }
+    }
+
+    @Test
+    fun `favourites test of all subjects queries every subject and respects the limit`() = runTest {
+        coEvery { dao.getFavoriteQuestions(null) } returns (1..30).map { question(it).copy(stableId = "q$it") }
+
+        val result = repository.getFavoriteQuestions("all", limit = 20)
+
+        assertEquals(20, result.size)
+        coVerify(exactly = 1) { dao.getFavoriteQuestions(null) }
+    }
+
+    @Test
+    fun `subject list shows the favourites row after smart review`() = runTest {
+        coEvery { dao.getUniqueTopicIds("programacion") } returns listOf("tema_1")
+
+        val ids = repository.getUniqueTopicsForSubject("programacion", emptySet()).map { it.id }
+
+        assertTrue(ids.indexOf("-5") == ids.indexOf("-4") + 1)
+    }
 }

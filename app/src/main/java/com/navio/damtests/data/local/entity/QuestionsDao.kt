@@ -98,11 +98,11 @@ interface QuestionsDao {
     suspend fun insertTestAttempts(attempts: List<TestAttempt>)
 
     /**
-     * Scored attempts for a set of subjects (a course), newest last. Smart
-     * review practice ("-4") is stored for the study streak but excluded here,
-     * so it never affects the statistics.
+     * Scored attempts for a set of subjects (a course), newest last. Practice
+     * tests (smart review "-4" and favourites "-5") are stored for the study
+     * streak but excluded here, so they never affect the statistics.
      */
-    @Query("SELECT * FROM test_attempts WHERE subjectId IN (:subjectIds) AND topicId != '-4' ORDER BY timestamp ASC")
+    @Query("SELECT * FROM test_attempts WHERE subjectId IN (:subjectIds) AND topicId NOT IN ('-4', '-5') ORDER BY timestamp ASC")
     suspend fun getAttemptsForSubjects(subjectIds: List<String>): List<TestAttempt>
 
     /** When every finished test happened (smart review included), for the study streak. */
@@ -112,6 +112,37 @@ interface QuestionsDao {
     /** All attempts, newest last. */
     @Query("SELECT * FROM test_attempts ORDER BY timestamp ASC")
     suspend fun getAllAttempts(): List<TestAttempt>
+
+    // --- Favourite questions ---
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveFavorite(favorite: FavoriteQuestion)
+
+    /** Bulk save, used when favourites are restored from the cloud. */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveFavorites(favorites: List<FavoriteQuestion>)
+
+    /** Every favourite record, unmarked ones included (for syncing). */
+    @Query("SELECT * FROM favorite_questions")
+    suspend fun getAllFavoriteRecords(): List<FavoriteQuestion>
+
+    @Query("SELECT stableId FROM favorite_questions WHERE isFavorite = 1")
+    fun getFavoriteIdsFlow(): Flow<List<String>>
+
+    /** Favourite questions, newest first; [subjectId] null means every subject. */
+    @Query(
+        "SELECT q.* FROM questions q INNER JOIN favorite_questions f ON q.stableId = f.stableId " +
+                "WHERE f.isFavorite = 1 AND (:subjectId IS NULL OR q.subjectId = :subjectId) " +
+                "ORDER BY f.updatedAt DESC"
+    )
+    suspend fun getFavoriteQuestions(subjectId: String?): List<Question>
+
+    /** All favourite questions, newest first, updated live (favourites screen). */
+    @Query(
+        "SELECT q.* FROM questions q INNER JOIN favorite_questions f ON q.stableId = f.stableId " +
+                "WHERE f.isFavorite = 1 ORDER BY f.updatedAt DESC"
+    )
+    fun getFavoriteQuestionsFlow(): Flow<List<Question>>
 
     // --- Logout ---
 
@@ -124,9 +155,12 @@ interface QuestionsDao {
     @Query("DELETE FROM test_attempts")
     suspend fun deleteAllAttempts()
 
+    @Query("DELETE FROM favorite_questions")
+    suspend fun deleteAllFavorites()
+
     /**
      * Removes everything that belongs to the signed-in user (progress, answer
-     * stats and attempt history). Questions are shared content and are kept.
+     * stats, attempt history and favourites). Questions are shared content and are kept.
      * Only call after the data has been confirmed in the cloud.
      */
     @Transaction
@@ -134,5 +168,6 @@ interface QuestionsDao {
         deleteAllProgress()
         deleteAllQuestionStats()
         deleteAllAttempts()
+        deleteAllFavorites()
     }
 }

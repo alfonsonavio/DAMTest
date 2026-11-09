@@ -8,6 +8,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.WindowInsetsController
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -43,6 +44,7 @@ class QuizActivity : AppCompatActivity() {
     private lateinit var tvCount: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var btnContextInfo: Button
+    private lateinit var btnFavorite: ImageButton
     private lateinit var btnNext: Button
 
     private lateinit var haptic: HapticFeedbackManager
@@ -80,6 +82,7 @@ class QuizActivity : AppCompatActivity() {
         tvCount        = findViewById(R.id.tvQuestionCount)
         progressBar    = findViewById(R.id.quizProgressBar)
         btnContextInfo = findViewById(R.id.btnContextInfo)
+        btnFavorite    = findViewById(R.id.btnFavorite)
         btnNext        = findViewById(R.id.btnNextQuestion)
 
 
@@ -148,6 +151,18 @@ class QuizActivity : AppCompatActivity() {
                 viewModel.aiFeedback.collect { feedback -> showAiFeedback(feedback) }
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isCurrentFavorite.collect { favorite ->
+                    btnFavorite.setImageResource(
+                        if (favorite) R.drawable.ic_star else R.drawable.ic_star_outline
+                    )
+                    btnFavorite.contentDescription =
+                        if (favorite) "Quitar de favoritas" else "Añadir a favoritas"
+                }
+            }
+        }
     }
 
     // --- UI helpers ---
@@ -174,6 +189,8 @@ class QuizActivity : AppCompatActivity() {
 
         val question = current.question
         tvQuestion.text = question.text
+        // Questions without a stable id can't be saved as favourites
+        btnFavorite.visibility = if (question.stableId.isBlank()) View.GONE else View.VISIBLE
         btnA.text       = current.options[0]
         btnB.text       = current.options[1]
         btnC.text       = current.options[2]
@@ -266,6 +283,7 @@ class QuizActivity : AppCompatActivity() {
         btnC.setOnClickListener { processAnswer(2) }
         btnD.setOnClickListener { processAnswer(3) }
         btnNext.setOnClickListener { viewModel.goToNextQuestion() }
+        btnFavorite.setOnClickListener { viewModel.toggleFavorite() }
     }
 
     private fun processAnswer(uiIndex: Int) {
