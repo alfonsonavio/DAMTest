@@ -22,6 +22,7 @@ import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.data.SubjectCatalog
 import com.navio.damtests.data.TopicNames
 import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.favorites.FavoritesActivity
 import com.navio.damtests.ui.QuizLauncher
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -62,6 +63,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         // Smart review is per subject: ask which one, then launch it.
         cardSmartReview.setOnClickListener { pickSubjectForSmartReview() }
+
+        // Favourites: list of marked questions and a test mixing every subject.
+        view.findViewById<MaterialCardView>(R.id.cardFavorites).setOnClickListener {
+            startActivity(Intent(requireContext(), FavoritesActivity::class.java))
+        }
 
         // Settings button opens the settings screen.
         btnSettings.setOnClickListener {
