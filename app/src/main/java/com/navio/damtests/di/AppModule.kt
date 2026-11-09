@@ -28,6 +28,7 @@ object AppModule {
             AppDatabase::class.java,
             "quiz_database"
         )
+            .addMigrations(AppDatabase.MIGRATION_4_5)
             .fallbackToDestructiveMigration()
             .build()
 

@@ -2,6 +2,7 @@ package com.navio.damtests.data
 
 import com.navio.damtests.R
 import com.navio.damtests.data.local.entity.Subject
+import com.navio.damtests.data.favorites.Favorites
 
 /**
  * Single source of truth for the DAM subjects shown in the app.
@@ -38,5 +39,6 @@ object SubjectCatalog {
 
     /** Display name for a subject id, falling back to the id itself. */
     fun nameFor(subjectId: String): String =
-        all.firstOrNull { it.id == subjectId }?.name ?: subjectId
+        if (subjectId == Favorites.ALL_SUBJECTS) "Todas las asignaturas"
+        else all.firstOrNull { it.id == subjectId }?.name ?: subjectId
 }
