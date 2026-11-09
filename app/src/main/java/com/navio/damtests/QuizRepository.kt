@@ -12,6 +12,8 @@ import com.navio.damtests.data.SmartReviewSelector
 import com.navio.damtests.data.local.entity.TestAttempt
 import com.navio.damtests.data.statistics.StatisticsCalculator
 import com.navio.damtests.data.statistics.StatisticsData
+import com.navio.damtests.data.streak.StreakCalculator
+import com.navio.damtests.data.streak.StreakInfo
 import javax.inject.Inject
 
 /**
@@ -222,6 +224,10 @@ class QuizRepository @Inject constructor(
             statsSyncRepository.saveAttempt(uid, attempt)
         }
     }
+
+    /** Current study streak (see [StreakCalculator]). */
+    suspend fun getStreak(now: Long = System.currentTimeMillis()): StreakInfo =
+        StreakCalculator.calculate(questionsDao.getAttemptTimestamps(), now)
 
     /**
      * Builds the statistics for a course, given that course's subject ids.

@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Daily study streak** — Home now shows the real number of consecutive days
+  with at least one finished test (smart review included); it was a fixed
+  placeholder ("🔥 5"). The streak is kept until the end of a day without
+  tests, follows the device's local calendar days and syncs across devices
+  with the attempt history. Smart review practice is now stored as an attempt
+  (topic "-4") for the streak, but the statistics still ignore it.
+- **Streak reminder** — if the user has a streak and hasn't studied yet that
+  day, the daily reminder warns about losing it ("Llevas N días de racha").
+
 ### Changed
 - **Google sign-in migrated to Credential Manager** (`androidx.credentials` +
   Sign in with Google), replacing the deprecated Google Sign-In for Android
