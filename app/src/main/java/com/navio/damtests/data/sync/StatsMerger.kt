@@ -1,11 +1,12 @@
 package com.navio.damtests.data.sync
 
+import com.navio.damtests.data.local.entity.FavoriteQuestion
 import com.navio.damtests.data.local.entity.QuestionStats
 import com.navio.damtests.data.local.entity.TestAttempt
 
 /**
  * Pure merge logic for syncing the statistics history (test attempts and
- * per-question stats) between Room and Firestore. No Android, no Firebase —
+ * per-question stats) and favourite questions between Room and Firestore. No Android, no Firebase —
  * fully unit-testable.
  *
  * Each merge returns a [Plan]: what must be written locally (it only exists
@@ -76,6 +77,37 @@ object StatsMerger {
             local.filter { l ->
                 val c = cloudById[l.stableId]
                 c == null || l.lastSeenTimestamp > c.lastSeenTimestamp
+            }
+        } else emptyList()
+
+        return Plan(toLocal, toCloud)
+    }
+
+    /**
+     * Favourites (marked or unmarked) are per question. For each stableId the
+     * copy with the most recent updatedAt wins, so unmarking on one device
+     * isn't undone by an older "marked" copy from another.
+     *
+     * @param uploadLocalNewer true only when [cloud] is complete (first sync);
+     *   see [mergeAttempts].
+     */
+    fun mergeFavorites(
+        local: List<FavoriteQuestion>,
+        cloud: List<FavoriteQuestion>,
+        uploadLocalNewer: Boolean
+    ): Plan<FavoriteQuestion> {
+        val localById = local.associateBy { it.stableId }
+        val cloudById = cloud.associateBy { it.stableId }
+
+        val toLocal = cloudById.values.filter { c ->
+            val l = localById[c.stableId]
+            l == null || c.updatedAt > l.updatedAt
+        }
+
+        val toCloud = if (uploadLocalNewer) {
+            local.filter { l ->
+                val c = cloudById[l.stableId]
+                c == null || l.updatedAt > c.updatedAt
             }
         } else emptyList()
 

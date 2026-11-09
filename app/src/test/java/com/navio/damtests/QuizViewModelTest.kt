@@ -15,6 +15,9 @@ import io.mockk.verify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -246,6 +249,49 @@ class QuizViewModelTest {
         // statistics ignore) but saves no score or topic progress
         coVerify(exactly = 1) { repository.recordTestAttempt("programacion", "-4", any(), any()) }
         coVerify(exactly = 0) { repository.updateProgress(any()) }
+    }
+
+    @Test
+    fun `favourites test loads favourite questions of every subject`() = runTest {
+        coEvery { repository.getFavoriteQuestions("all", any()) } returns listOf(question(1), question(2))
+
+        viewModel.loadQuestions("all", "-5")
+
+        assertEquals(2, viewModel.questions.value.size)
+    }
+
+    @Test
+    fun `finishing the favourites test records a practice attempt but no progress`() = runTest {
+        coEvery { repository.getFavoriteQuestions(any(), any()) } returns listOf(question(1))
+        viewModel.loadQuestions("all", "-5")
+
+        viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
+        viewModel.goToNextQuestion() // finishes
+
+        coVerify(exactly = 1) { repository.recordTestAttempt("all", "-5", any(), any()) }
+        coVerify(exactly = 0) { repository.updateProgress(any()) }
+    }
+
+    @Test
+    fun `toggleFavorite marks the question on screen and unmarks it when already favourite`() = runTest {
+        val favoriteIds = MutableStateFlow<Set<String>>(emptySet())
+        every { repository.getFavoriteIds() } returns favoriteIds
+        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
+        viewModel.loadQuestions("programacion", "tema_1")
+        // The star collects the flow while the quiz screen is visible. An unconfined
+        // dispatcher subscribes right away (runTest's own one would wait for a yield)
+        val job = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.isCurrentFavorite.collect {}
+        }
+
+        viewModel.toggleFavorite()
+        coVerify(exactly = 1) { repository.setFavorite(match { it.stableId == "q1" }, true, any()) }
+
+        favoriteIds.value = setOf("q1")
+        assertTrue(viewModel.isCurrentFavorite.value)
+        viewModel.toggleFavorite()
+        coVerify(exactly = 1) { repository.setFavorite(match { it.stableId == "q1" }, false, any()) }
+        job.cancel()
     }
 
     // --- Resuming a test in progress ---

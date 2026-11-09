@@ -8,7 +8,9 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -25,6 +27,7 @@ import kotlinx.coroutines.launch
 class ReviewActivity : AppCompatActivity() {
 
     @Inject lateinit var reportRepository: ReportRepository
+    @Inject lateinit var repository: QuizRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,11 +51,22 @@ class ReviewActivity : AppCompatActivity() {
 
         val rv = findViewById<RecyclerView>(R.id.rvReview)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = ReviewAdapter(
+        val adapter = ReviewAdapter(
             results,
-            onExplainClick = { result -> showAiExplanation(result) },
-            onReportClick  = { result -> showReportDialog(result) }
+            onExplainClick  = { result -> showAiExplanation(result) },
+            onReportClick   = { result -> showReportDialog(result) },
+            onFavoriteClick = { result, favorite ->
+                lifecycleScope.launch { repository.setFavorite(result.question, favorite) }
+            }
         )
+        rv.adapter = adapter
+
+        // Stars update live when a question is marked or unmarked
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                repository.getFavoriteIds().collect { ids -> adapter.updateFavorites(ids) }
+            }
+        }
 
         findViewById<MaterialButton>(R.id.btnBackToMenu).setOnClickListener {
             startActivity(

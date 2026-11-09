@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
@@ -12,8 +13,18 @@ import com.navio.damtests.ui.viewmodel.QuestionResult
 class ReviewAdapter(
     private val results: List<QuestionResult>,
     private val onExplainClick: (QuestionResult) -> Unit,
-    private val onReportClick: (QuestionResult) -> Unit
+    private val onReportClick: (QuestionResult) -> Unit,
+    private val onFavoriteClick: (QuestionResult, Boolean) -> Unit
 ) : RecyclerView.Adapter<ReviewAdapter.ViewHolder>() {
+
+    /** Stable ids of the favourite questions, to draw each card's star. */
+    private var favoriteIds: Set<String> = emptySet()
+
+    @android.annotation.SuppressLint("NotifyDataSetChanged")
+    fun updateFavorites(ids: Set<String>) {
+        favoriteIds = ids
+        notifyDataSetChanged()
+    }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvQuestion: TextView = view.findViewById(R.id.tvReviewQuestion)
@@ -21,6 +32,7 @@ class ReviewAdapter(
         val card: MaterialCardView = view.findViewById(R.id.cardReview)
         val btnVerExplicacion: Button = view.findViewById(R.id.btnVerExplicacion)
         val btnReportar: Button = view.findViewById(R.id.btnReportar)
+        val btnFavorito: ImageButton = view.findViewById(R.id.btnFavorito)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,6 +54,13 @@ class ReviewAdapter(
 
         holder.tvQuestion.text = "${position + 1}. ${q.text}"
         holder.btnReportar.setOnClickListener { onReportClick(res) }
+
+        // Favourite star (hidden for questions without a stable id)
+        val isFavorite = q.stableId in favoriteIds
+        holder.btnFavorito.visibility = if (q.stableId.isBlank()) View.GONE else View.VISIBLE
+        holder.btnFavorito.setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_outline)
+        holder.btnFavorito.contentDescription = if (isFavorite) "Quitar de favoritas" else "Añadir a favoritas"
+        holder.btnFavorito.setOnClickListener { onFavoriteClick(res, !isFavorite) }
 
         // The correct answer text (from original option order)
         val correctText = when (q.correctOptionIndex) {

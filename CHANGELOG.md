@@ -18,8 +18,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (topic "-4") for the streak, but the statistics still ignore it.
 - **Streak reminder** — if the user has a streak and hasn't studied yet that
   day, the daily reminder warns about losing it ("Llevas N días de racha").
+- **Favourite questions** — a star in the quiz header and on every question of
+  the review marks it as favourite. Each subject gets a "Preguntas favoritas"
+  row to practise its favourites, and Home has a "Preguntas favoritas" card
+  that opens a list of every favourite with its correct answer (removable,
+  with undo) and a "Practicar favoritas" button that mixes all subjects. Like
+  smart review, the favourites test counts for the streak and per-question
+  stats but saves no score or topic progress (attempt topic "-5"). Favourites
+  sync across devices (`users/{uid}/favorites`, last write wins) and are
+  removed on logout and account deletion.
 
 ### Changed
+- **Room database v5 with a real migration** (`MIGRATION_4_5`) adding the
+  `favorite_questions` table, so updating keeps the local history instead of
+  rebuilding the database.
 - **Google sign-in migrated to Credential Manager** (`androidx.credentials` +
   Sign in with Google), replacing the deprecated Google Sign-In for Android
   library (`play-services-auth` / `GoogleSignInClient`). The ID token is still
