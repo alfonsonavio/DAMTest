@@ -27,6 +27,7 @@ import org.junit.Test
 class LogoutManagerTest {
 
     private lateinit var authManager: AuthManager
+    private lateinit var googleClient: GoogleCredentialClient
     private lateinit var firestore: FirebaseFirestore
     private lateinit var dao: QuestionsDao
     private lateinit var sessionStore: QuizSessionStore
@@ -51,13 +52,14 @@ class LogoutManagerTest {
         every { Log.e(any(), any()) } returns 0
 
         authManager = mockk(relaxed = true)
+        googleClient = mockk(relaxed = true)
         firestore = mockk(relaxed = true)
         dao = mockk(relaxed = true)
         sessionStore = mockk(relaxed = true)
         progressRepo = mockk(relaxed = true)
         statsRepo = mockk(relaxed = true)
         sessionBackup = mockk(relaxed = true)
-        logoutManager = LogoutManager(authManager, firestore, dao, sessionStore, progressRepo, statsRepo, sessionBackup)
+        logoutManager = LogoutManager(authManager, firestore, dao, sessionStore, progressRepo, statsRepo, sessionBackup, googleClient)
 
         every { authManager.currentUid } returns "user123"
         every { firestore.waitForPendingWrites() } returns completedTask()
@@ -80,6 +82,7 @@ class LogoutManagerTest {
             firestore.waitForPendingWrites()
             dao.clearUserData()
             authManager.signOut()
+            googleClient.clearCredentialState()
         }
         verify { sessionStore.clear() }
         verify { statsRepo.forgetSyncState("user123") }
@@ -92,6 +95,7 @@ class LogoutManagerTest {
         val signedOut = logoutManager.backupAndSignOut()
 
         assertFalse(signedOut)
+        coVerify(exactly = 0) { googleClient.clearCredentialState() }
         coVerify(exactly = 0) { dao.clearUserData() }
         verify(exactly = 0) { sessionStore.clear() }
         verify(exactly = 0) { authManager.signOut() }

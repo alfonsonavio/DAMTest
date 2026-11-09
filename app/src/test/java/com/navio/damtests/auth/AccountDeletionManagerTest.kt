@@ -17,6 +17,7 @@ import org.junit.Test
 class AccountDeletionManagerTest {
 
     private lateinit var authManager: AuthManager
+    private lateinit var googleClient: GoogleCredentialClient
     private lateinit var cloudUserData: CloudUserDataRepository
     private lateinit var dao: QuestionsDao
     private lateinit var sessionStore: QuizSessionStore
@@ -28,11 +29,12 @@ class AccountDeletionManagerTest {
     @Before
     fun setUp() {
         authManager = mockk(relaxed = true)
+        googleClient = mockk(relaxed = true)
         cloudUserData = mockk(relaxed = true)
         dao = mockk(relaxed = true)
         sessionStore = mockk(relaxed = true)
         statsRepo = mockk(relaxed = true)
-        manager = AccountDeletionManager(authManager, cloudUserData, dao, sessionStore, statsRepo)
+        manager = AccountDeletionManager(authManager, cloudUserData, dao, sessionStore, statsRepo, googleClient)
 
         every { authManager.currentUid } returns "user123"
         every { authManager.lastSignInAt } returns now - 60_000L // signed in a minute ago
@@ -47,6 +49,7 @@ class AccountDeletionManagerTest {
             authManager.deleteCurrentUser()
             dao.clearUserData()
             authManager.signOut()
+            googleClient.clearCredentialState()
         }
         verify { sessionStore.clear() }
         verify { statsRepo.forgetSyncState("user123") }
