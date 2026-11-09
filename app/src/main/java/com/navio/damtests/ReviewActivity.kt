@@ -16,7 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
-import com.navio.damtests.ai.GeminiExplainer
+import com.navio.damtests.ai.ExplanationService
+import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.data.ReportRepository
 import com.navio.damtests.data.exam.Exam
 import com.navio.damtests.data.exam.ExamRange
@@ -24,6 +25,7 @@ import com.navio.damtests.exam.ExamActivity
 import com.navio.damtests.ui.viewmodel.QuestionResult
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -31,6 +33,7 @@ class ReviewActivity : AppCompatActivity() {
 
     @Inject lateinit var reportRepository: ReportRepository
     @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var fastExplainer: FastExplainer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,21 +119,20 @@ class ReviewActivity : AppCompatActivity() {
         val width = (resources.displayMetrics.widthPixels * 0.90).toInt()
         dialog.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
 
-        btnClose.setOnClickListener { dialog.dismiss() }
-
-        lifecycleScope.launch {
-            try {
-                val apiKey = RemoteConfigManager.getString(RemoteConfigManager.KEY_GEMINI)
-                if (apiKey.isBlank()) {
-                    tvMessage.text = getString(R.string.ai_key_not_available)
-                    return@launch
-                }
-                tvMessage.text = GeminiExplainer(apiKey)
-                    .explicarFallo(result.question, result.shuffledOptions, result.userSelectedIndex)
-            } catch (e: Exception) {
-                tvMessage.text = getString(R.string.ai_error)
+        val job = lifecycleScope.launch {
+            // Busy models can take a while: say so instead of looking frozen
+            val slowNotice = launch {
+                delay(SLOW_ANSWER_NOTICE_MS)
+                tvMessage.text = getString(R.string.ai_taking_longer)
             }
+            val explanation = ExplanationService.create(fastExplainer)
+                .explain(result.question, result.shuffledOptions, result.userSelectedIndex)
+            slowNotice.cancel()
+            tvMessage.text = explanation ?: getString(R.string.ai_error)
         }
+        // Closing the dialog cancels the request still in flight
+        dialog.setOnDismissListener { job.cancel() }
+        btnClose.setOnClickListener { dialog.dismiss() }
     }
 
     /** Lets the user flag a question with a wrong answer or typos. */
@@ -162,5 +164,8 @@ class ReviewActivity : AppCompatActivity() {
     companion object {
         /** Optional header text replacing "Resultado final: x / y" (exam mark). */
         const val EXTRA_SCORE_TEXT = "SCORE_TEXT"
+
+        /** After this long without an answer the dialog says it is taking longer. */
+        private const val SLOW_ANSWER_NOTICE_MS = 8_000L
     }
 }
