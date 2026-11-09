@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Google sign-in migrated to Credential Manager** (`androidx.credentials` +
+  Sign in with Google), replacing the deprecated Google Sign-In for Android
+  library (`play-services-auth` / `GoogleSignInClient`). The ID token is still
+  exchanged with Firebase Auth, so existing accounts are unaffected. Logout and
+  account deletion also clear the stored credential state. If the device has no
+  Google account, a clear message is shown; closing the picker shows nothing.
+
 ## [1.1.2] — 2026-10-23
 
 ### Added
