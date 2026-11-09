@@ -3,6 +3,8 @@ package com.navio.damtests
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.auth.UserProgressRepository
+import com.navio.damtests.data.exam.Exam
+import com.navio.damtests.data.exam.ExamRange
 import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.data.local.entity.FavoriteQuestion
 import com.navio.damtests.data.local.entity.Question
@@ -66,6 +68,25 @@ class QuizRepository @Inject constructor(
 
     suspend fun getUniqueTopicIds(subjectId: String): List<String> =
         questionsDao.getUniqueTopicIds(subjectId)
+
+    // --- Exam mode ---
+
+    /** How many questions an exam of [range] can draw from. */
+    suspend fun countExamQuestions(subjectId: String, range: ExamRange): Int = when (range) {
+        ExamRange.ALL         -> questionsDao.countGeneralTestQuestions(subjectId)
+        ExamRange.FIRST_HALF  -> questionsDao.countQuestionsForTopicList(subjectId, temaIds(1, 10))
+        ExamRange.SECOND_HALF -> questionsDao.countQuestionsForTopicList(subjectId, temaIds(11, 20))
+    }
+
+    /** [count] random questions of [range], without repeated texts. */
+    suspend fun getExamQuestions(subjectId: String, range: ExamRange, count: Int): List<Question> =
+        when (range) {
+            ExamRange.ALL         -> getRandomQuestionsForGeneralTest(subjectId, count)
+            ExamRange.FIRST_HALF  -> getQuestionsForRange(subjectId, 1, 10, count)
+            ExamRange.SECOND_HALF -> getQuestionsForRange(subjectId, 11, 20, count)
+        }.distinctBy { it.text }
+
+    private fun temaIds(start: Int, end: Int) = (start..end).map { "tema_$it" }
 
     suspend fun hasQuestions(subjectId: String, topicId: String): Boolean =
         questionsDao.getRandomQuestionsForTopic(subjectId, topicId, 1).isNotEmpty()
@@ -136,6 +157,7 @@ class QuizRepository @Inject constructor(
             }
             if (temaNumbers.isNotEmpty()) {
                 topics.add(Topic("-1", "TEST GENERAL (TODO)", subjectId))
+                topics.add(Topic(Exam.TOPIC_ID, "MODO EXAMEN", subjectId))
             }
             topics.add(Topic("-4", "REPASO INTELIGENTE", subjectId))
             topics.add(Topic(Favorites.TOPIC_ID, "PREGUNTAS FAVORITAS", subjectId))

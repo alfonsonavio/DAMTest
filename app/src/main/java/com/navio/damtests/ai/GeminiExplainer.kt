@@ -47,22 +47,34 @@ class GeminiExplainer(apiKey: String) {
             "Enunciado/Contexto del caso:\n${pregunta.contextText}\n\n"
         else ""
 
+        // A blank exam answer (selectedIndex < 0) only needs the correct option explained
+        val answered = selectedIndex >= 0
+        val situacion = if (answered)
+            "El alumno marcó la opción ${letter(selectedIndex)}), pero la respuesta correcta es la opción ${letter(correctIndex)})."
+        else
+            "El alumno dejó la pregunta en blanco. La respuesta correcta es la opción ${letter(correctIndex)})."
+        val puntos = if (answered)
+            "1. Por qué la respuesta correcta, la ${letter(correctIndex)}), es la correcta.\n" +
+                    "            2. Por qué la opción elegida, la ${letter(selectedIndex)}), es incorrecta."
+        else
+            "1. Por qué la respuesta correcta, la ${letter(correctIndex)}), es la correcta.\n" +
+                    "            2. Qué distingue a las otras opciones de la correcta."
+
         val opciones = shownOptions.mapIndexed { i, text -> "${letter(i)}) $text" }.joinToString("\n            ")
 
         val prompt = """
             Actúa como un profesor experto en DAM (Desarrollo de Aplicaciones Multiplataforma).
-            Un alumno ha respondido incorrectamente la siguiente pregunta de test.
+            Un alumno no ha acertado la siguiente pregunta de test.
 
             ${contexto}Pregunta: ${pregunta.text}
 
             Opciones (en el orden en que las ve el alumno):
             $opciones
 
-            El alumno marcó la opción ${letter(selectedIndex)}), pero la respuesta correcta es la opción ${letter(correctIndex)}).
+            $situacion
 
             Explica de forma breve y clara:
-            1. Por qué la respuesta correcta, la ${letter(correctIndex)}), es la correcta.
-            2. Por qué la opción elegida, la ${letter(selectedIndex)}), es incorrecta.
+            $puntos
 
             Cuando nombres una opción, usa siempre su letra (a, b, c o d) tal y como aparece arriba; nunca uses números.
             Sé pedagógico y conciso. No uses listas con guiones ni formato Markdown, solo texto plano.

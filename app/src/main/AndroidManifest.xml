@@ -61,6 +61,11 @@
             android:theme="@style/Theme.DAMTest" />
 
         <activity
+            android:name=".exam.ExamActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DAMTest" />
+
+        <activity
             android:name=".favorites.FavoritesActivity"
             android:exported="false"
             android:theme="@style/Theme.DAMTest" />

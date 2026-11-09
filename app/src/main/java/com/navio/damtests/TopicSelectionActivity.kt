@@ -15,8 +15,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.data.SubjectCatalog
+import com.navio.damtests.data.exam.Exam
+import com.navio.damtests.data.exam.ExamRange
 import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.exam.ExamActivity
+import com.navio.damtests.exam.ExamSetupDialog
 import com.navio.damtests.ui.QuizLauncher
 import com.navio.damtests.ui.TopicAdapter
 import kotlinx.coroutines.Dispatchers
@@ -71,13 +75,15 @@ class TopicSelectionActivity : AppCompatActivity() {
                             topic.id.startsWith("tema_")         -> 0
                             topic.id.startsWith("caso_")         -> 1
                             topic.id.startsWith("repaso_")       -> 2
-                            topic.id in listOf("-2", "-3", "-1", "-4", Favorites.TOPIC_ID) -> 3
+                            topic.id in listOf("-2", "-3", "-1", Exam.TOPIC_ID, "-4", Favorites.TOPIC_ID) -> 3
                             else                                       -> 4
                         }
                     },
                     { topic ->
                         if (topic.id.startsWith("-")) {
-                            when (topic.id) { "-2" -> 1; "-3" -> 2; "-1" -> 3; "-4" -> 4; else -> 5 }
+                            when (topic.id) {
+                                "-2" -> 1; "-3" -> 2; "-1" -> 3; Exam.TOPIC_ID -> 4; "-4" -> 5; else -> 6
+                            }
                         } else {
                             topic.id.filter { it.isDigit() }.toIntOrNull() ?: Int.MAX_VALUE
                         }
@@ -110,6 +116,12 @@ class TopicSelectionActivity : AppCompatActivity() {
             // The test left half-way: ask whether to continue it or start again.
             if (sessionStore.load()?.isFor(subjectId, topicId) == true) {
                 QuizLauncher.open(this@TopicSelectionActivity, sessionStore, subjectId, topicId)
+                return@launch
+            }
+
+            // Exam mode: choose topics, size and penalty first.
+            if (topicId == Exam.TOPIC_ID) {
+                showExamSetup(subjectId)
                 return@launch
             }
 
@@ -146,6 +158,18 @@ class TopicSelectionActivity : AppCompatActivity() {
                     .setPositiveButton(R.string.close, null)
                     .show()
             }
+        }
+    }
+
+    private suspend fun showExamSetup(subjectId: String) {
+        val counts = ExamRange.entries.associateWith { repository.countExamQuestions(subjectId, it) }
+        val ranges = ExamSetupDialog.availableRanges(counts)
+        if (ranges.isEmpty()) {
+            AuthUiHelper.showInfo(this, getString(R.string.no_questions_title), getString(R.string.no_questions_yet))
+            return
+        }
+        ExamSetupDialog.show(this, ranges) { range, size, penalized ->
+            ExamActivity.start(this, subjectId, range, size, penalized)
         }
     }
 
