@@ -27,6 +27,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stats but saves no score or topic progress (attempt topic "-5"). Favourites
   sync across devices (`users/{uid}/favorites`, last write wins) and are
   removed on logout and account deletion.
+- **Exam mode** — a "Modo examen" row in each subject opens a timed exam:
+  choose the topics (all, 1-10 or 11-20 when the subject has both halves),
+  the size (10, 20, 30 or 40 questions, only those the topics can fill) and
+  whether wrong answers subtract 1/3. The time is 1.5 minutes per question and
+  keeps running in the background. There is no feedback until the exam is
+  handed in: answers can be changed or cleared, questions flagged as doubtful
+  and reached from a question grid. It is graded out of 10 on submission or
+  automatically when the time runs out, then opens the usual review (blank
+  questions marked as such, AI explanation available). An exam counts as a
+  test in Statistics and for the streak (attempt topics "-6", "-7", "-8") but
+  saves no topic progress.
 
 ### Changed
 - **Room database v5 with a real migration** (`MIGRATION_4_5`) adding the
