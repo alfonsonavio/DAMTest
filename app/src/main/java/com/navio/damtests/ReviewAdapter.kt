@@ -85,9 +85,16 @@ class ReviewAdapter(
             }
             optionsText.append("$prefix ${labels[i]}) $optionText\n")
         }
+        // Exam questions left blank: say so and show only the right answer
+        if (!res.isAnswered) optionsText.insert(0, "⚪ Sin contestar\n\n")
         holder.tvOptions.text = optionsText.toString().trim()
 
-        if (isCorrect) {
+        if (!res.isAnswered) {
+            holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.surface))
+            holder.card.strokeColor = holder.card.context.getColor(R.color.text_muted)
+            holder.btnVerExplicacion.visibility = View.VISIBLE
+            holder.btnVerExplicacion.setOnClickListener { onExplainClick(res) }
+        } else if (isCorrect) {
             holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.state_success_bg))
             holder.card.strokeColor = holder.card.context.getColor(R.color.state_success)
             holder.btnVerExplicacion.visibility = View.GONE
