@@ -12,7 +12,8 @@ import kotlinx.parcelize.Parcelize
  * via Intent — no global singleton needed.
  *
  * @param question           The original question entity.
- * @param userSelectedIndex  0-based index of the option the user chose (shuffled order).
+ * @param userSelectedIndex  0-based index of the option the user chose (shuffled order),
+ *                           or [NOT_ANSWERED] for a question left blank in an exam.
  * @param shuffledOptions    Options as displayed on screen (already shuffled).
  * @param isCorrect          Whether the user's answer was correct.
  */
@@ -22,4 +23,11 @@ data class QuestionResult(
     val userSelectedIndex: Int,
     val shuffledOptions: List<String>,
     val isCorrect: Boolean
-) : Parcelable
+) : Parcelable {
+
+    val isAnswered: Boolean get() = userSelectedIndex != NOT_ANSWERED
+
+    companion object {
+        const val NOT_ANSWERED = -1
+    }
+}

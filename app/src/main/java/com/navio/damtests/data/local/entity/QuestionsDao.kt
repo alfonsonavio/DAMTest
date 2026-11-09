@@ -42,6 +42,13 @@ interface QuestionsDao {
     @Query("SELECT * FROM questions WHERE subjectId = :subjectId AND topicId IN (:topicIds) ORDER BY RANDOM() LIMIT :limit")
     suspend fun getRandomQuestionsForTopicList(subjectId: String, topicIds: List<String>, limit: Int): List<Question>
 
+    // Question counts, to offer only the exam sizes a subject can fill
+    @Query("SELECT COUNT(*) FROM questions WHERE subjectId = :subjectId AND topicId LIKE 'tema_%'")
+    suspend fun countGeneralTestQuestions(subjectId: String): Int
+
+    @Query("SELECT COUNT(*) FROM questions WHERE subjectId = :subjectId AND topicId IN (:topicIds)")
+    suspend fun countQuestionsForTopicList(subjectId: String, topicIds: List<String>): Int
+
     // --- Progress management ---
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
