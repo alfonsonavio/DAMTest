@@ -243,11 +243,16 @@ class QuizViewModel @Inject constructor(
         _currentAnswerState.value = null
         sessionStore.clear()
 
-        // Smart review (-4) is practice only — it does not save a score.
+        // Smart review (-4) is practice only — it saves no score or progress,
+        // only the attempt that keeps the study streak going.
         // The score belongs to the test that was launched (e.g. "-1" for the
         // full general test), not to the topic of its first question.
-        if (currentTopicId != "-4" && _questions.value.isNotEmpty()) {
-            saveFinalProgress(currentSubjectId, currentTopicId)
+        if (_questions.value.isNotEmpty()) {
+            if (currentTopicId == "-4") {
+                recordPracticeAttempt(currentSubjectId)
+            } else {
+                saveFinalProgress(currentSubjectId, currentTopicId)
+            }
         }
     }
 
@@ -290,6 +295,21 @@ class QuizViewModel @Inject constructor(
         _score.value = session.score
         _currentQuestionIndex.value = session.answeredCount.coerceAtMost(questions.lastIndex)
         return true
+    }
+
+    /**
+     * Smart review saves no score or progress, but it still counts as a study
+     * day for the streak, so the attempt is recorded (statistics ignore "-4").
+     */
+    private fun recordPracticeAttempt(subjectId: String) {
+        viewModelScope.launch {
+            repository.recordTestAttempt(
+                subjectId = subjectId,
+                topicId = "-4",
+                score = _score.value,
+                totalQuestions = _questions.value.size
+            )
+        }
     }
 
     private fun saveFinalProgress(subjectId: String, topicId: String) {
