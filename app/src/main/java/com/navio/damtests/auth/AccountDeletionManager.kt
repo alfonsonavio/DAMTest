@@ -20,7 +20,8 @@ class AccountDeletionManager @Inject constructor(
     private val cloudUserData: CloudUserDataRepository,
     private val questionsDao: QuestionsDao,
     private val sessionStore: QuizSessionStore,
-    private val statsSyncRepository: StatsSyncRepository
+    private val statsSyncRepository: StatsSyncRepository,
+    private val googleCredentialClient: GoogleCredentialClient
 ) {
 
     enum class Result {
@@ -59,6 +60,7 @@ class AccountDeletionManager @Inject constructor(
         sessionStore.clear()
         statsSyncRepository.forgetSyncState(uid)
         authManager.signOut()
+        googleCredentialClient.clearCredentialState()
 
         return if (accountDeleted) Result.DELETED else Result.DATA_DELETED_ACCOUNT_PENDING
     }
