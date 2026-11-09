@@ -9,13 +9,11 @@ import androidx.core.widget.doAfterTextChanged
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
+import com.navio.damtests.auth.GoogleCredentialClient
 import com.navio.damtests.auth.SessionBackupRepository
 import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.auth.UserProgressRepository
@@ -30,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
     @Inject lateinit var questionsDao: QuestionsDao
     @Inject lateinit var statsSyncRepository: StatsSyncRepository
     @Inject lateinit var sessionBackupRepository: SessionBackupRepository
+    @Inject lateinit var googleCredentialClient: GoogleCredentialClient
 
     private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
@@ -38,37 +37,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tvForgotPassword: TextView
     private lateinit var tvRegister: TextView
     private lateinit var progressOverlay: View
-
-    private val googleSignInClient by lazy {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        GoogleSignIn.getClient(this, gso)
-    }
-
-    private val googleSignInLauncher = registerForActivityResult(
-        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(ApiException::class.java)
-            lifecycleScope.launch {
-                setLoading(true)
-                val authResult = authManager.signInWithGoogle(account)
-                authResult.fold(
-                    onSuccess = { onLoginSuccess() },
-                    onFailure = {
-                        setLoading(false)
-                        AuthUiHelper.showInfo(this@LoginActivity, "Error",
-                            AuthUiHelper.translateError(this@LoginActivity, it))
-                    }
-                )
-            }
-        } catch (e: ApiException) {
-            AuthUiHelper.showInfo(this, "Error", getString(R.string.error_google_signin))
-        }
-    }
 
     private val registerLauncher = registerForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
@@ -129,8 +97,29 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startGoogleSignIn() {
-        googleSignInClient.signOut().addOnCompleteListener {
-            googleSignInLauncher.launch(googleSignInClient.signInIntent)
+        lifecycleScope.launch {
+            when (val result = googleCredentialClient.getGoogleIdToken(this@LoginActivity)) {
+                is GoogleCredentialClient.Result.Success -> {
+                    setLoading(true)
+                    authManager.signInWithGoogleIdToken(result.idToken).fold(
+                        onSuccess = { onLoginSuccess() },
+                        onFailure = {
+                            setLoading(false)
+                            AuthUiHelper.showInfo(this@LoginActivity, "Error",
+                                AuthUiHelper.translateError(this@LoginActivity, it))
+                        }
+                    )
+                }
+                GoogleCredentialClient.Result.Cancelled -> Unit // user closed the picker
+                GoogleCredentialClient.Result.NoAccount -> AuthUiHelper.showInfo(
+                    this@LoginActivity,
+                    "Sin cuenta de Google",
+                    getString(R.string.error_google_no_account)
+                )
+                is GoogleCredentialClient.Result.Error -> AuthUiHelper.showInfo(
+                    this@LoginActivity, "Error", getString(R.string.error_google_signin)
+                )
+            }
         }
     }
 
