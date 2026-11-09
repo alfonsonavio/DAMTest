@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.data.SubjectCatalog
+import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.ui.QuizLauncher
 import com.navio.damtests.ui.TopicAdapter
@@ -70,13 +71,13 @@ class TopicSelectionActivity : AppCompatActivity() {
                             topic.id.startsWith("tema_")         -> 0
                             topic.id.startsWith("caso_")         -> 1
                             topic.id.startsWith("repaso_")       -> 2
-                            topic.id in listOf("-2", "-3", "-1", "-4") -> 3
+                            topic.id in listOf("-2", "-3", "-1", "-4", Favorites.TOPIC_ID) -> 3
                             else                                       -> 4
                         }
                     },
                     { topic ->
                         if (topic.id.startsWith("-")) {
-                            when (topic.id) { "-2" -> 1; "-3" -> 2; "-1" -> 3; else -> 4 }
+                            when (topic.id) { "-2" -> 1; "-3" -> 2; "-1" -> 3; "-4" -> 4; else -> 5 }
                         } else {
                             topic.id.filter { it.isDigit() }.toIntOrNull() ?: Int.MAX_VALUE
                         }
@@ -118,6 +119,17 @@ class TopicSelectionActivity : AppCompatActivity() {
                     this@TopicSelectionActivity,
                     "Repaso inteligente",
                     "Aún no tienes fallos que repasar en esta asignatura. Haz algún test y vuelve."
+                )
+                return@launch
+            }
+
+            // Favourites: only once the user has marked some in this subject.
+            if (topicId == Favorites.TOPIC_ID && !repository.hasFavorites(subjectId)) {
+                AuthUiHelper.showInfo(
+                    this@TopicSelectionActivity,
+                    "Preguntas favoritas",
+                    "Aún no tienes favoritas en esta asignatura. Márcalas con la estrella ★ " +
+                            "durante un test o en la revisión."
                 )
                 return@launch
             }
