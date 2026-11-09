@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="28dp"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Modo examen"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Sin corrección hasta que entregues. Puedes saltar preguntas, volver atrás y marcar las dudosas. Tienes 1,5 minutos por pregunta."
+            android:textAppearance="@style/TextAppearance.DAMTest.Secondary" />
+
+        <!-- Temas -->
+        <TextView
+            android:id="@+id/tvSetupRangeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Temas"
+            android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cgExamRange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:selectionRequired="true"
+            app:singleSelection="true" />
+
+        <!-- Número de preguntas (y tiempo) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Preguntas"
+            android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cgExamSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:selectionRequired="true"
+            app:singleSelection="true" />
+
+        <!-- Penalización -->
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/swExamPenalty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Los fallos restan"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cada fallo resta 1/3 de acierto. Las preguntas en blanco no restan."
+            android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStartExam"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:text="EMPEZAR EXAMEN"
+            app:backgroundTint="@color/brand_primary"
+            app:cornerRadius="16dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelExam"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="CANCELAR"
+            android:textColor="@color/text_secondary" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
