@@ -1,5 +1,6 @@
 package com.navio.damtests
 
+import com.navio.damtests.data.local.entity.FavoriteQuestion
 import com.navio.damtests.data.local.entity.QuestionStats
 import com.navio.damtests.data.local.entity.TestAttempt
 import com.navio.damtests.data.sync.StatsMerger
@@ -94,6 +95,44 @@ class StatsMergerTest {
         val plan = StatsMerger.mergeQuestionStats(
             local = listOf(stats("q1", seen = 5, lastSeen = 2000)),
             cloud = listOf(stats("q2", seen = 1, lastSeen = 3000)),
+            uploadLocalNewer = false
+        )
+        assertEquals(listOf("q2"), plan.toLocal.map { it.stableId })
+        assertTrue(plan.toCloud.isEmpty())
+    }
+
+    // --- Favourites ---
+
+    private fun fav(id: String, favorite: Boolean, updatedAt: Long) =
+        FavoriteQuestion(id, "programacion", favorite, updatedAt)
+
+    @Test
+    fun `newer cloud unmark replaces an older local favourite`() {
+        val plan = StatsMerger.mergeFavorites(
+            local = listOf(fav("q1", favorite = true, updatedAt = 1000)),
+            cloud = listOf(fav("q1", favorite = false, updatedAt = 2000)),
+            uploadLocalNewer = true
+        )
+        assertEquals(false, plan.toLocal.single().isFavorite)
+        assertTrue(plan.toCloud.isEmpty())
+    }
+
+    @Test
+    fun `local favourites missing in the cloud are uploaded on first sync`() {
+        val plan = StatsMerger.mergeFavorites(
+            local = listOf(fav("q1", favorite = true, updatedAt = 1000)),
+            cloud = emptyList(),
+            uploadLocalNewer = true
+        )
+        assertTrue(plan.toLocal.isEmpty())
+        assertEquals(listOf("q1"), plan.toCloud.map { it.stableId })
+    }
+
+    @Test
+    fun `incremental sync only downloads favourites`() {
+        val plan = StatsMerger.mergeFavorites(
+            local = listOf(fav("q1", favorite = true, updatedAt = 3000)),
+            cloud = listOf(fav("q2", favorite = true, updatedAt = 1000)),
             uploadLocalNewer = false
         )
         assertEquals(listOf("q2"), plan.toLocal.map { it.stableId })

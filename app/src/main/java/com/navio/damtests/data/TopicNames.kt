@@ -12,6 +12,7 @@ object TopicNames {
         topicId == "-2" -> "Test general (temas 1-10)"
         topicId == "-3" -> "Test general (temas 11-20)"
         topicId == "-4" -> "Repaso inteligente"
+        topicId == "-5" -> "Preguntas favoritas"
         topicId.startsWith("tema_")   -> "Tema ${topicId.removePrefix("tema_")}"
         topicId.startsWith("caso_")   -> "Caso práctico ${topicId.removePrefix("caso_")}"
         topicId.startsWith("repaso_") -> "Repaso final"

@@ -3,6 +3,8 @@ package com.navio.damtests
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.auth.UserProgressRepository
+import com.navio.damtests.data.favorites.Favorites
+import com.navio.damtests.data.local.entity.FavoriteQuestion
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.Topic
@@ -14,6 +16,8 @@ import com.navio.damtests.data.statistics.StatisticsCalculator
 import com.navio.damtests.data.statistics.StatisticsData
 import com.navio.damtests.data.streak.StreakCalculator
 import com.navio.damtests.data.streak.StreakInfo
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -134,6 +138,7 @@ class QuizRepository @Inject constructor(
                 topics.add(Topic("-1", "TEST GENERAL (TODO)", subjectId))
             }
             topics.add(Topic("-4", "REPASO INTELIGENTE", subjectId))
+            topics.add(Topic(Favorites.TOPIC_ID, "PREGUNTAS FAVORITAS", subjectId))
         }
         return topics
     }
@@ -224,6 +229,39 @@ class QuizRepository @Inject constructor(
             statsSyncRepository.saveAttempt(uid, attempt)
         }
     }
+
+    // --- Favourite questions ---
+
+    /** Stable ids of the questions marked as favourite, updated live. */
+    fun getFavoriteIds(): Flow<Set<String>> =
+        questionsDao.getFavoriteIdsFlow().map { it.toSet() }
+
+    /** All favourite questions, newest first, updated live (favourites screen). */
+    fun getFavoriteQuestionsFlow(): Flow<List<Question>> =
+        questionsDao.getFavoriteQuestionsFlow().map { list -> list.distinctBy { it.stableId } }
+
+    /**
+     * Marks or unmarks [question] as favourite, locally and in the cloud.
+     * Questions without a stable id can't be favourited (they couldn't be
+     * found again after the next question sync).
+     */
+    suspend fun setFavorite(question: Question, favorite: Boolean, now: Long = System.currentTimeMillis()) {
+        if (question.stableId.isBlank()) return
+        val record = FavoriteQuestion(question.stableId, question.subjectId, favorite, now)
+        questionsDao.saveFavorite(record)
+        authManager.currentUid?.let { uid -> statsSyncRepository.saveFavorite(uid, record) }
+    }
+
+    /** True if [subjectId] (or any subject, for [Favorites.ALL_SUBJECTS]) has favourites. */
+    suspend fun hasFavorites(subjectId: String): Boolean =
+        getFavoriteQuestions(subjectId, Int.MAX_VALUE).isNotEmpty()
+
+    /** Up to [limit] favourite questions in random order, for the favourites test. */
+    suspend fun getFavoriteQuestions(subjectId: String, limit: Int = 20): List<Question> =
+        questionsDao.getFavoriteQuestions(subjectId.takeUnless { it == Favorites.ALL_SUBJECTS })
+            .distinctBy { it.stableId }
+            .shuffled()
+            .take(limit)
 
     /** Current study streak (see [StreakCalculator]). */
     suspend fun getStreak(now: Long = System.currentTimeMillis()): StreakInfo =

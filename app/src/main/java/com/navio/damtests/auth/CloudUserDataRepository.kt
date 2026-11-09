@@ -31,7 +31,7 @@ class CloudUserDataRepository @Inject constructor(
 
     private companion object {
         /** Every subcollection the app writes under users/{uid}. */
-        val USER_COLLECTIONS = listOf("progress", "attempts", "questionStats", "backup")
+        val USER_COLLECTIONS = listOf("progress", "attempts", "questionStats", "favorites", "backup")
         const val MAX_BATCH_WRITES = 500 // Firestore limit per batch
     }
 }
