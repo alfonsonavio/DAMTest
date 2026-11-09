@@ -97,9 +97,17 @@ interface QuestionsDao {
     @Insert
     suspend fun insertTestAttempts(attempts: List<TestAttempt>)
 
-    /** All attempts for a set of subjects (a course), newest last. */
-    @Query("SELECT * FROM test_attempts WHERE subjectId IN (:subjectIds) ORDER BY timestamp ASC")
+    /**
+     * Scored attempts for a set of subjects (a course), newest last. Smart
+     * review practice ("-4") is stored for the study streak but excluded here,
+     * so it never affects the statistics.
+     */
+    @Query("SELECT * FROM test_attempts WHERE subjectId IN (:subjectIds) AND topicId != '-4' ORDER BY timestamp ASC")
     suspend fun getAttemptsForSubjects(subjectIds: List<String>): List<TestAttempt>
+
+    /** When every finished test happened (smart review included), for the study streak. */
+    @Query("SELECT timestamp FROM test_attempts")
+    suspend fun getAttemptTimestamps(): List<Long>
 
     /** All attempts, newest last. */
     @Query("SELECT * FROM test_attempts ORDER BY timestamp ASC")

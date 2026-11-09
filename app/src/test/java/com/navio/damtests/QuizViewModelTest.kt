@@ -234,7 +234,7 @@ class QuizViewModelTest {
     }
 
     @Test
-    fun `finishing smart review does NOT record an attempt`() = runTest {
+    fun `finishing smart review records a practice attempt but no progress`() = runTest {
         val questions = listOf(question(1))
         coEvery { repository.getSmartReviewQuestions(any(), any()) } returns questions
         viewModel.loadQuestions("programacion", "-4") // smart review
@@ -242,8 +242,10 @@ class QuizViewModelTest {
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // finishes
 
-        // Smart review is practice-only — no attempt, no progress
-        coVerify(exactly = 0) { repository.recordTestAttempt(any(), any(), any(), any()) }
+        // Smart review counts for the study streak (attempt "-4", which the
+        // statistics ignore) but saves no score or topic progress
+        coVerify(exactly = 1) { repository.recordTestAttempt("programacion", "-4", any(), any()) }
+        coVerify(exactly = 0) { repository.updateProgress(any()) }
     }
 
     // --- Resuming a test in progress ---
@@ -266,7 +268,7 @@ class QuizViewModelTest {
         verify {
             sessionStore.save(match {
                 it.topicId == "tema_1" && it.questionIds == listOf("q1", "q2") &&
-                    it.answeredCount == 1 && it.score == 1
+                        it.answeredCount == 1 && it.score == 1
             })
         }
     }
@@ -286,7 +288,7 @@ class QuizViewModelTest {
     fun `resume restores position, score and answers`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 2, score = 2)
         coEvery { repository.getQuestionsInOrder(listOf("q1", "q2", "q3")) } returns
-            listOf(question(1), question(2), question(3))
+                listOf(question(1), question(2), question(3))
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
 
@@ -315,7 +317,7 @@ class QuizViewModelTest {
     fun `resume of a test with every question answered finishes it`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 3, score = 3)
         coEvery { repository.getQuestionsInOrder(any()) } returns
-            listOf(question(1), question(2), question(3))
+                listOf(question(1), question(2), question(3))
         coEvery { repository.getProgress(any(), any()) } returns null
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
