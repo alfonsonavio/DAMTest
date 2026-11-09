@@ -18,6 +18,7 @@ import com.navio.damtests.R
 import com.navio.damtests.TopicSelectionActivity
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
+import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.data.SubjectCatalog
 import com.navio.damtests.data.TopicNames
 import com.navio.damtests.data.session.QuizSessionStore
@@ -38,12 +39,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     @Inject lateinit var repository: QuizRepository
     @Inject lateinit var authManager: AuthManager
     @Inject lateinit var sessionStore: QuizSessionStore
+    @Inject lateinit var statsSyncRepository: StatsSyncRepository
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val tvGreeting     = view.findViewById<TextView>(R.id.tvGreeting)
         val tvName         = view.findViewById<TextView>(R.id.tvName)
+        val tvStreak       = view.findViewById<TextView>(R.id.tvStreak)
         val tvAvgScore     = view.findViewById<TextView>(R.id.tvAvgScore)
         val tvTotalTests   = view.findViewById<TextView>(R.id.tvTotalTests)
         val cardContinue   = view.findViewById<MaterialCardView>(R.id.cardContinue)
@@ -65,6 +68,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             startActivity(Intent(requireContext(), com.navio.damtests.SettingsActivity::class.java))
         }
 
+        // Study streak: recalculated whenever Home is shown again (e.g. after a
+        // test) and whenever a background sync brings tests from another device.
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                statsSyncRepository.syncedAt.collect {
+                    tvStreak.text = "🔥 ${repository.getStreak().days}"
+                }
+            }
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 repository.getAllProgress().collect { allProgress ->
@@ -84,7 +97,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         tvContinueHeader.isVisible = true
                         tvContinueSubject.text = SubjectCatalog.nameFor(session.subjectId)
                         tvContinueDetail.text = "${TopicNames.displayName(session.topicId)} · " +
-                            "Pregunta ${session.nextQuestionNumber} de ${session.total}"
+                                "Pregunta ${session.nextQuestionNumber} de ${session.total}"
                         progressContinue.isVisible = true
                         progressContinue.max = session.total
                         progressContinue.progress = session.answeredCount
