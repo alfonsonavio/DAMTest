@@ -50,6 +50,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   account deletion also clear the stored credential state. If the device has no
   Google account, a clear message is shown; closing the picker shows nothing.
 
+### Fixed
+- **Review explanations no longer hang** — the "Ver explicación" request waits
+  at most 20 seconds for Gemini, retries once when Gemini is busy (503 "high
+  demand") and otherwise falls back to Groq with the same prompt, so there is
+  almost always an explanation. Closing the dialog cancels the request in
+  flight, and after 8 seconds the dialog says it is taking longer.
+
 ## [1.1.2] — 2026-10-23
 
 ### Added
