@@ -22,6 +22,8 @@ import kotlin.time.Duration.Companion.seconds
  *   Left  → why the chosen option is wrong (2-3 sentences)
  *   Right → why the correct option is right (2-3 sentences)
  *
+ * It is also the fallback of the review explanation ([generate]).
+ *
  * One HTTP client is kept for the whole app (rebuilt only if the API key
  * changes in Remote Config) instead of a new, never-closed client per answer.
  * Request logging is off: it printed every request in release builds.
@@ -48,11 +50,6 @@ class FastExplainer @Inject constructor() {
     }
 
     suspend fun explicarRapido(pregunta: String, elegida: String, correcta: String): String {
-        val apiKey = RemoteConfigManager.getString(RemoteConfigManager.KEY_GROQ)
-        // No key yet (Remote Config not fetched): report it as a normal failure
-        // so the user sees the friendly error, not a developer message.
-        check(apiKey.isNotBlank()) { "groq_api_key missing in Remote Config" }
-
         val systemPrompt = """
             Eres un profesor de informática de grado superior explicando a un alumno por qué falló una pregunta de test.
             
@@ -73,6 +70,31 @@ class FastExplainer @Inject constructor() {
             Opción correcta: $correcta
         """.trimIndent()
 
+        val content = complete(
+            listOf(
+                ChatMessage(role = ChatRole.System, content = systemPrompt),
+                ChatMessage(role = ChatRole.User,   content = userContent)
+            )
+        )
+        return content ?: "No se pudo generar explicación | Inténtalo de nuevo"
+    }
+
+    /**
+     * Free-form answer to [prompt]. Used as the fallback of the review
+     * explanation when Gemini is busy; throws if there is no answer.
+     */
+    suspend fun generate(prompt: String): String {
+        val content = complete(listOf(ChatMessage(role = ChatRole.User, content = prompt)))
+        check(!content.isNullOrBlank()) { "Groq returned an empty answer" }
+        return content.trim()
+    }
+
+    private suspend fun complete(messages: List<ChatMessage>): String? {
+        val apiKey = RemoteConfigManager.getString(RemoteConfigManager.KEY_GROQ)
+        // No key yet (Remote Config not fetched): report it as a normal failure
+        // so the user sees the friendly error, not a developer message.
+        check(apiKey.isNotBlank()) { "groq_api_key missing in Remote Config" }
+
         val response = clientFor(apiKey).chatCompletion(
             ChatCompletionRequest(
                 model    = ModelId(
@@ -81,14 +103,10 @@ class FastExplainer @Inject constructor() {
                         RemoteConfigManager.DEFAULT_GROQ_MODEL
                     )
                 ),
-                messages = listOf(
-                    ChatMessage(role = ChatRole.System, content = systemPrompt),
-                    ChatMessage(role = ChatRole.User,   content = userContent)
-                ),
+                messages = messages,
                 temperature = 0.4
             )
         )
-        return response.choices.first().message.content
-            ?: "No se pudo generar explicación | Inténtalo de nuevo"
+        return response.choices.firstOrNull()?.message?.content
     }
 }
