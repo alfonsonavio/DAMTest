@@ -1,6 +1,5 @@
 package com.navio.damtests.auth
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -71,9 +70,10 @@ class AuthManager @Inject constructor(
 
     // --- Google Sign-In ---
 
-    suspend fun signInWithGoogle(account: GoogleSignInAccount): Result<FirebaseUser> {
+    /** Signs in to Firebase with a Google ID token from [GoogleCredentialClient]. */
+    suspend fun signInWithGoogleIdToken(idToken: String): Result<FirebaseUser> {
         return try {
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
             val result = auth.signInWithCredential(credential).await()
             Result.success(result.user!!)
         } catch (e: Exception) {

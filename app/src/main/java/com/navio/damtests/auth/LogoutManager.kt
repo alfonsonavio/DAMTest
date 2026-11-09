@@ -32,7 +32,8 @@ class LogoutManager @Inject constructor(
     private val sessionStore: QuizSessionStore,
     private val userProgressRepository: UserProgressRepository,
     private val statsSyncRepository: StatsSyncRepository,
-    private val sessionBackupRepository: SessionBackupRepository
+    private val sessionBackupRepository: SessionBackupRepository,
+    private val googleCredentialClient: GoogleCredentialClient
 ) {
 
     /** @return true if the user was signed out; false if the backup couldn't be confirmed. */
@@ -57,6 +58,7 @@ class LogoutManager @Inject constructor(
             Log.d(TAG, "All data confirmed in the cloud; local user data cleared")
         }
         authManager.signOut()
+        googleCredentialClient.clearCredentialState()
         return true
     }
 

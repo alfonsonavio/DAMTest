@@ -107,8 +107,10 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore") // User progress sync
     implementation("com.google.firebase:firebase-analytics")
 
-    // Google Sign-In
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    // Google Sign-In via Credential Manager
+    implementation("androidx.credentials:credentials:1.5.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     // Networking
