@@ -209,6 +209,29 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Sección Información -->
+            <TextView style="@style/SettingsSectionHeader" android:text="@string/settings_section_info" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:id="@+id/rowPrivacy" style="@style/SettingsRow"
+                    android:clickable="true" android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="@string/icon_lock" android:textSize="18sp" />
+                    <LinearLayout style="@style/SettingsRowText">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/settings_privacy_title"
+                            android:textAppearance="@style/TextAppearance.DAMTest.Body" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="@string/settings_privacy_subtitle"
+                            android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
+                    </LinearLayout>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="@string/icon_chevron"
+                        android:textColor="@color/text_muted"
+                        android:textSize="22sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Cuenta: eliminar la cuenta y todos los datos (RGPD) -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
