@@ -124,7 +124,6 @@ dependencies {
     implementation(libs.firebase.config)
     implementation(libs.firebase.database)
     implementation(libs.firebase.firestore)
-    implementation(libs.firebase.analytics)
     implementation(libs.kotlinx.coroutines.play.services)
 
     // Google sign-in via Credential Manager
