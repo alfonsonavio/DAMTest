@@ -48,6 +48,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **Data layer split by responsibility** — the single `QuestionsDao` (41
+  queries) is now one DAO per table plus `UserDataDao` for the logout wipe,
+  and `QuizRepository` keeps only the question bank and the tests built from
+  it: the user's progress, answers, attempts, streak and statistics moved to
+  `ProgressRepository`, and favourites to `FavoritesRepository`. Logout and
+  account deletion share `CloudBackup` and `LocalUserData` instead of
+  repeating the same steps.
+- **Code clean for detekt** — every file follows the ktlint formatting rules,
+  numbers have named constants or resources, long methods (Home, quiz screen,
+  registration form, review list, question sync) are split into small ones,
+  and only `suspendRunCatching` catches every exception, for the Firebase,
+  Credential Manager and AI SDKs that don't document what they throw.
 - **Material time picker for the reminder** — the reminder time uses the
   Material 3 clock picker, in the app's colours and always in 24 h format,
   instead of the old system dialog with its own pink accent.
@@ -112,6 +124,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Google account, a clear message is shown; closing the picker shows nothing.
 
 ### Fixed
+- **Closing a screen no longer reports a failure** — the background work
+  (sign-in, sync, backups, explanations) caught every exception, including the
+  cancellation a coroutine gets when its screen closes, and went on as if it
+  had failed. Cancellation now always stops the work.
+- **A topic is never left half-updated** — a new version of a topic's
+  questions replaces the old one in a single database transaction.
+- **Aligned options in the review** — the first option lost its indentation
+  when it was neither the right answer nor the user's choice.
 - **Reminder picker opens on the clock** — the Material time picker could
   open on the keyboard input; it now always starts on the clock.
 - **Tests always have their full length** — a test of 20 sometimes had 19
