@@ -63,7 +63,7 @@ class QuizRepository @Inject constructor(
         questionsDao.getRandomQuestionsForGeneralTest(subjectId, limit)
 
     suspend fun getQuestionsForRange(subjectId: String, start: Int, end: Int, limit: Int): List<Question> {
-        val topicIds = (start..end).map { "tema_$it" }
+        val topicIds = (start..end).map(StudyTopics::temaId)
         return questionsDao.getRandomQuestionsForTopicList(subjectId, topicIds, limit)
     }
 
@@ -87,7 +87,7 @@ class QuizRepository @Inject constructor(
             ExamRange.SECOND_HALF -> getQuestionsForRange(subjectId, 11, 20, count)
         }.distinctBy { it.text }
 
-    private fun temaIds(start: Int, end: Int) = (start..end).map { "tema_$it" }
+    private fun temaIds(start: Int, end: Int) = (start..end).map(StudyTopics::temaId)
 
     suspend fun hasQuestions(subjectId: String, topicId: String): Boolean =
         questionsDao.getRandomQuestionsForTopic(subjectId, topicId, 1).isNotEmpty()

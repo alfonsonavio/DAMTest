@@ -160,7 +160,7 @@ class QuizActivity : AppCompatActivity() {
                         if (favorite) R.drawable.ic_star else R.drawable.ic_star_outline
                     )
                     btnFavorite.contentDescription =
-                        if (favorite) "Quitar de favoritas" else "Añadir a favoritas"
+                        getString(if (favorite) R.string.favorite_remove else R.string.favorite_add)
                 }
             }
         }
@@ -170,7 +170,7 @@ class QuizActivity : AppCompatActivity() {
 
     private fun refreshCountAndProgress(index: Int, total: Int) {
         val pos = index + 1
-        tvCount.text         = "$pos de $total"
+        tvCount.text         = getString(R.string.quiz_question_count, pos, total)
         // Set the max every time: after a rotation the bar is a new view whose
         // max would otherwise stay at the default 100.
         progressBar.max      = total
@@ -247,11 +247,11 @@ class QuizActivity : AppCompatActivity() {
             }
             is QuizViewModel.AiFeedback.Ready -> {
                 if (feedback.wrong != null) {
-                    wrongView.show("❌ ${feedback.wrong}", R.color.state_error)
+                    wrongView.show(getString(R.string.ai_feedback_wrong, feedback.wrong), R.color.state_error)
                 } else {
                     wrongView.visibility = View.GONE
                 }
-                correctView.show("✅ ${feedback.correct}", R.color.state_success)
+                correctView.show(getString(R.string.ai_feedback_correct, feedback.correct), R.color.state_success)
             }
             QuizViewModel.AiFeedback.Error -> {
                 wrongView.show(getString(R.string.ai_connection_error), R.color.state_error)

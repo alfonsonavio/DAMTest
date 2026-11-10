@@ -29,10 +29,10 @@ class NotificationHelper(private val context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "Recordatorios de estudio",
+            context.getString(R.string.notification_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
-            description = "Recordatorios para que no dejes de practicar"
+            description = context.getString(R.string.notification_channel_description)
         }
         notificationManager?.createNotificationChannel(channel)
     }

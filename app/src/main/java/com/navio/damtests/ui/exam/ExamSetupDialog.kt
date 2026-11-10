@@ -58,15 +58,17 @@ object ExamSetupDialog {
         fun fillSizes(range: ExamRange) {
             cgSize.removeAllViews()
             Exam.availableSizes(ranges[range] ?: 0).forEach { size ->
-                cgSize.addView(choiceChip(context, "$size · ${Exam.durationLabel(size)}", tag = size))
+                val duration = Exam.durationLabel(size).asString(context)
+                val label = context.getString(R.string.exam_size_option, size, duration)
+                cgSize.addView(choiceChip(context, label, tag = size))
             }
-            // Default: 20 questions when possible, otherwise the largest size
+            // Default size when possible, otherwise the largest one available
             val sizes = (0 until cgSize.childCount).map { cgSize.getChildAt(it) as Chip }
-            (sizes.firstOrNull { it.tag == 20 } ?: sizes.lastOrNull())?.isChecked = true
+            (sizes.firstOrNull { it.tag == Exam.DEFAULT_SIZE } ?: sizes.lastOrNull())?.isChecked = true
         }
 
         ranges.keys.forEach { range ->
-            cgRange.addView(choiceChip(context, range.label, tag = range))
+            cgRange.addView(choiceChip(context, context.getString(range.labelRes), tag = range))
         }
         cgRange.setOnCheckedStateChangeListener { group, ids ->
             val range = ids.firstOrNull()?.let { group.findViewById<Chip>(it).tag as ExamRange }

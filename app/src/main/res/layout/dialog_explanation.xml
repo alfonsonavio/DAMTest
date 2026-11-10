@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Explicación"
+            android:text="@string/explanation_title"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary" />
@@ -34,7 +34,7 @@
                 android:id="@+id/tvAiExplanation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Analizando la pregunta..."
+                android:text="@string/explanation_loading"
                 android:textSize="15sp"
                 android:lineSpacingExtra="4dp"
                 android:textColor="@color/text_secondary" />
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="20dp"
-            android:text="ENTENDIDO"
+            android:text="@string/got_it"
             android:textSize="16sp"
             app:cornerRadius="16dp"
             app:backgroundTint="@color/brand_primary" />

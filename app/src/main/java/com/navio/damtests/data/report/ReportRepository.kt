@@ -20,13 +20,20 @@ class ReportRepository @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
 
-    fun reportQuestion(question: Question, reason: String, comment: String) {
+    /** Why a question is reported; [storedValue] is what Firestore keeps. */
+    enum class Reason(val storedValue: String) {
+        WRONG_ANSWER("respuesta_incorrecta"),
+        TYPO("errata"),
+        OTHER("otro")
+    }
+
+    fun reportQuestion(question: Question, reason: Reason, comment: String) {
         val data = mapOf(
             "stableId"     to question.stableId,
             "subjectId"    to question.subjectId,
             "topicId"      to question.topicId,
             "questionText" to question.text,
-            "reason"       to reason,
+            "reason"       to reason.storedValue,
             "comment"      to comment,
             "appVersion"   to BuildConfig.VERSION_NAME,
             "createdAt"    to FieldValue.serverTimestamp()

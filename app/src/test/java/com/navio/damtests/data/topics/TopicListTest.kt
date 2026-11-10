@@ -1,5 +1,6 @@
 package com.navio.damtests.data.topics
 
+import com.navio.damtests.core.UiText
 import com.navio.damtests.data.local.entity.Topic
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.ui.topics.TopicRow
@@ -53,7 +54,10 @@ class TopicListTest {
 
     @Test
     fun `rows show the last score as a percentage and whether there is a pdf`() {
-        val topics = listOf(Topic("tema_1", "Tema 1", "programacion"), Topic("tema_2", "Tema 2", "programacion"))
+        val topics = listOf(
+            Topic("tema_1", UiText.Raw("Tema 1"), "programacion"),
+            Topic("tema_2", UiText.Raw("Tema 2"), "programacion")
+        )
         val progress = listOf(TopicProgress("programacion", "tema_1", lastScore = 15, totalQuestions = 20))
 
         val rows = TopicRow.build(topics, progress, pdfTopicIds = setOf("tema_2"))
@@ -67,7 +71,7 @@ class TopicListTest {
     @Test
     fun `a progress without questions never divides by zero`() {
         val rows = TopicRow.build(
-            listOf(Topic("tema_1", "Tema 1", "programacion")),
+            listOf(Topic("tema_1", UiText.Raw("Tema 1"), "programacion")),
             listOf(TopicProgress("programacion", "tema_1", lastScore = 0, totalQuestions = 0)),
             emptySet()
         )

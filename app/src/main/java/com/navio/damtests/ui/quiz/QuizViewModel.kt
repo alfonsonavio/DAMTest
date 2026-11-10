@@ -234,7 +234,7 @@ class QuizViewModel @Inject constructor(
         _aiFeedback.value = AiFeedback.Loading
         aiJob = viewModelScope.launch {
             _aiFeedback.value = try {
-                val response = fastExplainer.explicarRapido(question, chosen, correct)
+                val response = fastExplainer.explainQuickly(question, chosen, correct)
                 val parts = response.split("|")
                 if (parts.size >= 2) AiFeedback.Ready(parts[0].trim(), parts[1].trim())
                 else AiFeedback.Ready(null, response.trim())
