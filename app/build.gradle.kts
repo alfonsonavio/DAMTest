@@ -43,12 +43,19 @@ android {
     }
 
     // Android Lint: any warning fails the build, so the code stays clean.
-    // Dependency updates are reviewed on purpose, not forced by the build.
+    // Dependency and target SDK updates are reviewed on purpose, not forced by
+    // the build: those checks depend on what is installed on each machine, so
+    // the same code could pass locally and fail in CI.
     lint {
         warningsAsErrors = true
         abortOnError = true
         checkReleaseBuilds = true
-        disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion")
+        disable += setOf(
+            "GradleDependency",
+            "NewerVersionAvailable",
+            "AndroidGradlePluginVersion",
+            "OldTargetApi"
+        )
         textReport = true
         textOutput = file("build/reports/lint-results.txt")
     }
