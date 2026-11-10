@@ -5,8 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.content.edit
 import com.navio.damtests.BuildConfig
-import com.navio.damtests.RemoteConfigManager
-import com.navio.damtests.auth.AuthUiHelper
+import com.navio.damtests.core.RemoteConfigManager
+import com.navio.damtests.ui.common.AuthUiHelper
 import java.util.concurrent.TimeUnit
 
 /**

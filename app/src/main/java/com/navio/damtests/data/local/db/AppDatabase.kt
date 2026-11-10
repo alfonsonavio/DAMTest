@@ -4,10 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.local.entity.FavoriteQuestion
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionStats
-import com.navio.damtests.data.local.entity.QuestionsDao
 import com.navio.damtests.data.local.entity.TestAttempt
 import com.navio.damtests.data.local.entity.TopicProgress
 

@@ -3,7 +3,7 @@ package com.navio.damtests.notifications
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.navio.damtests.data.local.entity.QuestionsDao
+import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.streak.StreakCalculator
 import com.navio.damtests.data.streak.StreakInfo
 import dagger.hilt.EntryPoint
