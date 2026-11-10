@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Política de privacidad · DAM Tests</title>
+  <meta name="description" content="Qué datos usa la app DAM Tests, para qué, con quién se comparten y cómo borrarlos.">
+  <style>
+    :root {
+      --bg: #f8fafc; --surface: #ffffff; --border: #e2e8f0;
+      --text: #1e293b; --muted: #64748b; --accent: #4f46e5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a; --surface: #1e293b; --border: #334155;
+        --text: #e2e8f0; --muted: #94a3b8; --accent: #818cf8;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    main { max-width: 760px; margin: 0 auto; padding: 40px 16px 64px; }
+    h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 4px; }
+    h2 { font-size: 1.2rem; margin: 36px 0 8px; }
+    p, li { margin: 0 0 10px; }
+    ul { padding-left: 22px; }
+    a { color: var(--accent); }
+    .updated { color: var(--muted); margin-bottom: 28px; }
+    .summary {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+    }
+    .summary ul { margin: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: .95rem; }
+    th, td { text-align: left; vertical-align: top; padding: 10px 8px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    .table-wrap { overflow-x: auto; }
+    @media (max-width: 600px) {
+      thead { display: none; }
+      tr { display: block; border-bottom: 1px solid var(--border); padding: 8px 0; }
+      td { display: block; border: 0; padding: 4px 0; }
+      td::before {
+        content: attr(data-label); display: block;
+        color: var(--muted); font-size: .8rem; font-weight: 600;
+      }
+    }
+    footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Política de privacidad de DAM Tests</h1>
+  <p class="updated">Última actualización: 10 de noviembre de 2026</p>
+
+  <div class="summary">
+    <p><strong>En resumen</strong></p>
+    <ul>
+      <li>La app solo guarda lo necesario para tu cuenta y tu progreso de estudio.</li>
+      <li>No hay publicidad, no se vende ningún dato y no se usan herramientas de analítica ni de seguimiento.</li>
+      <li>Puedes borrar tu cuenta y todos tus datos desde la propia app, en <em>Ajustes → Eliminar cuenta</em>.</li>
+    </ul>
+  </div>
+
+  <h2>1. Responsable</h2>
+  <p>DAM Tests es una app gratuita para estudiantes del ciclo de Desarrollo de Aplicaciones Multiplataforma (DAM), desarrollada por Alfonso Navío Castellano, persona física, que es el responsable del tratamiento de tus datos.</p>
+  <p>Contacto: <a href="mailto:alfonsonaviocastellano@gmail.com">alfonsonaviocastellano@gmail.com</a></p>
+
+  <h2>2. Qué datos se usan y para qué</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Datos</th><th>Para qué</th><th>Dónde se guardan</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-label="Datos"><strong>Cuenta</strong>: nombre, email y un identificador de usuario. La contraseña la gestiona Firebase y nunca es visible para el desarrollador. Si entras con Google, se usan el nombre y el email de esa cuenta.</td>
+        <td data-label="Para qué">Crear tu cuenta, iniciar sesión y mostrar tu nombre en la app.</td>
+        <td data-label="Dónde se guardan">Firebase Authentication (Google).</td>
+      </tr>
+      <tr>
+        <td data-label="Datos"><strong>Progreso de estudio</strong>: nota de cada tema, tests y exámenes hechos, cómo has respondido cada pregunta, preguntas favoritas y el test que hayas dejado a medias.</td>
+        <td data-label="Para qué">Mostrarte tu progreso, tu racha y tus estadísticas, preparar el repaso inteligente y recuperarlo todo si cambias de móvil.</td>
+        <td data-label="Dónde se guardan">En tu dispositivo y en Cloud Firestore (Google), vinculado a tu cuenta.</td>
+      </tr>
+      <tr>
+        <td data-label="Datos"><strong>Reportes de preguntas</strong>: la pregunta, el motivo, el comentario que escribas y la versión de la app.</td>
+        <td data-label="Para qué">Corregir preguntas con errores.</td>
+        <td data-label="Dónde se guardan">Cloud Firestore (Google), <strong>sin vincular a tu cuenta</strong>. No escribas datos personales en el comentario.</td>
+      </tr>
+      <tr>
+        <td data-label="Datos"><strong>Ajustes</strong>: tema, vibración y hora del recordatorio.</td>
+        <td data-label="Para qué">Recordar tus preferencias. Los recordatorios se generan en el propio dispositivo.</td>
+        <td data-label="Dónde se guardan">Solo en tu dispositivo.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>3. Explicaciones con inteligencia artificial</h2>
+  <p>Cuando pides la explicación de una pregunta, la app envía a un servicio de inteligencia artificial el texto de la pregunta, sus opciones y la opción que elegiste. <strong>No se envía ningún dato tuyo</strong>: ni tu nombre, ni tu email, ni tu identificador.</p>
+  <p>Se usa la API de Gemini de Google y, si no responde, la de Groq como respaldo. Estos servicios tratan las peticiones según sus propias políticas y pueden conservarlas un tiempo, por ejemplo para evitar abusos.</p>
+
+  <h2>4. Con quién se comparten los datos</h2>
+  <p>Los datos no se venden ni se ceden a nadie. Solo los tratan los proveedores técnicos que hacen funcionar la app:</p>
+  <ul>
+    <li><strong>Google (Firebase)</strong>: cuentas, base de datos, descarga de preguntas y configuración remota. Firebase usa un identificador de instalación técnico para funcionar.</li>
+    <li><strong>Google (API de Gemini)</strong> y <strong>Groq</strong>: explicaciones con IA, como se indica en el apartado 3.</li>
+    <li><strong>GitHub</strong>: descarga de los apuntes en PDF y aviso de nuevas versiones.</li>
+  </ul>
+  <p>Como en cualquier conexión a internet, estos proveedores reciben la dirección IP del dispositivo. Algunos tienen servidores fuera del Espacio Económico Europeo; en ese caso las transferencias se amparan en las garantías previstas por el RGPD, como el Marco de Privacidad de Datos UE-EE. UU. o las cláusulas contractuales tipo.</p>
+
+  <h2>5. Base legal</h2>
+  <p>Los datos de tu cuenta y tu progreso se tratan porque son necesarios para darte el servicio que pides al registrarte (art. 6.1.b del RGPD). Los reportes y las explicaciones con IA se envían solo cuando tú lo pides.</p>
+
+  <h2>6. Cuánto tiempo se guardan</h2>
+  <p>Mientras tengas la cuenta. Al cerrar sesión, los datos se suben a la nube y se borran del dispositivo. Al eliminar la cuenta desde <em>Ajustes → Eliminar cuenta</em> se borran la cuenta, todos tus datos en la nube y los datos del dispositivo. Los reportes de preguntas no están vinculados a tu cuenta, así que se conservan mientras sean útiles para corregir el contenido.</p>
+
+  <h2>7. Tus derechos</h2>
+  <p>Puedes acceder a tus datos, rectificarlos, borrarlos, pedir su portabilidad, oponerte a su tratamiento o limitarlo escribiendo a <a href="mailto:alfonsonaviocastellano@gmail.com">alfonsonaviocastellano@gmail.com</a>. Si crees que no se han respetado tus derechos, puedes reclamar ante la <a href="https://www.aepd.es">Agencia Española de Protección de Datos</a>.</p>
+
+  <h2>8. Menores</h2>
+  <p>La app está pensada para estudiantes de formación profesional. Si tienes menos de 14 años, necesitas el consentimiento de tu madre, padre o tutor para crear una cuenta.</p>
+
+  <h2>9. Cambios en esta política</h2>
+  <p>Si la política cambia, se publicará aquí con una nueva fecha de actualización.</p>
+
+  <footer>DAM Tests · <a href="https://github.com/alfonsonavio/DAMTest">Código fuente en GitHub</a></footer>
+</main>
+</body>
+</html>
