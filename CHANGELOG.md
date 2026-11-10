@@ -43,6 +43,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **Edge-to-edge on every screen** — the app now draws behind the status and
+  navigation bars on every Android version (Android 15 already forced it),
+  instead of the deprecated `statusBarColor`. Headers get the real status bar
+  height instead of a guessed 44-52 dp, and the status bar icons are dark on
+  light screens and light on the navy headers, switching with the bottom
+  navigation tabs. This fixes the white, almost invisible status bar icons on
+  light screens with Android 15.
+- **No deprecated APIs or build warnings** — removed the pre-Android 8
+  vibration path (min SDK is 26) and the old status bar flags, moved the
+  build to `kotlin.compilerOptions` and `base.archivesName` (APKs are now
+  `DAMTest-<version>-<type>.apk`) instead of the internal variant API, removed
+  the unused view binding, and Room exports its schema to `app/schemas` with
+  the Room Gradle plugin so future migrations can be verified.
 - **Every user-facing text in `strings.xml`** — about 300 texts written in
   Kotlin or in layouts now live in resources, with plurals where the number
   changes the sentence ("1 pregunta en blanco" / "3 preguntas…"). Catalogs,
@@ -91,6 +104,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Google account, a clear message is shown; closing the picker shows nothing.
 
 ### Fixed
+- **Subject screen details** — the back arrow was dark grey on the navy
+  toolbar, and the topic and "continue" progress bars drew a stray dot at
+  their end (Material 3's stop indicator); both are gone.
 - **Exam plurals and contrast** — the question grid and the result said "1
   dudosas" or "1 aciertos"; each count now has its own plural. The navy
   "Entregar examen" button showed purple text on navy in the grid sheet; navy

@@ -45,7 +45,9 @@
                 android:max="100"
                 app:indicatorColor="@color/state_success"
                 app:trackColor="@color/surface_border"
+                app:indicatorTrackGapSize="0dp"
                 app:trackCornerRadius="2dp"
+                app:trackStopIndicatorSize="0dp"
                 app:trackThickness="4dp" />
         </LinearLayout>
 

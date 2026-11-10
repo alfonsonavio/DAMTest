@@ -2,11 +2,8 @@ package com.navio.damtests.ui.quiz
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.WindowInsetsController
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageButton
@@ -23,6 +20,7 @@ import com.navio.damtests.R
 import com.navio.damtests.core.HapticFeedbackManager
 import com.navio.damtests.data.settings.SettingsManager
 import com.navio.damtests.ui.common.AuthUiHelper
+import com.navio.damtests.ui.common.setupEdgeToEdge
 import com.navio.damtests.ui.review.ReviewActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -62,12 +60,11 @@ class QuizActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge(darkTop = false)
         setContentView(R.layout.activity_quiz)
 
         haptic      = HapticFeedbackManager(this, settingsManager.hapticsEnabled)
         quizContent = findViewById(R.id.quizContentContainer)
-
-        applyStatusBar()
 
         subjectId = intent.getStringExtra(EXTRA_SUBJECT_ID) ?: return finish()
         topicId   = intent.getStringExtra(EXTRA_TOPIC_ID) ?: return finish()
@@ -358,21 +355,6 @@ class QuizActivity : AppCompatActivity() {
             .setMessage(text)
             .setPositiveButton(R.string.close, null)
             .show()
-    }
-
-    private fun applyStatusBar() {
-        window.statusBarColor = getColor(R.color.surface_bg)
-        // Light status bar (dark icons) only in light mode; dark mode gets light icons.
-        val lightBars = (resources.configuration.uiMode and
-                Configuration.UI_MODE_NIGHT_MASK) != Configuration.UI_MODE_NIGHT_YES
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val mask = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            window.insetsController?.setSystemBarsAppearance(if (lightBars) mask else 0, mask)
-        } else {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility =
-                if (lightBars) View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR else 0
-        }
     }
 
     companion object {

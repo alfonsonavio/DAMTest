@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.room)
 }
 
 android {
@@ -21,14 +24,6 @@ android {
         versionName = "1.1.2"
     }
 
-    applicationVariants.all {
-        val variant = this
-        variant.outputs.all {
-            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-            output.outputFileName = "DAMTest-${variant.versionName}.apk"
-        }
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -42,13 +37,26 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
-        viewBinding = true
         buildConfig = true
     }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+    }
+}
+
+// APKs and bundles are named "DAMTest-<version>-<build type>"
+base {
+    archivesName.set("DAMTest-${android.defaultConfig.versionName}")
+}
+
+// Room exports each database version's schema to app/schemas (versioned in
+// git) so migrations can be checked against the real previous schemas.
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {

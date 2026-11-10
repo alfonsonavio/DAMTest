@@ -16,6 +16,8 @@ import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.ui.common.padForSystemBars
+import com.navio.damtests.ui.common.setupEdgeToEdge
 import com.navio.damtests.ui.quiz.QuizLauncher
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -33,7 +35,10 @@ class FavoritesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge(darkTop = true)
         setContentView(R.layout.activity_favorites)
+        findViewById<View>(R.id.favoritesHeader).padForSystemBars(top = true)
+        findViewById<View>(R.id.favoritesBottomBar).padForSystemBars(bottom = true)
 
         val rv          = findViewById<RecyclerView>(R.id.rvFavorites)
         val emptyState  = findViewById<View>(R.id.emptyFavorites)

@@ -41,10 +41,6 @@
         <item name="fontFamily">@font/inter</item>
         <item name="android:fontFamily">@font/inter</item>
 
-        <!-- Barra de estado: navy (la cabecera sigue navy), con iconos claros -->
-        <item name="android:statusBarColor">@color/brand_navy</item>
-        <item name="android:windowLightStatusBar">false</item>
-
         <!-- Sin ActionBar (usamos toolbars propias) -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
