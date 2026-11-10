@@ -1,6 +1,7 @@
 package com.navio.damtests.data.local.entity
 
 import android.os.Parcelable
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
@@ -13,7 +14,10 @@ import kotlinx.parcelize.Parcelize
  * e.g. "digitalizacion_tema_1_p1"). Unlike the auto-generated Room [id] — which
  * changes every time a topic is re-synced — [stableId] stays constant across
  * syncs, so it can be used to track per-question statistics reliably.
+ *
+ * Kept by R8: Firebase Realtime Database fills it by field name.
  */
+@Keep
 @Parcelize
 @Entity(tableName = "questions")
 data class Question(
