@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="¿Qué le pasa a esta pregunta?"
+        android:text="@string/report_question"
         android:textAppearance="@style/TextAppearance.DAMTest.Body"
         android:textColor="@color/text_secondary" />
 
@@ -24,26 +24,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="La respuesta correcta está mal" />
+            android:text="@string/report_reason_wrong_answer" />
 
         <RadioButton
             android:id="@+id/rbTypo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="El enunciado o las opciones tienen errores" />
+            android:text="@string/report_reason_typo" />
 
         <RadioButton
             android:id="@+id/rbOther"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Otro problema" />
+            android:text="@string/report_reason_other" />
     </RadioGroup>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Comentario (opcional)">
+        android:hint="@string/report_comment_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etReportComment"

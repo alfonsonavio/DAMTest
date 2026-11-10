@@ -49,7 +49,7 @@ class FastExplainer @Inject constructor() {
         }
     }
 
-    suspend fun explicarRapido(pregunta: String, elegida: String, correcta: String): String {
+    suspend fun explainQuickly(question: String, chosen: String, correct: String): String {
         val systemPrompt = """
             Eres un profesor de informática de grado superior explicando a un alumno por qué falló una pregunta de test.
             
@@ -65,9 +65,9 @@ class FastExplainer @Inject constructor() {
         """.trimIndent()
 
         val userContent = """
-            Pregunta: $pregunta
-            Opción elegida por el alumno: $elegida
-            Opción correcta: $correcta
+            Pregunta: $question
+            Opción elegida por el alumno: $chosen
+            Opción correcta: $correct
         """.trimIndent()
 
         val content = complete(

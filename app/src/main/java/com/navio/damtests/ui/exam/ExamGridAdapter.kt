@@ -45,11 +45,15 @@ class ExamGridAdapter(
             }
             setStroke((width * density).toInt(), ctx.getColor(color))
         }
-        holder.cell.contentDescription = buildString {
-            append("Pregunta ${position + 1}")
-            append(if (answered) ", respondida" else ", en blanco")
-            if (flagged) append(", dudosa")
-        }
+        holder.cell.contentDescription = ctx.getString(
+            when {
+                flagged && answered -> R.string.exam_cell_answered_flagged
+                flagged             -> R.string.exam_cell_blank_flagged
+                answered            -> R.string.exam_cell_answered
+                else                -> R.string.exam_cell_blank
+            },
+            position + 1
+        )
         holder.cell.setOnClickListener { onClick(position) }
     }
 

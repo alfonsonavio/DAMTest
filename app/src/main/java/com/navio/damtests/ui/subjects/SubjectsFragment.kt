@@ -88,8 +88,8 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
             if (!hasContent && FirebaseSyncManager.syncing.value) {
                 val loading = AuthUiHelper.showLoading(
                     requireContext(),
-                    "Descargando preguntas",
-                    "Es la primera vez que abres la app: estamos descargando las preguntas. Solo tarda unos segundos."
+                    getString(R.string.subjects_downloading_title),
+                    getString(R.string.subjects_downloading_message)
                 )
                 withTimeoutOrNull(SYNC_WAIT_MS) { FirebaseSyncManager.syncing.first { !it } }
                 loading.dismiss()
@@ -101,8 +101,8 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
             } else {
                 AuthUiHelper.showInfo(
                     requireContext(),
-                    "Próximamente",
-                    "El contenido de ${subject.name} estará disponible muy pronto."
+                    getString(R.string.subjects_coming_soon_title),
+                    getString(R.string.subjects_coming_soon_message, getString(subject.nameRes))
                 )
             }
         }

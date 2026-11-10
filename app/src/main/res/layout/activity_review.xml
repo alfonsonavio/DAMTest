@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="24dp"
-            android:text="Resultado: 15 / 20"
+            tools:text="Resultado final: 15 / 20"
             android:textColor="@color/text_on_dark"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -49,7 +50,7 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="MENÚ"
+            android:text="@string/review_menu"
             android:textColor="@color/brand_primary"
             app:backgroundTint="@color/surface_border"
             app:strokeColor="@color/brand_primary"
@@ -61,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="1"
-            android:text="REPETIR"
+            android:text="@string/review_repeat"
             app:backgroundTint="@color/state_success"
             app:cornerRadius="16dp" />
     </LinearLayout>

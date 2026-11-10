@@ -28,7 +28,6 @@ import com.navio.damtests.ui.exam.ExamSetupDialog
 import com.navio.damtests.ui.quiz.QuizLauncher
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -64,7 +63,8 @@ class TopicSelectionActivity : AppCompatActivity() {
         setSupportActionBar(findViewById<Toolbar>(R.id.toolbar_topics))
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
-            title     = SubjectCatalog.nameFor(subjectId).uppercase(Locale.forLanguageTag("es-ES"))
+            title     = SubjectCatalog.nameFor(subjectId).asString(this@TopicSelectionActivity)
+                .uppercase(resources.configuration.locales[0])
             elevation = 0f
         }
         @Suppress("DEPRECATION")

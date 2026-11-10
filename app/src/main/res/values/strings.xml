@@ -1,89 +1,81 @@
 <resources>
     <string name="app_name">DAM Tests</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
+    <!-- Common -->
     <string name="loading">Cargando…</string>
-    <plurals name="quiz_result_message">
-        <item quantity="one">Has acertado %1$d pregunta.</item>
-        <item quantity="other">Has acertado %1$d preguntas.</item>
-    </plurals>
-    <string name="review_final_score">Resultado final: %1$d / %2$d</string>
-    <string name="context_dialog_title">Enunciado del Caso</string>
+    <string name="please_wait">Un momento…</string>
     <string name="close">Cerrar</string>
-    <string name="next_question">Siguiente Pregunta</string>
-    <string name="finish_test">Finalizar Test</string>
-    <string name="downloading_pdf">Descargando apuntes…</string>
-    <string name="pdf_not_found">El PDF no está disponible en el servidor.</string>
-    <string name="network_error">Error de red. Comprueba tu conexión.</string>
-    <string name="pdf_open_error">No se pudo abrir el PDF.</string>
-    <string name="ai_taking_longer">Está tardando más de lo normal, seguimos intentándolo…</string>
-    <string name="ai_error">No se ha podido generar la explicación ahora mismo. Comprueba tu conexión e inténtalo de nuevo.</string>
-    <string name="ai_analyzing">⏳ Analizando tu respuesta…</string>
-    <string name="ai_preparing_correction">⏳ Preparando corrección…</string>
-    <string name="ai_connection_error">❌ No se ha podido cargar la explicación. Comprueba tu conexión.</string>
-    <string name="no_questions_title">Sin preguntas disponibles</string>
-    <string name="no_questions_yet">Las preguntas de este tema aún no están disponibles, pero puedes consultar los apuntes en PDF.</string>
-
-    <!-- Auth - General -->
-    <string name="login_subtitle">Inicia sesión para continuar</string>
-    <string name="hint_email">Correo electrónico</string>
-    <string name="hint_password">Contraseña</string>
-    <string name="hint_name">Nombre</string>
-    <string name="hint_password_confirm">Confirmar contraseña</string>
-    <string name="or_divider">— o —</string>
-
-    <!-- Auth - Login -->
-    <string name="btn_login">Iniciar sesión</string>
-    <string name="btn_google_signin">Continuar con Google</string>
-    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
-    <string name="no_account_register">¿No tienes cuenta? Regístrate</string>
-
-    <!-- Auth - Register -->
-    <string name="register_title">Crear cuenta</string>
-    <string name="register_subtitle">Únete para guardar tu progreso</string>
-    <string name="btn_register">Crear cuenta</string>
-    <string name="already_have_account">¿Ya tienes cuenta? Inicia sesión</string>
-    <string name="register_success">¡Cuenta creada! Ya puedes iniciar sesión</string>
-
-    <!-- Auth - Errors -->
-    <string name="error_fields_required">Rellena todos los campos</string>
-    <string name="error_invalid_credentials">Email o contraseña incorrectos</string>
-    <string name="error_passwords_no_match">Las contraseñas no coinciden</string>
-    <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
-    <string name="error_register">Error al crear la cuenta. Inténtalo de nuevo</string>
-    <string name="error_google_signin">Error al iniciar sesión con Google</string>
-    <string name="error_google_no_account">No hay ninguna cuenta de Google en este dispositivo. Añade una en los ajustes del móvil o inicia sesión con tu correo.</string>
-    <string name="error_email_for_reset">Introduce tu email primero</string>
-    <string name="error_reset_email">No se pudo enviar el email de recuperación</string>
-    <string name="error_generic">Algo salió mal. Inténtalo de nuevo</string>
-
-    <!-- Auth - Success -->
-    <string name="reset_email_sent">Email de recuperación enviado</string>
-    <string name="welcome_user">Hola, %1$s</string>
-
-    <!-- Auth - Logout -->
-    <string name="logout_title">Cerrar sesión</string>
-    <string name="logout_message">¿Seguro que quieres cerrar sesión?</string>
-    <string name="logout_confirm">Cerrar sesión</string>
-    <string name="logout_saving_title">Guardando tus datos</string>
-    <string name="logout_saving_message">Estamos comprobando que todo tu progreso y tus estadísticas están guardados en la nube.</string>
-    <string name="logout_failed_title">No se ha podido cerrar sesión</string>
-    <string name="logout_failed_message">No hemos podido confirmar que todos tus datos están guardados en la nube, así que no se ha borrado nada. Comprueba tu conexión a internet e inténtalo de nuevo.</string>
-
-    <!-- Settings -->
-    <string name="settings_title">Ajustes</string>
-    <string name="settings_back">Volver</string>
-    <string name="settings_section_notifications">Notificaciones</string>
-    <string name="settings_reminder_title">Recordatorio diario</string>
-    <string name="settings_reminder_subtitle">Recibe un aviso para repasar cada día</string>
-    <string name="settings_reminder_hour_label">Hora del recordatorio</string>
-    <string name="settings_section_general">General</string>
-    <string name="settings_haptics_title">Vibración</string>
-    <string name="settings_haptics_subtitle">Vibra al responder en los tests</string>
-    <string name="settings_logout">Cerrar sesión</string>
     <string name="cancel">Cancelar</string>
+    <string name="back">Volver</string>
+    <string name="exit">SALIR</string>
+    <string name="got_it">Entendido</string>
+    <string name="undo">Deshacer</string>
+    <string name="error_title">Error</string>
+    <string name="network_error">Error de red. Comprueba tu conexión.</string>
+    <string name="default_user_name">Usuario</string>
+    <string name="list_and">" y "</string>
+    <string name="list_separator">" · "</string>
+    <string name="percent">%1$d%%</string>
+    <string name="score_one_decimal">%1$.1f</string>
+    <string name="time_hh_mm">%1$02d:%2$02d</string>
+    <string name="subject_and_topic">%1$s · %2$s</string>
+    <string name="course_first">1º</string>
+    <string name="course_second">2º</string>
+    <string name="nav_home">Inicio</string>
 
+    <!-- Decorative icons (emoji), not translated -->
+    <string name="icon_bell" translatable="false">🔔</string>
+    <string name="icon_clock" translatable="false">🕐</string>
+    <string name="icon_palette" translatable="false">🎨</string>
+    <string name="icon_vibration" translatable="false">📳</string>
+    <string name="icon_trash" translatable="false">🗑️</string>
+    <string name="icon_door" translatable="false">🚪</string>
+    <string name="icon_play" translatable="false">▶</string>
+    <string name="icon_chevron" translatable="false">›</string>
+    <string name="icon_chart" translatable="false">📊</string>
+    <string name="icon_chart_down" translatable="false">📉</string>
+
+    <!-- Subjects -->
+    <string name="subjects_title">Asignaturas</string>
+    <string name="subject_all">Todas las asignaturas</string>
+    <string name="subject_programacion">Programación</string>
+    <string name="subject_base_de_datos">Base de Datos</string>
+    <string name="subject_sistemas">Sistemas</string>
+    <string name="subject_marcas">Leng. Marcas</string>
+    <string name="subject_entornos">Entornos</string>
+    <string name="subject_digitalizacion">Digitalización</string>
+    <string name="subject_ipe">IPE</string>
+    <string name="subject_sostenibilidad">Sostenibilidad</string>
+    <string name="subject_acceso_datos">Acceso a Datos</string>
+    <string name="subject_ciberseguridad">Ciberseguridad</string>
+    <string name="subject_interfaces">Interfaces</string>
+    <string name="subject_ingles">Inglés</string>
+    <string name="subject_ipe2">IPE II</string>
+    <string name="subject_servicios">Servicios</string>
+    <string name="subject_multimedia">Multimedia</string>
+    <string name="subject_gestion">Gestión</string>
+    <string name="subject_no_tests">Sin tests realizados</string>
+    <plurals name="subject_stats">
+        <item quantity="one">%1$d test · %2$.1f de media</item>
+        <item quantity="other">%1$d tests · %2$.1f de media</item>
+    </plurals>
+    <string name="subjects_downloading_title">Descargando preguntas</string>
+    <string name="subjects_downloading_message">Es la primera vez que abres la app: estamos descargando las preguntas. Solo tarda unos segundos.</string>
+    <string name="subjects_coming_soon_title">Próximamente</string>
+    <string name="subjects_coming_soon_message">El contenido de %1$s estará disponible muy pronto.</string>
+
+    <!-- Topics and test modes -->
+    <string name="topic_tema">Tema %1$s</string>
+    <string name="topic_case">Caso práctico %1$s</string>
+    <string name="topic_final_review">Repaso final</string>
+    <string name="mode_general_all">Test general (todo)</string>
+    <string name="mode_general_first_half">Test general (temas 1-10)</string>
+    <string name="mode_general_second_half">Test general (temas 11-20)</string>
+    <string name="mode_smart_review">Repaso inteligente</string>
+    <string name="mode_favorites">Preguntas favoritas</string>
+    <string name="mode_exam_all">Examen (todo)</string>
+    <string name="mode_exam_first_half">Examen (temas 1-10)</string>
+    <string name="mode_exam_second_half">Examen (temas 11-20)</string>
 
     <!-- Subject screen: practice modes and topics -->
     <string name="practice_header">PRACTICAR</string>
@@ -117,4 +109,289 @@
     <string name="topic_not_done">Sin hacer</string>
     <string name="topic_last_score">%d%%</string>
     <string name="topic_open_pdf">Ver apuntes PDF</string>
+    <string name="no_questions_title">Sin preguntas disponibles</string>
+    <string name="no_questions_yet">Las preguntas de este tema aún no están disponibles, pero puedes consultar los apuntes en PDF.</string>
+    <string name="downloading_pdf">Descargando apuntes…</string>
+    <string name="pdf_not_found">El PDF no está disponible en el servidor.</string>
+    <string name="pdf_open_error">No se pudo abrir el PDF.</string>
+
+    <!-- Quiz -->
+    <string name="quiz_question_count">%1$d de %2$d</string>
+    <string name="next_question">Siguiente Pregunta</string>
+    <string name="finish_test">Finalizar Test</string>
+    <string name="context_dialog_title">Enunciado del Caso</string>
+    <string name="favorite_add">Añadir a favoritas</string>
+    <string name="favorite_remove">Quitar de favoritas</string>
+    <string name="ai_analyzing">⏳ Analizando tu respuesta…</string>
+    <string name="ai_preparing_correction">⏳ Preparando corrección…</string>
+    <string name="ai_connection_error">❌ No se ha podido cargar la explicación. Comprueba tu conexión.</string>
+    <string name="ai_feedback_wrong">❌ %1$s</string>
+    <string name="ai_feedback_correct">✅ %1$s</string>
+    <string name="resume_test_title">Tienes este test a medias</string>
+    <string name="resume_test_message">Vas por la pregunta %1$d de %2$d.</string>
+    <string name="resume_test_continue">Seguir</string>
+    <string name="resume_test_restart">Empezar de nuevo</string>
+    <string name="results_title">¡Test Finalizado!</string>
+    <plurals name="quiz_result_message">
+        <item quantity="one">Has acertado %1$d pregunta.</item>
+        <item quantity="other">Has acertado %1$d preguntas.</item>
+    </plurals>
+    <string name="results_review">VER REVISIÓN</string>
+
+    <!-- Review -->
+    <string name="review_final_score">Resultado final: %1$d / %2$d</string>
+    <string name="review_menu">MENÚ</string>
+    <string name="review_repeat">REPETIR</string>
+    <string name="review_report">REPORTAR</string>
+    <string name="review_explain">VER EXPLICACIÓN</string>
+    <string name="review_not_answered">⚪ Sin contestar</string>
+    <string name="explanation_title">Explicación</string>
+    <string name="explanation_loading">Analizando la pregunta…</string>
+    <string name="ai_taking_longer">Está tardando más de lo normal, seguimos intentándolo…</string>
+    <string name="ai_error">No se ha podido generar la explicación ahora mismo. Comprueba tu conexión e inténtalo de nuevo.</string>
+    <string name="report_title">Reportar pregunta</string>
+    <string name="report_question">¿Qué le pasa a esta pregunta?</string>
+    <string name="report_reason_wrong_answer">La respuesta correcta está mal</string>
+    <string name="report_reason_typo">El enunciado o las opciones tienen errores</string>
+    <string name="report_reason_other">Otro problema</string>
+    <string name="report_comment_hint">Comentario (opcional)</string>
+    <string name="report_send">Enviar</string>
+    <string name="report_thanks">Gracias, revisaremos la pregunta</string>
+
+    <!-- Exam -->
+    <string name="exam_setup_description">Sin corrección hasta que entregues. Puedes saltar preguntas, volver atrás y marcar las dudosas. Tienes 1,5 minutos por pregunta.</string>
+    <string name="exam_setup_topics">Temas</string>
+    <string name="exam_setup_questions">Preguntas</string>
+    <string name="exam_setup_penalty">Los fallos restan</string>
+    <string name="exam_setup_penalty_description">Cada fallo resta 1/3 de acierto. Las preguntas en blanco no restan.</string>
+    <string name="exam_setup_start">EMPEZAR EXAMEN</string>
+    <string name="exam_range_all">Todos los temas</string>
+    <string name="exam_range_first_half">Temas 1-10</string>
+    <string name="exam_range_second_half">Temas 11-20</string>
+    <string name="exam_size_option">%1$d · %2$s</string>
+    <string name="exam_duration_minutes">%1$d min</string>
+    <string name="exam_duration_minutes_seconds">%1$d min %2$d s</string>
+    <string name="exam_exit_description">Abandonar examen</string>
+    <string name="exam_question_count">Pregunta %1$d de %2$d</string>
+    <string name="exam_answered_count">%1$d de %2$d respondidas</string>
+    <string name="exam_timer">⏱ %1$d:%2$02d</string>
+    <string name="exam_flag">MARCAR COMO DUDOSA</string>
+    <string name="exam_flagged">DUDOSA</string>
+    <string name="exam_context">ENUNCIADO</string>
+    <string name="exam_clear_hint">Toca otra vez una respuesta para dejarla en blanco</string>
+    <string name="exam_previous">ANTERIOR</string>
+    <string name="exam_next">SIGUIENTE</string>
+    <string name="exam_questions_grid">PREGUNTAS</string>
+    <string name="exam_submit">ENTREGAR</string>
+    <string name="exam_submit_exam">ENTREGAR EXAMEN</string>
+    <string name="exam_warning_five_minutes">Quedan 5 minutos</string>
+    <string name="exam_warning_one_minute">Queda 1 minuto</string>
+    <string name="exam_grid_legend">Relleno: respondida · Borde naranja: dudosa · Borde oscuro: actual</string>
+    <string name="exam_cell_answered">Pregunta %1$d, respondida</string>
+    <string name="exam_cell_blank">Pregunta %1$d, en blanco</string>
+    <string name="exam_cell_answered_flagged">Pregunta %1$d, respondida, dudosa</string>
+    <string name="exam_cell_blank_flagged">Pregunta %1$d, en blanco, dudosa</string>
+    <string name="exam_submit_title">¿Entregar el examen?</string>
+    <string name="exam_submit_all_answered">Has respondido todas las preguntas.</string>
+    <string name="exam_submit_pending">Tienes %1$s. Después ya no podrás cambiar nada.</string>
+    <plurals name="exam_blank_questions">
+        <item quantity="one">%d pregunta en blanco</item>
+        <item quantity="other">%d preguntas en blanco</item>
+    </plurals>
+    <plurals name="exam_answered">
+        <item quantity="one">%d respondida</item>
+        <item quantity="other">%d respondidas</item>
+    </plurals>
+    <plurals name="exam_blank">
+        <item quantity="one">%d en blanco</item>
+        <item quantity="other">%d en blanco</item>
+    </plurals>
+    <plurals name="exam_correct">
+        <item quantity="one">%d acierto</item>
+        <item quantity="other">%d aciertos</item>
+    </plurals>
+    <plurals name="exam_wrong">
+        <item quantity="one">%d fallo</item>
+        <item quantity="other">%d fallos</item>
+    </plurals>
+    <plurals name="exam_flagged_questions">
+        <item quantity="one">%d dudosa</item>
+        <item quantity="other">%d dudosas</item>
+    </plurals>
+    <string name="exam_exit_title">¿Abandonar el examen?</string>
+    <string name="exam_exit_message">Se perderán tus respuestas y no contará como test.</string>
+    <string name="exam_exit_confirm">ABANDONAR</string>
+    <string name="exam_result_submitted">Examen entregado</string>
+    <string name="exam_result_time_up">¡Se acabó el tiempo!</string>
+    <string name="exam_result_out_of_ten">/ 10</string>
+    <string name="exam_result_penalty_note">Con penalización: cada fallo resta 1/3</string>
+    <string name="exam_result_review">VER CORRECCIÓN</string>
+    <string name="exam_review_score">Nota: %1$s / 10 · %2$d de %3$d</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Preguntas favoritas</string>
+    <string name="favorites_empty_title">Aún no tienes preguntas favoritas</string>
+    <string name="favorites_empty_message">Márcalas con la estrella ★ durante un test o en la revisión y aparecerán aquí.</string>
+    <string name="favorites_practice">PRACTICAR FAVORITAS</string>
+    <string name="favorites_practice_count">PRACTICAR FAVORITAS (%1$d)</string>
+    <string name="favorites_removed">Quitada de favoritas</string>
+    <string name="favorites_correct_answer">✅ %1$s</string>
+
+    <!-- Home -->
+    <string name="greeting_morning">Buenos días</string>
+    <string name="greeting_afternoon">Buenas tardes</string>
+    <string name="greeting_evening">Buenas noches</string>
+    <string name="home_streak">🔥 %1$d</string>
+    <string name="home_streak_label">racha</string>
+    <string name="home_average_label">nota media</string>
+    <string name="home_tests_label">tests</string>
+    <string name="home_continue_header">Continúa donde lo dejaste</string>
+    <string name="home_continue_session">%1$s · Pregunta %2$d de %3$d</string>
+    <string name="home_shortcuts">Accesos rápidos</string>
+    <string name="home_review_subtitle">Practica las preguntas que sueles fallar</string>
+    <string name="home_review_empty">Aún no tienes fallos que repasar. Haz algún test y vuelve.</string>
+    <string name="home_favorites_subtitle">Las preguntas que has marcado con ★</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">Estadísticas</string>
+    <string name="statistics_empty_title">Aún no hay datos</string>
+    <string name="statistics_empty_message">Haz algún test para ver tus estadísticas</string>
+    <string name="statistics_accuracy">Precisión</string>
+    <string name="statistics_tests">Tests</string>
+    <string name="statistics_evolution">Tu evolución</string>
+    <string name="statistics_evolution_subtitle">Nota media por test</string>
+    <string name="statistics_chart_label">Nota</string>
+    <string name="statistics_by_subject">Rendimiento por asignatura</string>
+    <string name="statistics_weak_topics">A repasar</string>
+    <string name="statistics_weak_topic_detail">Fallas el %1$d%% de las preguntas</string>
+
+    <!-- Auth -->
+    <string name="login_subtitle">Inicia sesión para continuar</string>
+    <string name="hint_email">Correo electrónico</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="hint_name">Nombre</string>
+    <string name="hint_password_confirm">Confirmar contraseña</string>
+    <string name="or_divider">— o —</string>
+    <string name="btn_login">Iniciar sesión</string>
+    <string name="btn_google_signin">Continuar con Google</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="no_account_register">¿No tienes cuenta? Regístrate</string>
+    <string name="register_title">Crear cuenta</string>
+    <string name="register_subtitle">Únete para guardar tu progreso</string>
+    <string name="btn_register">Crear cuenta</string>
+    <string name="already_have_account">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="register_success_title">¡Cuenta creada!</string>
+    <string name="register_success_message">Ya puedes iniciar sesión con tus credenciales</string>
+    <string name="register_password_rules">Mínimo %1$d caracteres, con al menos una letra y un número</string>
+    <string name="register_error_name">Introduce tu nombre</string>
+    <string name="register_error_password_empty">Introduce una contraseña</string>
+    <string name="register_error_password_short">Debe tener al menos %1$d caracteres</string>
+    <string name="register_error_password_digit">Debe incluir al menos un número</string>
+    <string name="register_error_password_letter">Debe incluir al menos una letra</string>
+    <string name="error_missing_data_title">Faltan datos</string>
+    <string name="error_fields_required">Rellena todos los campos</string>
+    <string name="error_missing_email_title">Falta el correo</string>
+    <string name="error_missing_email">Introduce tu correo electrónico</string>
+    <string name="error_passwords_no_match">Las contraseñas no coinciden</string>
+    <string name="error_google_signin">Error al iniciar sesión con Google</string>
+    <string name="error_google_no_account_title">Sin cuenta de Google</string>
+    <string name="error_google_no_account">No hay ninguna cuenta de Google en este dispositivo. Añade una en los ajustes del móvil o inicia sesión con tu correo.</string>
+    <string name="auth_error_email_in_use">Ese correo ya está registrado</string>
+    <string name="auth_error_invalid_email">El correo no tiene un formato válido</string>
+    <string name="auth_error_wrong_credentials">Correo o contraseña incorrectos</string>
+    <string name="auth_error_no_account">No existe ninguna cuenta con ese correo</string>
+    <string name="auth_error_network">Error de red. Comprueba tu conexión</string>
+    <string name="auth_error_too_many_attempts">Demasiados intentos. Espera un momento e inténtalo de nuevo</string>
+    <string name="auth_error_weak_password">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="auth_error_unknown">Algo salió mal. Inténtalo de nuevo</string>
+    <string name="reset_password_title">Recuperar contraseña</string>
+    <string name="reset_password_message">Introduce tu correo y te enviaremos un enlace para restablecerla.</string>
+    <string name="reset_password_send">Enviar enlace</string>
+    <string name="reset_email_sent_title">Correo enviado</string>
+    <string name="reset_email_sent_message">Revisa tu bandeja de entrada (y la carpeta de spam) para restablecer tu contraseña</string>
+
+    <!-- Logout -->
+    <string name="logout_title">Cerrar sesión</string>
+    <string name="logout_message">¿Seguro que quieres cerrar sesión?</string>
+    <string name="logout_confirm">Cerrar sesión</string>
+    <string name="logout_saving_title">Guardando tus datos</string>
+    <string name="logout_saving_message">Estamos comprobando que todo tu progreso y tus estadísticas están guardados en la nube.</string>
+    <string name="logout_failed_title">No se ha podido cerrar sesión</string>
+    <string name="logout_failed_message">No hemos podido confirmar que todos tus datos están guardados en la nube, así que no se ha borrado nada. Comprueba tu conexión a internet e inténtalo de nuevo.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_section_notifications">NOTIFICACIONES</string>
+    <string name="settings_reminder_title">Recordatorios de estudio</string>
+    <string name="settings_reminder_subtitle">Un aviso diario para practicar</string>
+    <string name="settings_reminder_hour_label">Hora del recordatorio</string>
+    <string name="settings_section_experience">EXPERIENCIA</string>
+    <string name="settings_theme_title">Tema</string>
+    <string name="settings_theme_subtitle">Claro, oscuro o el del sistema</string>
+    <!-- Order matches SettingsManager.THEME_SYSTEM, THEME_LIGHT, THEME_DARK -->
+    <string-array name="settings_theme_options">
+        <item>Sistema</item>
+        <item>Claro</item>
+        <item>Oscuro</item>
+    </string-array>
+    <string name="settings_haptics_title">Vibración</string>
+    <string name="settings_haptics_subtitle">Al responder preguntas</string>
+    <string name="settings_notifications_blocked_title">Notificaciones desactivadas</string>
+    <string name="settings_notifications_blocked_message">Para recibir el recordatorio diario, permite las notificaciones de DAMTest en los ajustes del sistema.</string>
+    <string name="settings_notifications_blocked_confirm">Abrir ajustes</string>
+    <string name="delete_account_title">Eliminar cuenta</string>
+    <string name="delete_account_subtitle">Borra tu cuenta y todos tus datos</string>
+    <string name="delete_account_message">Se borrarán tu cuenta y todos tus datos: progreso, estadísticas y el test que tengas a medias. Esta acción no se puede deshacer.</string>
+    <string name="delete_account_confirm">Eliminar</string>
+    <string name="delete_account_progress_title">Eliminando tu cuenta</string>
+    <string name="delete_account_progress_message">Estamos borrando tu cuenta y todos tus datos.</string>
+    <string name="delete_account_done_title">Cuenta eliminada</string>
+    <string name="delete_account_done_message">Tu cuenta y todos tus datos se han borrado.</string>
+    <string name="delete_account_pending_title">Casi listo</string>
+    <string name="delete_account_pending_message">Tus datos se han borrado, pero no se ha podido eliminar la cuenta. Inicia sesión de nuevo y repite la eliminación para terminar.</string>
+    <string name="delete_account_relogin_title">Vuelve a iniciar sesión</string>
+    <string name="delete_account_relogin_message">Por seguridad, para eliminar la cuenta tienes que haber iniciado sesión hace poco. Cierra sesión, vuelve a entrar y repite la eliminación. No se ha borrado nada.</string>
+    <string name="delete_account_failed_title">No se ha podido eliminar</string>
+    <string name="delete_account_failed_message">No se ha borrado nada. Comprueba tu conexión e inténtalo de nuevo.</string>
+
+    <!-- Update -->
+    <string name="update_title">Nueva versión disponible</string>
+    <string name="update_message">Ya puedes descargar %1$s, con mejoras y correcciones. Instálala encima de la actual: no perderás tu progreso.</string>
+    <string name="update_version_named">DAMTest %1$s</string>
+    <string name="update_version_unnamed">una nueva versión de DAMTest</string>
+    <string name="update_download">Descargar</string>
+
+    <!-- Reminders -->
+    <string name="notification_channel_name">Recordatorios de estudio</string>
+    <string name="notification_channel_description">Recordatorios para que no dejes de practicar</string>
+    <string name="reminder_quick_test_title">¿Un test rápido?</string>
+    <string name="reminder_quick_test_body">Dedica 5 minutos a repasar y mantén el ritmo.</string>
+    <string name="reminder_practice_title">Hora de practicar</string>
+    <string name="reminder_practice_body">Un test al día te acerca a aprobar tu examen de DAM.</string>
+    <string name="reminder_keep_going_title">Sigue con el ritmo</string>
+    <string name="reminder_keep_going_body">Vuelve a DAMTest y sigue mejorando tus notas.</string>
+    <string name="reminder_review_title">Repaso pendiente</string>
+    <string name="reminder_review_body">Tus preguntas falladas te esperan en el repaso inteligente.</string>
+    <string name="reminder_go_title">¡A por ello!</string>
+    <string name="reminder_go_body">Un poco de práctica hoy es mucho menos estudio mañana.</string>
+    <string name="reminder_streak_title">🔥 ¡No pierdas tu racha!</string>
+    <plurals name="reminder_streak_body">
+        <item quantity="one">Llevas %d día de racha. Haz un test hoy para no perderla.</item>
+        <item quantity="other">Llevas %d días de racha. Haz un test hoy para no perderla.</item>
+    </plurals>
+    <string name="reminder_streak_waiting_title">🔥 Tu racha te espera</string>
+    <plurals name="reminder_streak_waiting_body">
+        <item quantity="one">Llevas %d día de racha. ¿Sumamos el segundo?</item>
+        <item quantity="other">%d días seguidos estudiando. ¿Sumamos uno más?</item>
+    </plurals>
+    <string name="reminder_streak_danger_title">🔥 ¡Racha en peligro!</string>
+    <plurals name="reminder_streak_danger_body">
+        <item quantity="one">Si hoy no haces un test, perderás tu racha de %d día.</item>
+        <item quantity="other">Si hoy no haces un test, perderás tus %d días de racha.</item>
+    </plurals>
+    <string name="reminder_streak_one_more_title">🔥 Sigue sumando</string>
+    <plurals name="reminder_streak_one_more_body">
+        <item quantity="one">Llevas %d día. Un test rápido y tu racha sigue creciendo.</item>
+        <item quantity="other">Llevas %d días. Un test rápido y tu racha sigue creciendo.</item>
+    </plurals>
 </resources>

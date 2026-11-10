@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Varied streak reminders** — the streak warning now picks one of four
+  messages ("¡No pierdas tu racha!", "Tu racha te espera", "¡Racha en
+  peligro!", "Sigue sumando"), like the everyday reminders already did.
 - **Daily study streak** — Home now shows the real number of consecutive days
   with at least one finished test (smart review included); it was a fixed
   placeholder ("🔥 5"). The streak is kept until the end of a day without
@@ -40,6 +43,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **Every user-facing text in `strings.xml`** — about 300 texts written in
+  Kotlin or in layouts now live in resources, with plurals where the number
+  changes the sentence ("1 pregunta en blanco" / "3 preguntas…"). Catalogs,
+  rules and the reminder decide their text without a Context through a small
+  `UiText` type, so they stay unit-tested. Layout placeholders that are always
+  replaced at runtime became `tools:text`, and unused strings were removed.
+- **English names in code** — the last Spanish identifiers (`explicarRapido`,
+  `btnVerExplicacion`, `btnReportar`, `btnFavorito`) were renamed; Firebase
+  auth errors are a typed `AuthError` (no more checking whether the message
+  contains "correo"), and report reasons a typed enum with the same stored
+  values.
 - **One model for the special tests** — the general tests, smart review,
   favourites and exams are a `TestMode` enum instead of "-1"…"-8" strings
   scattered across the code (the stored ids are unchanged and covered by a
@@ -77,6 +91,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Google account, a clear message is shown; closing the picker shows nothing.
 
 ### Fixed
+- **Exam plurals and contrast** — the question grid and the result said "1
+  dudosas" or "1 aciertos"; each count now has its own plural. The navy
+  "Entregar examen" button showed purple text on navy in the grid sheet; navy
+  buttons now always use light text.
 - **Reminder minutes** — the daily reminder only kept the hour: choosing 6:45
   scheduled it at 6:00 and Settings showed "06:00". The minutes are now saved,
   shown and used; reminders set before keep their time at minute 0. The delay

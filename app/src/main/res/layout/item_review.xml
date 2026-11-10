@@ -44,19 +44,19 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/btnFavorito"
+                android:id="@+id/btnFavorite"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Añadir a favoritas"
+                android:contentDescription="@string/favorite_add"
                 android:src="@drawable/ic_star_outline" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnReportar"
+                android:id="@+id/btnReport"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="REPORTAR"
+                android:text="@string/review_report"
                 android:textColor="@color/text_secondary" />
 
             <Space
@@ -65,11 +65,11 @@
                 android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnVerExplicacion"
+                android:id="@+id/btnExplain"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="VER EXPLICACIÓN"
+                android:text="@string/review_explain"
                 android:textColor="@color/brand_primary_dark"
                 android:visibility="visible" />
         </LinearLayout>

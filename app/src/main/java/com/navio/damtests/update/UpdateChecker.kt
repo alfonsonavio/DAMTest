@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.content.edit
 import com.navio.damtests.BuildConfig
+import com.navio.damtests.R
 import com.navio.damtests.core.RemoteConfigManager
 import com.navio.damtests.ui.common.AuthUiHelper
 import java.util.concurrent.TimeUnit
@@ -40,14 +41,14 @@ object UpdateChecker {
         prefs.edit { putLong(KEY_LAST_PROMPT, now) }
 
         val versionName = RemoteConfigManager.getString(RemoteConfigManager.KEY_LATEST_VERSION_NAME)
-        val versionText = if (versionName.isNotBlank()) "DAMTest $versionName" else "una nueva versión de DAMTest"
+        val versionText = if (versionName.isNotBlank()) context.getString(R.string.update_version_named, versionName)
+        else context.getString(R.string.update_version_unnamed)
 
         AuthUiHelper.showConfirm(
             context = context,
-            title = "Nueva versión disponible",
-            message = "Ya puedes descargar $versionText, con mejoras y correcciones. " +
-                "Instálala encima de la actual: no perderás tu progreso.",
-            confirmText = "Descargar"
+            title = context.getString(R.string.update_title),
+            message = context.getString(R.string.update_message, versionText),
+            confirmText = context.getString(R.string.update_download)
         ) {
             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(DOWNLOAD_URL)))
         }

@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Preguntas"
+        android:text="@string/exam_setup_questions"
         android:textAppearance="@style/TextAppearance.DAMTest.CardTitle" />
 
     <TextView
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Relleno: respondida · Borde naranja: dudosa · Borde oscuro: actual"
+        android:text="@string/exam_grid_legend"
         android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -40,7 +40,8 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="16dp"
-        android:text="ENTREGAR EXAMEN"
+        android:text="@string/exam_submit_exam"
+        android:textColor="@color/text_on_dark"
         app:backgroundTint="@color/brand_navy"
         app:cornerRadius="16dp" />
 </LinearLayout>

@@ -57,7 +57,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Quitar de favoritas"
+            android:contentDescription="@string/favorite_remove"
             android:src="@drawable/ic_star" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

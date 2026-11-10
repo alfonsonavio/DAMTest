@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -44,8 +43,9 @@ class LoginActivity : AppCompatActivity() {
         androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            AuthUiHelper.showInfo(this, "¡Cuenta creada!",
-                "Ya puedes iniciar sesión con tus credenciales")
+            AuthUiHelper.showInfo(
+                this, getString(R.string.register_success_title), getString(R.string.register_success_message)
+            )
         }
     }
 
@@ -80,7 +80,9 @@ class LoginActivity : AppCompatActivity() {
         val password = etPassword.text?.toString() ?: ""
 
         if (email.isBlank() || password.isBlank()) {
-            AuthUiHelper.showInfo(this, "Faltan datos", getString(R.string.error_fields_required))
+            AuthUiHelper.showInfo(
+                this, getString(R.string.error_missing_data_title), getString(R.string.error_fields_required)
+            )
             return
         }
 
@@ -91,8 +93,7 @@ class LoginActivity : AppCompatActivity() {
                 onSuccess = { onLoginSuccess() },
                 onFailure = {
                     setLoading(false)
-                    AuthUiHelper.showInfo(this@LoginActivity, "Error",
-                        AuthUiHelper.translateError(this@LoginActivity, it))
+                    showError(it)
                 }
             )
         }
@@ -107,30 +108,34 @@ class LoginActivity : AppCompatActivity() {
                         onSuccess = { onLoginSuccess() },
                         onFailure = {
                             setLoading(false)
-                            AuthUiHelper.showInfo(this@LoginActivity, "Error",
-                                AuthUiHelper.translateError(this@LoginActivity, it))
+                            showError(it)
                         }
                     )
                 }
                 GoogleCredentialClient.Result.Cancelled -> Unit // user closed the picker
                 GoogleCredentialClient.Result.NoAccount -> AuthUiHelper.showInfo(
                     this@LoginActivity,
-                    "Sin cuenta de Google",
+                    getString(R.string.error_google_no_account_title),
                     getString(R.string.error_google_no_account)
                 )
                 is GoogleCredentialClient.Result.Error -> AuthUiHelper.showInfo(
-                    this@LoginActivity, "Error", getString(R.string.error_google_signin)
+                    this@LoginActivity, getString(R.string.error_title), getString(R.string.error_google_signin)
                 )
             }
         }
+    }
+
+    private fun showError(error: Throwable) {
+        AuthUiHelper.showInfo(this, getString(R.string.error_title), AuthUiHelper.translateError(this, error))
     }
 
     private fun showForgotPasswordDialog() {
         val prefill = etEmail.text?.toString()?.trim() ?: ""
         AuthUiHelper.showForgotPassword(this, prefill) { email, dialog ->
             if (email.isBlank()) {
-                AuthUiHelper.showInfo(this, "Falta el correo",
-                    "Introduce tu correo electrónico")
+                AuthUiHelper.showInfo(
+                    this, getString(R.string.error_missing_email_title), getString(R.string.error_missing_email)
+                )
                 return@showForgotPassword
             }
             lifecycleScope.launch {
@@ -138,12 +143,14 @@ class LoginActivity : AppCompatActivity() {
                 dialog.dismiss()
                 result.fold(
                     onSuccess = {
-                        AuthUiHelper.showInfo(this@LoginActivity, "Correo enviado",
-                            "Revisa tu bandeja de entrada (y la carpeta de spam) para restablecer tu contraseña")
+                        AuthUiHelper.showInfo(
+                            this@LoginActivity,
+                            getString(R.string.reset_email_sent_title),
+                            getString(R.string.reset_email_sent_message)
+                        )
                     },
                     onFailure = {
-                        AuthUiHelper.showInfo(this@LoginActivity, "Error",
-                            AuthUiHelper.translateError(this@LoginActivity, it))
+                        showError(it)
                     }
                 )
             }
