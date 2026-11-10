@@ -40,6 +40,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **One model for the special tests** — the general tests, smart review,
+  favourites and exams are a `TestMode` enum instead of "-1"…"-8" strings
+  scattered across the code (the stored ids are unchanged and covered by a
+  test). Exams are described by a parcelable `ExamConfig`, and every screen
+  that is opened with data (quiz, review, exam, subject) builds its own
+  `Intent` with private extra keys, so no key is typed twice.
 - **Packages organised by feature** — no class is left in the root package
   except the Application. Screens live in `ui/<feature>` (auth, main, quiz,
   review, exam, favorites, settings, subjects, topics…), data in

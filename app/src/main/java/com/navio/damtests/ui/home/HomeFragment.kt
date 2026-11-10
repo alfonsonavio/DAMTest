@@ -18,6 +18,7 @@ import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.data.catalog.SubjectCatalog
 import com.navio.damtests.data.catalog.TopicNames
 import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.sync.StatsSyncRepository
 import com.navio.damtests.ui.common.AuthUiHelper
@@ -137,7 +138,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     /**
-     * Lets the user choose a subject and launches its smart review (topicId "-4").
+     * Lets the user choose a subject and launches its smart review.
      * Only subjects with at least one failed question are offered.
      */
     private fun pickSubjectForSmartReview() {
@@ -156,7 +157,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Repaso inteligente")
                 .setItems(available.map { it.name }.toTypedArray()) { _, which ->
-                    QuizLauncher.open(requireContext(), sessionStore, available[which].id, "-4")
+                    QuizLauncher.open(requireContext(), sessionStore, available[which].id, TestMode.SMART_REVIEW.topicId)
                 }
                 .setNegativeButton("Cancelar", null)
                 .show()

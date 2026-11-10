@@ -4,6 +4,7 @@ import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSession
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.session.SavedAnswer
@@ -241,14 +242,16 @@ class QuizViewModelTest {
     fun `finishing smart review records a practice attempt but no progress`() = runTest {
         val questions = listOf(question(1))
         coEvery { repository.getSmartReviewQuestions(any(), any()) } returns questions
-        viewModel.loadQuestions("programacion", "-4") // smart review
+        viewModel.loadQuestions("programacion", TestMode.SMART_REVIEW.topicId) // smart review
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // finishes
 
-        // Smart review counts for the study streak (attempt "-4", which the
-        // statistics ignore) but saves no score or topic progress
-        coVerify(exactly = 1) { repository.recordTestAttempt("programacion", "-4", any(), any()) }
+        // Smart review counts for the study streak (its attempt is stored and the
+        // statistics ignore it) but saves no score or topic progress
+        coVerify(exactly = 1) {
+            repository.recordTestAttempt("programacion", TestMode.SMART_REVIEW.topicId, any(), any())
+        }
         coVerify(exactly = 0) { repository.updateProgress(any()) }
     }
 
@@ -256,7 +259,7 @@ class QuizViewModelTest {
     fun `favourites test loads favourite questions of every subject`() = runTest {
         coEvery { repository.getFavoriteQuestions("all", any()) } returns listOf(question(1), question(2))
 
-        viewModel.loadQuestions("all", "-5")
+        viewModel.loadQuestions("all", TestMode.FAVORITES.topicId)
 
         assertEquals(2, viewModel.questions.value.size)
     }
@@ -264,12 +267,12 @@ class QuizViewModelTest {
     @Test
     fun `finishing the favourites test records a practice attempt but no progress`() = runTest {
         coEvery { repository.getFavoriteQuestions(any(), any()) } returns listOf(question(1))
-        viewModel.loadQuestions("all", "-5")
+        viewModel.loadQuestions("all", TestMode.FAVORITES.topicId)
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // finishes
 
-        coVerify(exactly = 1) { repository.recordTestAttempt("all", "-5", any(), any()) }
+        coVerify(exactly = 1) { repository.recordTestAttempt("all", TestMode.FAVORITES.topicId, any(), any()) }
         coVerify(exactly = 0) { repository.updateProgress(any()) }
     }
 
@@ -449,7 +452,7 @@ class QuizViewModelTest {
     fun `a test with no questions is reported instead of loading forever`() = runTest {
         coEvery { repository.getQuestionsForRange(any(), any(), any(), any()) } returns emptyList()
 
-        viewModel.loadQuestions("sistemas", "-3")
+        viewModel.loadQuestions("sistemas", TestMode.GENERAL_SECOND_HALF.topicId)
 
         assertTrue(viewModel.noQuestions.value)
         assertFalse(viewModel.isLoading.value)
@@ -459,12 +462,12 @@ class QuizViewModelTest {
     fun `a general test is saved under its own id, not its first question's topic`() = runTest {
         coEvery { repository.getRandomQuestionsForGeneralTest(any(), any()) } returns listOf(question(1))
         coEvery { repository.getProgress(any(), any()) } returns null
-        viewModel.loadQuestions("programacion", "-1")
+        viewModel.loadQuestions("programacion", TestMode.GENERAL_ALL.topicId)
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // finishes
 
-        coVerify { repository.recordTestAttempt("programacion", "-1", any(), any()) }
-        coVerify { repository.updateProgress(match { it.topicId == "-1" }) }
+        coVerify { repository.recordTestAttempt("programacion", TestMode.GENERAL_ALL.topicId, any(), any()) }
+        coVerify { repository.updateProgress(match { it.topicId == TestMode.GENERAL_ALL.topicId }) }
     }
 }

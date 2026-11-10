@@ -1,5 +1,6 @@
 package com.navio.damtests.ui.quiz
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
@@ -68,8 +69,8 @@ class QuizActivity : AppCompatActivity() {
 
         applyStatusBar()
 
-        subjectId = intent.getStringExtra("SUBJECT_ID") ?: "programacion"
-        topicId   = intent.getStringExtra("TOPIC_ID")   ?: "tema_1"
+        subjectId = intent.getStringExtra(EXTRA_SUBJECT_ID) ?: return finish()
+        topicId   = intent.getStringExtra(EXTRA_TOPIC_ID) ?: return finish()
 
         tvQuestion     = findViewById(R.id.tvQuestionText)
         btnA           = findViewById(R.id.btnOptionA)
@@ -335,12 +336,7 @@ class QuizActivity : AppCompatActivity() {
     private fun showReviewScreen() {
         val results = viewModel.getResults()
         startActivity(
-            Intent(this, ReviewActivity::class.java)
-                .putExtra("SUBJECT_ID", subjectId)
-                .putExtra("TOPIC_ID", topicId)
-                .putExtra("SCORE", viewModel.score.value)
-                .putExtra("TOTAL", results.size)
-                .putParcelableArrayListExtra("RESULTS", ArrayList(results))
+            ReviewActivity.intent(this, subjectId, topicId, viewModel.score.value, results)
         )
         finish()
     }
@@ -380,7 +376,16 @@ class QuizActivity : AppCompatActivity() {
     }
 
     companion object {
-        /** Boolean extra: continue the saved test instead of starting a new one. */
-        const val EXTRA_RESUME = "RESUME"
+        private const val EXTRA_SUBJECT_ID = "SUBJECT_ID"
+        private const val EXTRA_TOPIC_ID = "TOPIC_ID"
+        /** Continue the saved test instead of starting a new one. */
+        private const val EXTRA_RESUME = "RESUME"
+
+        /** A test of [topicId] (a regular topic or a [com.navio.damtests.data.quiz.TestMode] id). */
+        fun intent(context: Context, subjectId: String, topicId: String, resume: Boolean = false): Intent =
+            Intent(context, QuizActivity::class.java)
+                .putExtra(EXTRA_SUBJECT_ID, subjectId)
+                .putExtra(EXTRA_TOPIC_ID, topicId)
+                .putExtra(EXTRA_RESUME, resume)
     }
 }

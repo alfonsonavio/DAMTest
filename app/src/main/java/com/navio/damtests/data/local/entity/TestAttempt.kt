@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
  * [TopicProgress], which overwrites the last score per topic). This history
  * powers the statistics screen's evolution chart and time-based metrics.
  *
- * Smart-review practice (topicId "-4") is recorded too, because it counts as a
- * study day for the streak, but the statistics queries exclude it so it doesn't
- * distort the score evolution.
+ * Practice tests (smart review and favourites, see TestMode.isPractice) are
+ * recorded too, because they count as a study day for the streak, but the
+ * statistics queries exclude them so they don't distort the score evolution.
  */
 @Entity(tableName = "test_attempts")
 data class TestAttempt(

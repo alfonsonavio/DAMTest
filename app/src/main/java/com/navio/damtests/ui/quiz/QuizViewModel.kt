@@ -3,10 +3,10 @@ package com.navio.damtests.ui.quiz
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.navio.damtests.ai.FastExplainer
-import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.quiz.shuffle
 import com.navio.damtests.data.session.QuizSession
 import com.navio.damtests.data.session.QuizSessionStore
@@ -109,7 +109,7 @@ class QuizViewModel @Inject constructor(
 
     private val _resultsList = mutableListOf<QuestionResult>()
 
-    /** The subject and topicId this test was launched with (e.g. "-4" for smart review). */
+    /** The subject and topic this test was launched with (a [TestMode] id or a regular topic). */
     private var currentSubjectId: String = ""
     private var currentTopicId: String = ""
 
@@ -118,13 +118,9 @@ class QuizViewModel @Inject constructor(
     /**
      * Loads questions for the given subject and topic.
      *
-     * Special topicId values:
-     *  - "-1" → all topics (full general test, 20 questions)
-     *  - "-2" → topics 1–10 (20 questions)
-     *  - "-3" → topics 11–20 (20 questions)
-     *  - "-4" → smart review (20 questions)
-     *  - "-5" → favourite questions (20 questions); subjectId "all" mixes every subject
-     *  - any other → specific topic (10 questions)
+     * A [TestMode] topic id loads [MODE_TEST_SIZE] questions of that mode (for
+     * favourites, subjectId [com.navio.damtests.data.favorites.Favorites.ALL_SUBJECTS]
+     * mixes every subject); a regular topic loads [TOPIC_TEST_SIZE] of its own.
      *
      * With [resume] = true it continues the saved test for this subject/topic
      * instead, falling back to a new test if it can no longer be rebuilt.
@@ -149,15 +145,17 @@ class QuizViewModel @Inject constructor(
                 return@launch
             }
 
-            val limit = if (topicId.startsWith("-")) 20 else 10
+            val mode = TestMode.fromTopicId(topicId)
+            val limit = if (mode != null) MODE_TEST_SIZE else TOPIC_TEST_SIZE
 
-            _questions.value = when (topicId) {
-                "-1"  -> repository.getRandomQuestionsForGeneralTest(subjectId, limit)
-                "-2"  -> repository.getQuestionsForRange(subjectId, 1,  10, limit)
-                "-3"  -> repository.getQuestionsForRange(subjectId, 11, 20, limit)
-                "-4"  -> repository.getSmartReviewQuestions(subjectId, limit)
-                Favorites.TOPIC_ID -> repository.getFavoriteQuestions(subjectId, limit)
-                else  -> repository.getQuestionsByTopic(subjectId, topicId, limit)
+            _questions.value = when (mode) {
+                TestMode.GENERAL_ALL         -> repository.getRandomQuestionsForGeneralTest(subjectId, limit)
+                TestMode.GENERAL_FIRST_HALF  -> repository.getQuestionsForRange(subjectId, 1, 10, limit)
+                TestMode.GENERAL_SECOND_HALF -> repository.getQuestionsForRange(subjectId, 11, 20, limit)
+                TestMode.SMART_REVIEW        -> repository.getSmartReviewQuestions(subjectId, limit)
+                TestMode.FAVORITES           -> repository.getFavoriteQuestions(subjectId, limit)
+                // Exams have their own screen; a regular topic loads its questions
+                else -> repository.getQuestionsByTopic(subjectId, topicId, limit)
             }.distinctBy { it.text }  // prevent duplicates if Room has stale rows
 
             showQuestion(0)
@@ -264,12 +262,12 @@ class QuizViewModel @Inject constructor(
         _currentAnswerState.value = null
         sessionStore.clear()
 
-        // Smart review (-4) and favourites (-5) are practice only — they save no
-        // score or progress, only the attempt that keeps the study streak going.
-        // The score belongs to the test that was launched (e.g. "-1" for the
-        // full general test), not to the topic of its first question.
+        // Practice tests (smart review, favourites) save no score or progress,
+        // only the attempt that keeps the study streak going. The score belongs
+        // to the test that was launched (e.g. the full general test), not to
+        // the topic of its first question.
         if (_questions.value.isNotEmpty()) {
-            if (currentTopicId == "-4" || currentTopicId == Favorites.TOPIC_ID) {
+            if (TestMode.fromTopicId(currentTopicId)?.isPractice == true) {
                 recordPracticeAttempt(currentSubjectId, currentTopicId)
             } else {
                 saveFinalProgress(currentSubjectId, currentTopicId)
@@ -319,9 +317,9 @@ class QuizViewModel @Inject constructor(
     }
 
     /**
-     * Practice tests (smart review "-4", favourites "-5") save no score or
-     * progress, but they still count as a study day for the streak, so the
-     * attempt is recorded (statistics ignore both ids).
+     * Practice tests (smart review, favourites) save no score or progress, but
+     * they still count as a study day for the streak, so the attempt is
+     * recorded (statistics ignore them).
      */
     private fun recordPracticeAttempt(subjectId: String, topicId: String) {
         viewModelScope.launch {
@@ -362,5 +360,13 @@ class QuizViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private companion object {
+        /** Questions of a general test, smart review or favourites test. */
+        const val MODE_TEST_SIZE = 20
+
+        /** Questions of a single-topic test. */
+        const val TOPIC_TEST_SIZE = 10
     }
 }

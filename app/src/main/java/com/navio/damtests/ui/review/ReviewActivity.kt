@@ -1,13 +1,14 @@
 package com.navio.damtests.ui.review
 
+import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -19,8 +20,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.navio.damtests.R
 import com.navio.damtests.ai.ExplanationService
 import com.navio.damtests.ai.FastExplainer
-import com.navio.damtests.data.exam.Exam
-import com.navio.damtests.data.exam.ExamRange
+import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.report.ReportRepository
 import com.navio.damtests.ui.exam.ExamActivity
@@ -43,18 +43,14 @@ class ReviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_review)
 
-        // All data arrives via Intent — no global singleton needed
-        val score     = intent.getIntExtra("SCORE", 0)
-        val total     = intent.getIntExtra("TOTAL", 0)
-        val subjectId = intent.getStringExtra("SUBJECT_ID") ?: "programacion"
-        val topicId   = intent.getStringExtra("TOPIC_ID")   ?: "tema_1"
-
-        @Suppress("DEPRECATION")
-        val results: List<QuestionResult> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableArrayListExtra("RESULTS", QuestionResult::class.java) ?: emptyList()
-        } else {
-            intent.getParcelableArrayListExtra("RESULTS") ?: emptyList()
-        }
+        // All data arrives via Intent (see [intent]) — no global singleton needed
+        val subjectId = intent.getStringExtra(EXTRA_SUBJECT_ID) ?: return finish()
+        val topicId   = intent.getStringExtra(EXTRA_TOPIC_ID) ?: return finish()
+        val score     = intent.getIntExtra(EXTRA_SCORE, 0)
+        val results: List<QuestionResult> =
+            IntentCompat.getParcelableArrayListExtra(intent, EXTRA_RESULTS, QuestionResult::class.java).orEmpty()
+        val total     = results.size
+        val exam      = IntentCompat.getParcelableExtra(intent, EXTRA_EXAM, ExamConfig::class.java)
 
         // Exams show their mark; the other tests, correct answers out of total
         findViewById<TextView>(R.id.tvReviewScore).text =
@@ -89,21 +85,11 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         findViewById<MaterialButton>(R.id.btnRepeatTest).setOnClickListener {
-            val examRange = ExamRange.fromAttemptTopicId(topicId)
-            if (examRange != null) {
-                // Same exam again: same topics, size and penalty, new questions
-                ExamActivity.start(
-                    this, subjectId, examRange,
-                    intent.getIntExtra(ExamActivity.EXTRA_SIZE, Exam.SIZES[1]),
-                    intent.getBooleanExtra(ExamActivity.EXTRA_PENALTY, false)
-                )
-            } else {
-                startActivity(
-                    Intent(this, QuizActivity::class.java)
-                        .putExtra("SUBJECT_ID", subjectId)
-                        .putExtra("TOPIC_ID", topicId)
-                )
-            }
+            // An exam repeats with the same topics, size and penalty (new questions)
+            startActivity(
+                if (exam != null) ExamActivity.intent(this, exam)
+                else QuizActivity.intent(this, subjectId, topicId)
+            )
             finish()
         }
     }
@@ -166,10 +152,36 @@ class ReviewActivity : AppCompatActivity() {
     }
 
     companion object {
-        /** Optional header text replacing "Resultado final: x / y" (exam mark). */
-        const val EXTRA_SCORE_TEXT = "SCORE_TEXT"
+        private const val EXTRA_SUBJECT_ID = "SUBJECT_ID"
+        private const val EXTRA_TOPIC_ID = "TOPIC_ID"
+        private const val EXTRA_SCORE = "SCORE"
+        private const val EXTRA_RESULTS = "RESULTS"
+        private const val EXTRA_SCORE_TEXT = "SCORE_TEXT"
+        private const val EXTRA_EXAM = "EXAM"
 
         /** After this long without an answer the dialog says it is taking longer. */
         private const val SLOW_ANSWER_NOTICE_MS = 8_000L
+
+        /**
+         * Review of a finished test.
+         *
+         * @param scoreText Header replacing "Resultado final: x / y" (the exam mark).
+         * @param exam      Set for exams, so "Repetir" starts the same exam again.
+         */
+        fun intent(
+            context: Context,
+            subjectId: String,
+            topicId: String,
+            score: Int,
+            results: List<QuestionResult>,
+            scoreText: String? = null,
+            exam: ExamConfig? = null
+        ): Intent = Intent(context, ReviewActivity::class.java)
+            .putExtra(EXTRA_SUBJECT_ID, subjectId)
+            .putExtra(EXTRA_TOPIC_ID, topicId)
+            .putExtra(EXTRA_SCORE, score)
+            .putParcelableArrayListExtra(EXTRA_RESULTS, ArrayList(results))
+            .putExtra(EXTRA_SCORE_TEXT, scoreText)
+            .putExtra(EXTRA_EXAM, exam)
     }
 }
