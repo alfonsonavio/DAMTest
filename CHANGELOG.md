@@ -43,6 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **Material time picker for the reminder** — the reminder time uses the
+  Material 3 clock picker, in the app's colours and always in 24 h format,
+  instead of the old system dialog with its own pink accent.
 - **Edge-to-edge on every screen** — the app now draws behind the status and
   navigation bars on every Android version (Android 15 already forced it),
   instead of the deprecated `statusBarColor`. Headers get the real status bar
