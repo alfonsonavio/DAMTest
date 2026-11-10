@@ -23,9 +23,10 @@ data class PracticeOptions(
             if (topicIds.isEmpty()) return NONE
             val temaNumbers = topicIds.mapNotNull { StudyTopics.temaNumber(it) }
             return PracticeOptions(
-                hasQuestions   = true,
+                hasQuestions = true,
                 hasGeneralTest = temaNumbers.isNotEmpty(),
-                hasHalves      = temaNumbers.any { it in 1..10 } && temaNumbers.any { it in 11..20 }
+                hasHalves = temaNumbers.any { it in StudyTopics.FIRST_HALF } &&
+                    temaNumbers.any { it in StudyTopics.SECOND_HALF }
             )
         }
     }

@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/surface_bg"
     android:fitsSystemWindows="true">
 
     <!-- Cabecera: salir, número de pregunta y tiempo restante -->

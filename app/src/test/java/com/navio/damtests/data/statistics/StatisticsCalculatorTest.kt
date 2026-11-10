@@ -98,7 +98,7 @@ class StatisticsCalculatorTest {
     fun `bySubject computes accuracy per subject sorted best first`() {
         val stats = listOf(
             stat("prog", "tema_1", "p1", seen = 10, correct = 9), // 90%
-            stat("db",   "tema_1", "p1", seen = 10, correct = 4)  // 40%
+            stat("db", "tema_1", "p1", seen = 10, correct = 4) // 40%
         )
         val result = calc.calculate(emptyList(), stats)
         assertEquals(2, result.bySubject.size)

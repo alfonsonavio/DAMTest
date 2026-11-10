@@ -39,8 +39,8 @@ class FastExplainer @Inject constructor() {
         client?.takeIf { clientKey == apiKey }?.let { return it }
         client?.close()
         return OpenAI(
-            token   = apiKey,
-            host    = OpenAIHost("https://api.groq.com/openai/v1/"),
+            token = apiKey,
+            host = OpenAIHost("https://api.groq.com/openai/v1/"),
             logging = LoggingConfig(logLevel = LogLevel.None),
             timeout = Timeout(socket = 30.seconds)
         ).also {
@@ -73,7 +73,7 @@ class FastExplainer @Inject constructor() {
         val content = complete(
             listOf(
                 ChatMessage(role = ChatRole.System, content = systemPrompt),
-                ChatMessage(role = ChatRole.User,   content = userContent)
+                ChatMessage(role = ChatRole.User, content = userContent)
             )
         )
         return content ?: "No se pudo generar explicación | Inténtalo de nuevo"
@@ -97,7 +97,7 @@ class FastExplainer @Inject constructor() {
 
         val response = clientFor(apiKey).chatCompletion(
             ChatCompletionRequest(
-                model    = ModelId(
+                model = ModelId(
                     RemoteConfigManager.getStringOr(
                         RemoteConfigManager.KEY_GROQ_MODEL,
                         RemoteConfigManager.DEFAULT_GROQ_MODEL

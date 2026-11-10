@@ -15,10 +15,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.navio.damtests.R
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.core.markOf
 import com.navio.damtests.data.catalog.SubjectCatalog
 import com.navio.damtests.data.catalog.TopicNames
-import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.local.entity.TopicProgress
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.TestMode
+import com.navio.damtests.data.session.QuizSession
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.sync.StatsSyncRepository
 import com.navio.damtests.ui.common.AuthUiHelper
@@ -40,107 +43,119 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var progressRepository: ProgressRepository
+
     @Inject lateinit var authManager: AuthManager
+
     @Inject lateinit var sessionStore: QuizSessionStore
+
     @Inject lateinit var statsSyncRepository: StatsSyncRepository
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<View>(R.id.homeHeader).padForSystemBars(top = true)
 
-        val tvGreeting     = view.findViewById<TextView>(R.id.tvGreeting)
-        val tvName         = view.findViewById<TextView>(R.id.tvName)
-        val tvStreak       = view.findViewById<TextView>(R.id.tvStreak)
-        val tvAvgScore     = view.findViewById<TextView>(R.id.tvAvgScore)
-        val tvTotalTests   = view.findViewById<TextView>(R.id.tvTotalTests)
-        val cardContinue   = view.findViewById<MaterialCardView>(R.id.cardContinue)
-        val tvContinueHeader  = view.findViewById<TextView>(R.id.tvContinueHeader)
-        val tvContinueSubject = view.findViewById<TextView>(R.id.tvContinueSubject)
-        val tvContinueDetail  = view.findViewById<TextView>(R.id.tvContinueDetail)
-        val progressContinue  = view.findViewById<LinearProgressIndicator>(R.id.progressContinue)
-        val cardSmartReview   = view.findViewById<MaterialCardView>(R.id.cardSmartReview)
-        val btnSettings       = view.findViewById<ImageButton>(R.id.btnSettings)
+        view.findViewById<TextView>(R.id.tvGreeting).text = greetingForTimeOfDay()
+        view.findViewById<TextView>(R.id.tvName).text =
+            authManager.displayName ?: getString(R.string.default_user_name)
 
-        tvGreeting.text = greetingForTimeOfDay()
-        tvName.text     = authManager.displayName ?: getString(R.string.default_user_name)
+        setupShortcuts(view)
+        observeStreak(view.findViewById(R.id.tvStreak))
+        observeProgress(view)
+    }
 
+    private fun setupShortcuts(view: View) {
         // Smart review is per subject: ask which one, then launch it.
-        cardSmartReview.setOnClickListener { pickSubjectForSmartReview() }
+        view.findViewById<MaterialCardView>(R.id.cardSmartReview).setOnClickListener { pickSubjectForSmartReview() }
 
         // Favourites: list of marked questions and a test mixing every subject.
         view.findViewById<MaterialCardView>(R.id.cardFavorites).setOnClickListener {
             startActivity(Intent(requireContext(), FavoritesActivity::class.java))
         }
 
-        // Settings button opens the settings screen.
-        btnSettings.setOnClickListener {
+        view.findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
+    }
 
-        // Study streak: recalculated whenever Home is shown again (e.g. after a
-        // test) and whenever a background sync brings tests from another device.
+    /**
+     * Study streak: recalculated whenever Home is shown again (e.g. after a
+     * test) and whenever a background sync brings tests from another device.
+     */
+    private fun observeStreak(tvStreak: TextView) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 statsSyncRepository.syncedAt.collect {
-                    tvStreak.text = getString(R.string.home_streak, repository.getStreak().days)
+                    tvStreak.text = getString(R.string.home_streak, progressRepository.getStreak().days)
                 }
             }
         }
+    }
 
+    private fun observeProgress(view: View) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.getAllProgress().collect { allProgress ->
-                    // Quick stats
-                    val totalTests     = allProgress.sumOf { it.attemptsCount }
-                    val totalScore     = allProgress.sumOf { it.lastScore }
-                    val totalQuestions = allProgress.sumOf { it.totalQuestions }
-                    val average = if (totalQuestions > 0)
-                        totalScore.toDouble() / totalQuestions * 10 else 0.0
-                    tvAvgScore.text   = getString(R.string.score_one_decimal, average)
-                    tvTotalTests.text = totalTests.toString()
-
+                progressRepository.getAllProgress().collect { allProgress ->
+                    renderQuickStats(view, allProgress)
                     // A test left half-way takes priority: the card resumes it.
                     val session = sessionStore.load()
-                    if (session != null) {
-                        cardContinue.isVisible = true
-                        tvContinueHeader.isVisible = true
-                        tvContinueSubject.text = SubjectCatalog.nameFor(session.subjectId).asString(requireContext())
-                        tvContinueDetail.text = getString(
-                            R.string.home_continue_session,
-                            TopicNames.displayName(session.topicId).asString(requireContext()),
-                            session.nextQuestionNumber,
-                            session.total
-                        )
-                        progressContinue.isVisible = true
-                        progressContinue.max = session.total
-                        progressContinue.progress = session.answeredCount
-                        cardContinue.setOnClickListener {
-                            QuizLauncher.start(requireContext(), session.subjectId, session.topicId, resume = true)
-                        }
-                        return@collect
-                    }
-                    progressContinue.isVisible = false
-
-                    // Otherwise: the most recent progress by timestamp
-                    val lastProgress = allProgress
-                        .filter { it.lastAttemptTimestamp > 0 }
-                        .maxByOrNull { it.lastAttemptTimestamp }
-
-                    val hasHistory = lastProgress != null
-                    cardContinue.isVisible = hasHistory
-                    tvContinueHeader.isVisible = hasHistory
-
-                    if (lastProgress != null) {
-                        val context = requireContext()
-                        tvContinueSubject.text = SubjectCatalog.nameFor(lastProgress.subjectId).asString(context)
-                        tvContinueDetail.text  = TopicNames.displayName(lastProgress.topicId).asString(context)
-                        cardContinue.setOnClickListener {
-                            startActivity(TopicSelectionActivity.intent(requireContext(), lastProgress.subjectId))
-                        }
-                    }
+                    if (session != null) renderSavedTest(view, session) else renderLastTopic(view, allProgress)
                 }
             }
+        }
+    }
+
+    private fun renderQuickStats(view: View, allProgress: List<TopicProgress>) {
+        val average = markOf(allProgress.sumOf { it.lastScore }, allProgress.sumOf { it.totalQuestions })
+        view.findViewById<TextView>(R.id.tvAvgScore).text = getString(R.string.score_one_decimal, average)
+        view.findViewById<TextView>(R.id.tvTotalTests).text =
+            getString(R.string.number, allProgress.sumOf { it.attemptsCount })
+    }
+
+    /** "Continue" card for the test left half-way: resumes it where it was. */
+    private fun renderSavedTest(view: View, session: QuizSession) {
+        val context = requireContext()
+        view.findViewById<TextView>(R.id.tvContinueHeader).isVisible = true
+        view.findViewById<TextView>(R.id.tvContinueSubject).text =
+            SubjectCatalog.nameFor(session.subjectId).asString(context)
+        view.findViewById<TextView>(R.id.tvContinueDetail).text = getString(
+            R.string.home_continue_session,
+            TopicNames.displayName(session.topicId).asString(context),
+            session.nextQuestionNumber,
+            session.total
+        )
+        view.findViewById<LinearProgressIndicator>(R.id.progressContinue).apply {
+            isVisible = true
+            max = session.total
+            progress = session.answeredCount
+        }
+        view.findViewById<MaterialCardView>(R.id.cardContinue).apply {
+            isVisible = true
+            setOnClickListener {
+                QuizLauncher.start(context, session.subjectId, session.topicId, resume = true)
+            }
+        }
+    }
+
+    /** "Continue" card for the most recently practised topic, if any. */
+    private fun renderLastTopic(view: View, allProgress: List<TopicProgress>) {
+        val lastProgress = allProgress
+            .filter { it.lastAttemptTimestamp > 0 }
+            .maxByOrNull { it.lastAttemptTimestamp }
+        val cardContinue = view.findViewById<MaterialCardView>(R.id.cardContinue)
+
+        view.findViewById<LinearProgressIndicator>(R.id.progressContinue).isVisible = false
+        view.findViewById<TextView>(R.id.tvContinueHeader).isVisible = lastProgress != null
+        cardContinue.isVisible = lastProgress != null
+        if (lastProgress == null) return
+
+        val context = requireContext()
+        view.findViewById<TextView>(R.id.tvContinueSubject).text =
+            SubjectCatalog.nameFor(lastProgress.subjectId).asString(context)
+        view.findViewById<TextView>(R.id.tvContinueDetail).text =
+            TopicNames.displayName(lastProgress.topicId).asString(context)
+        cardContinue.setOnClickListener {
+            startActivity(TopicSelectionActivity.intent(context, lastProgress.subjectId))
         }
     }
 
@@ -150,7 +165,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
      */
     private fun pickSubjectForSmartReview() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val available = SubjectCatalog.all.filter { repository.subjectHasFailures(it.id) }
+            val available = SubjectCatalog.all.filter { progressRepository.subjectHasFailures(it.id) }
 
             if (available.isEmpty()) {
                 AuthUiHelper.showInfo(
@@ -174,9 +189,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun greetingForTimeOfDay(): String =
         when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-            in MORNING_HOURS   -> getString(R.string.greeting_morning)
+            in MORNING_HOURS -> getString(R.string.greeting_morning)
             in AFTERNOON_HOURS -> getString(R.string.greeting_afternoon)
-            else               -> getString(R.string.greeting_evening)
+            else -> getString(R.string.greeting_evening)
         }
 
     private companion object {

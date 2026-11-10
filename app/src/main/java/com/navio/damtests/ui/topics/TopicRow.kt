@@ -1,5 +1,6 @@
 package com.navio.damtests.ui.topics
 
+import com.navio.damtests.core.percentOf
 import com.navio.damtests.data.local.entity.Topic
 import com.navio.damtests.data.local.entity.TopicProgress
 
@@ -24,14 +25,14 @@ data class TopicRow(
             val byTopic = progress.associateBy { it.topicId }
             return topics.map { topic ->
                 TopicRow(
-                    topic       = topic,
-                    lastPercent = byTopic[topic.id]?.let(::percentOf),
-                    hasPdf      = topic.id in pdfTopicIds
+                    topic = topic,
+                    lastPercent = byTopic[topic.id]?.let(::lastPercent),
+                    hasPdf = topic.id in pdfTopicIds
                 )
             }
         }
 
-        private fun percentOf(progress: TopicProgress): Int? =
-            progress.totalQuestions.takeIf { it > 0 }?.let { progress.lastScore * 100 / it }
+        private fun lastPercent(progress: TopicProgress): Int? =
+            progress.totalQuestions.takeIf { it > 0 }?.let { percentOf(progress.lastScore, it) }
     }
 }

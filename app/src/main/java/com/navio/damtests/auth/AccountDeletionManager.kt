@@ -1,9 +1,8 @@
 package com.navio.damtests.auth
 
-import com.navio.damtests.data.local.dao.QuestionsDao
-import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.core.suspendRunCatching
+import com.navio.damtests.data.local.LocalUserData
 import com.navio.damtests.data.sync.CloudUserDataRepository
-import com.navio.damtests.data.sync.StatsSyncRepository
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,19 +19,20 @@ import javax.inject.Singleton
 class AccountDeletionManager @Inject constructor(
     private val authManager: AuthManager,
     private val cloudUserData: CloudUserDataRepository,
-    private val questionsDao: QuestionsDao,
-    private val sessionStore: QuizSessionStore,
-    private val statsSyncRepository: StatsSyncRepository,
+    private val localUserData: LocalUserData,
     private val googleCredentialClient: GoogleCredentialClient
 ) {
 
     enum class Result {
         /** Account and all data deleted; the user is signed out. */
         DELETED,
+
         /** Nothing deleted: the user must sign in again first. */
         NEEDS_RECENT_LOGIN,
+
         /** Data deleted but the account itself could not be; the user is signed out. */
         DATA_DELETED_ACCOUNT_PENDING,
+
         /** Nothing deleted (no connection, server error…). */
         FAILED
     }
@@ -43,24 +43,14 @@ class AccountDeletionManager @Inject constructor(
         val lastSignIn = authManager.lastSignInAt ?: 0L
         if (now - lastSignIn > RECENT_LOGIN_MS) return Result.NEEDS_RECENT_LOGIN
 
-        try {
-            withTimeout(TIMEOUT_MS) { cloudUserData.deleteAll(uid) }
-        } catch (e: Exception) {
-            return Result.FAILED
-        }
+        val cloudDeleted = suspendRunCatching { withTimeout(TIMEOUT_MS) { cloudUserData.deleteAll(uid) } }.isSuccess
+        if (!cloudDeleted) return Result.FAILED
 
-        val accountDeleted = try {
-            authManager.deleteCurrentUser()
-            true
-        } catch (e: Exception) {
-            false
-        }
+        val accountDeleted = suspendRunCatching { authManager.deleteCurrentUser() }.isSuccess
 
         // The cloud data is gone either way: wipe the local copy too, so it
         // can't be uploaded again, and leave the user signed out.
-        questionsDao.clearUserData()
-        sessionStore.clear()
-        statsSyncRepository.forgetSyncState(uid)
+        localUserData.clear(uid)
         authManager.signOut()
         googleCredentialClient.clearCredentialState()
 

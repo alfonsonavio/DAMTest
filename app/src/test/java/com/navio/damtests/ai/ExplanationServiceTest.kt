@@ -2,6 +2,7 @@ package com.navio.damtests.ai
 
 import com.navio.damtests.data.local.entity.Question
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
@@ -14,11 +15,16 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ExplanationServiceTest {
 
     private val question = Question(
-        stableId = "q1", text = "¿Qué es una clase?",
-        optionA = "Un molde", optionB = "Un objeto", optionC = "Un método", optionD = "Un paquete",
+        stableId = "q1",
+        text = "¿Qué es una clase?",
+        optionA = "Un molde",
+        optionB = "Un objeto",
+        optionC = "Un método",
+        optionD = "Un paquete",
         correctOptionIndex = 0
     )
     private val options = listOf("Un objeto", "Un molde", "Un método", "Un paquete")
@@ -28,19 +34,30 @@ class ExplanationServiceTest {
 
     private fun service(
         primary: (suspend (String) -> String)?,
-        fallback: suspend (String) -> String = { fallbackCalls++; "groq" }
+        fallback: suspend (String) -> String = {
+            fallbackCalls++
+            "groq"
+        }
     ): ExplanationService {
         // Counts the calls to the primary provider
         val countedPrimary: (suspend (String) -> String)? = primary?.let { p ->
-            val wrapped: suspend (String) -> String = { prompt -> primaryCalls++; p(prompt) }
+            val wrapped: suspend (String) -> String = { prompt ->
+                primaryCalls++
+                p(prompt)
+            }
             wrapped
         }
         return ExplanationService(
-            primary = countedPrimary, fallback = fallback, onError = { _, _ -> }, onInfo = {}
+            primary = countedPrimary,
+            fallback = fallback,
+            onError = { _, _ -> },
+            onInfo = {}
         )
     }
 
-    private val busy = IllegalStateException("""Unexpected Response: {"error": {"code": 503, "status": "UNAVAILABLE"}}""")
+    private val busy = IllegalStateException(
+        """Unexpected Response: {"error": {"code": 503, "status": "UNAVAILABLE"}}"""
+    )
 
     @Test
     fun `gemini answer is used when it works`() = runTest {
@@ -83,7 +100,7 @@ class ExplanationServiceTest {
     fun `a time limit hidden inside the Gemini SDK error goes to groq without retry`() = runTest {
         // The Gemini SDK reports our time limit as its own exception
         val result = service(primary = {
-            throw RuntimeException("Something unexpected happened.", CancellationException("Timed out"))
+            throw IllegalStateException("Something unexpected happened.", CancellationException("Timed out"))
         }).explain(question, options, 0)
 
         assertEquals("groq", result)
@@ -96,7 +113,7 @@ class ExplanationServiceTest {
             try {
                 awaitCancellation()
             } catch (e: CancellationException) {
-                throw RuntimeException("Something unexpected happened.", e)
+                throw IllegalStateException("Something unexpected happened.", e)
             }
         })
         var result: String? = "not finished"

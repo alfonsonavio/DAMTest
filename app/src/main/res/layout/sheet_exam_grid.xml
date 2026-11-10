@@ -33,7 +33,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="5" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSheetSubmit"

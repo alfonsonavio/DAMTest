@@ -11,13 +11,21 @@ import org.junit.Test
 class StatsMergerTest {
 
     private fun attempt(topic: String, timestamp: Long, id: Long = 0) = TestAttempt(
-        id = id, subjectId = "programacion", topicId = topic,
-        score = 5, totalQuestions = 10, timestamp = timestamp
+        id = id,
+        subjectId = "programacion",
+        topicId = topic,
+        score = 5,
+        totalQuestions = 10,
+        timestamp = timestamp
     )
 
     private fun stats(id: String, seen: Int, lastSeen: Long) = QuestionStats(
-        stableId = id, subjectId = "programacion",
-        timesSeen = seen, timesCorrect = seen, timesWrong = 0, lastSeenTimestamp = lastSeen
+        stableId = id,
+        subjectId = "programacion",
+        timesSeen = seen,
+        timesCorrect = seen,
+        timesWrong = 0,
+        lastSeenTimestamp = lastSeen
     )
 
     // --- Attempts ---

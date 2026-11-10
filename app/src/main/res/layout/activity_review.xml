@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:fitsSystemWindows="true"
-    android:background="@color/surface_bg">
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"

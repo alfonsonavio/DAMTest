@@ -55,7 +55,7 @@ object AuthUiHelper {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { topMargin = (16 * context.resources.displayMetrics.density).toInt() }
+            ).apply { topMargin = context.resources.getDimensionPixelSize(R.dimen.dialog_spinner_margin_top) }
         }
         container.addView(spinner, container.indexOfChild(tvMessage))
 
@@ -79,7 +79,10 @@ object AuthUiHelper {
         view.findViewById<TextView>(R.id.tvConfirmMessage).text = message
         view.findViewById<MaterialButton>(R.id.btnConfirmYes).apply {
             text = confirmText
-            setOnClickListener { dialog.dismiss(); onConfirm() }
+            setOnClickListener {
+                dialog.dismiss()
+                onConfirm()
+            }
         }
         view.findViewById<MaterialButton>(R.id.btnConfirmNo).setOnClickListener { dialog.dismiss() }
         dialog.show()

@@ -9,17 +9,14 @@ data class ShuffledQuestion(
 )
 
 fun Question.shuffle(): ShuffledQuestion {
-    // Creamos una lista de pares
-    val options = listOf(
-        optionA to (correctOptionIndex == 0),
-        optionB to (correctOptionIndex == 1),
-        optionC to (correctOptionIndex == 2),
-        optionD to (correctOptionIndex == 3)
-    ).shuffled()
+    // Each option with whether it is the right one, then mixed
+    val marked = options
+        .mapIndexed { index, text -> text to (index == correctOptionIndex) }
+        .shuffled()
 
     return ShuffledQuestion(
         originalQuestion = this,
-        shuffledOptions = options.map { it.first },
-        newCorrectIndex = options.indexOfFirst { it.second }
+        shuffledOptions = marked.map { it.first },
+        newCorrectIndex = marked.indexOfFirst { it.second }
     )
 }

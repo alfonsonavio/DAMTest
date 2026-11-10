@@ -21,7 +21,7 @@ import com.navio.damtests.R
 import com.navio.damtests.ai.ExplanationService
 import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.data.exam.ExamConfig
-import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.favorites.FavoritesRepository
 import com.navio.damtests.data.report.ReportRepository
 import com.navio.damtests.ui.common.setupEdgeToEdge
 import com.navio.damtests.ui.exam.ExamActivity
@@ -37,7 +37,9 @@ import javax.inject.Inject
 class ReviewActivity : AppCompatActivity() {
 
     @Inject lateinit var reportRepository: ReportRepository
-    @Inject lateinit var repository: QuizRepository
+
+    @Inject lateinit var favoritesRepository: FavoritesRepository
+
     @Inject lateinit var fastExplainer: FastExplainer
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,12 +49,12 @@ class ReviewActivity : AppCompatActivity() {
 
         // All data arrives via Intent (see [intent]) — no global singleton needed
         val subjectId = intent.getStringExtra(EXTRA_SUBJECT_ID) ?: return finish()
-        val topicId   = intent.getStringExtra(EXTRA_TOPIC_ID) ?: return finish()
-        val score     = intent.getIntExtra(EXTRA_SCORE, 0)
+        val topicId = intent.getStringExtra(EXTRA_TOPIC_ID) ?: return finish()
+        val score = intent.getIntExtra(EXTRA_SCORE, 0)
         val results: List<QuestionResult> =
             IntentCompat.getParcelableArrayListExtra(intent, EXTRA_RESULTS, QuestionResult::class.java).orEmpty()
-        val total     = results.size
-        val exam      = IntentCompat.getParcelableExtra(intent, EXTRA_EXAM, ExamConfig::class.java)
+        val total = results.size
+        val exam = IntentCompat.getParcelableExtra(intent, EXTRA_EXAM, ExamConfig::class.java)
 
         // Exams show their mark; the other tests, correct answers out of total
         findViewById<TextView>(R.id.tvReviewScore).text =
@@ -63,10 +65,10 @@ class ReviewActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this)
         val adapter = ReviewAdapter(
             results,
-            onExplainClick  = { result -> showAiExplanation(result) },
-            onReportClick   = { result -> showReportDialog(result) },
+            onExplainClick = { result -> showAiExplanation(result) },
+            onReportClick = { result -> showReportDialog(result) },
             onFavoriteClick = { result, favorite ->
-                lifecycleScope.launch { repository.setFavorite(result.question, favorite) }
+                lifecycleScope.launch { favoritesRepository.setFavorite(result.question, favorite) }
             }
         )
         rv.adapter = adapter
@@ -74,7 +76,7 @@ class ReviewActivity : AppCompatActivity() {
         // Stars update live when a question is marked or unmarked
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.getFavoriteIds().collect { ids -> adapter.updateFavorites(ids) }
+                favoritesRepository.getFavoriteIds().collect { ids -> adapter.updateFavorites(ids) }
             }
         }
 
@@ -89,8 +91,11 @@ class ReviewActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btnRepeatTest).setOnClickListener {
             // An exam repeats with the same topics, size and penalty (new questions)
             startActivity(
-                if (exam != null) ExamActivity.intent(this, exam)
-                else QuizActivity.intent(this, subjectId, topicId)
+                if (exam != null) {
+                    ExamActivity.intent(this, exam)
+                } else {
+                    QuizActivity.intent(this, subjectId, topicId)
+                }
             )
             finish()
         }
@@ -98,8 +103,8 @@ class ReviewActivity : AppCompatActivity() {
 
     private fun showAiExplanation(result: QuestionResult) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_explanation, null)
-        val tvMessage  = dialogView.findViewById<TextView>(R.id.tvAiExplanation)
-        val btnClose   = dialogView.findViewById<MaterialButton>(R.id.btnDialogClose)
+        val tvMessage = dialogView.findViewById<TextView>(R.id.tvAiExplanation)
+        val btnClose = dialogView.findViewById<MaterialButton>(R.id.btnDialogClose)
 
         val dialog = MaterialAlertDialogBuilder(this)
             .setView(dialogView)
@@ -108,7 +113,7 @@ class ReviewActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
 
-        val width = (resources.displayMetrics.widthPixels * 0.90).toInt()
+        val width = (resources.displayMetrics.widthPixels * DIALOG_WIDTH_FRACTION).toInt()
         dialog.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         val job = lifecycleScope.launch {
@@ -130,8 +135,8 @@ class ReviewActivity : AppCompatActivity() {
     /** Lets the user flag a question with a wrong answer or typos. */
     private fun showReportDialog(result: QuestionResult) {
         val view = layoutInflater.inflate(R.layout.dialog_report, null)
-        val reasons  = view.findViewById<RadioGroup>(R.id.rgReportReason)
-        val comment  = view.findViewById<TextInputEditText>(R.id.etReportComment)
+        val reasons = view.findViewById<RadioGroup>(R.id.rgReportReason)
+        val comment = view.findViewById<TextInputEditText>(R.id.etReportComment)
 
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.report_title)
@@ -140,8 +145,8 @@ class ReviewActivity : AppCompatActivity() {
             .setPositiveButton(R.string.report_send) { _, _ ->
                 val reason = when (reasons.checkedRadioButtonId) {
                     R.id.rbWrongAnswer -> ReportRepository.Reason.WRONG_ANSWER
-                    R.id.rbTypo        -> ReportRepository.Reason.TYPO
-                    else               -> ReportRepository.Reason.OTHER
+                    R.id.rbTypo -> ReportRepository.Reason.TYPO
+                    else -> ReportRepository.Reason.OTHER
                 }
                 reportRepository.reportQuestion(
                     result.question,
@@ -154,6 +159,9 @@ class ReviewActivity : AppCompatActivity() {
     }
 
     companion object {
+        /** The explanation dialog takes 90 % of the screen width. */
+        private const val DIALOG_WIDTH_FRACTION = 0.9
+
         private const val EXTRA_SUBJECT_ID = "SUBJECT_ID"
         private const val EXTRA_TOPIC_ID = "TOPIC_ID"
         private const val EXTRA_SCORE = "SCORE"

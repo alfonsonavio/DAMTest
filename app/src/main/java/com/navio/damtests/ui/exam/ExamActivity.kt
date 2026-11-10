@@ -17,7 +17,6 @@ import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -57,6 +56,7 @@ class ExamActivity : AppCompatActivity() {
     private var gridAdapter: ExamGridAdapter? = null
     private var resultDialog: AlertDialog? = null
     private var noQuestionsShown = false
+
     /** Previous remaining time, to warn once when 5 and 1 minutes are left. */
     private var lastRemaining = -1L
 
@@ -67,15 +67,15 @@ class ExamActivity : AppCompatActivity() {
         // A timed exam shouldn't be interrupted by the screen switching off
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        tvCount     = findViewById(R.id.tvExamCount)
-        tvTimer     = findViewById(R.id.tvExamTimer)
-        tvAnswered  = findViewById(R.id.tvExamAnswered)
+        tvCount = findViewById(R.id.tvExamCount)
+        tvTimer = findViewById(R.id.tvExamTimer)
+        tvAnswered = findViewById(R.id.tvExamAnswered)
         progressBar = findViewById(R.id.examProgressBar)
-        tvQuestion  = findViewById(R.id.tvExamQuestion)
-        btnFlag     = findViewById(R.id.btnFlagQuestion)
-        btnContext  = findViewById(R.id.btnExamContext)
+        tvQuestion = findViewById(R.id.tvExamQuestion)
+        btnFlag = findViewById(R.id.btnFlagQuestion)
+        btnContext = findViewById(R.id.btnExamContext)
         btnPrevious = findViewById(R.id.btnExamPrevious)
-        btnNext     = findViewById(R.id.btnExamNext)
+        btnNext = findViewById(R.id.btnExamNext)
         options = listOf(
             findViewById(R.id.btnExamOptionA),
             findViewById(R.id.btnExamOptionB),
@@ -90,9 +90,12 @@ class ExamActivity : AppCompatActivity() {
         setupClicks()
         setupObservers()
 
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() = confirmExit()
-        })
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() = confirmExit()
+            }
+        )
     }
 
     override fun onDestroy() {
@@ -150,7 +153,12 @@ class ExamActivity : AppCompatActivity() {
         tvCount.text = getString(R.string.exam_question_count, state.currentIndex + 1, state.total)
         progressBar.max = state.total
         progressBar.progress = state.answeredCount
-        tvAnswered.text = getString(R.string.exam_answered_count, state.answeredCount, state.total)
+        tvAnswered.text = resources.getQuantityString(
+            R.plurals.exam_answered_count,
+            state.total,
+            state.answeredCount,
+            state.total
+        )
         renderTimer(state.remainingSeconds)
 
         tvQuestion.text = current.question.text
@@ -235,15 +243,15 @@ class ExamActivity : AppCompatActivity() {
             viewModel.goTo(index)
             sheet.dismiss()
         }
-        sheet.findViewById<RecyclerView>(R.id.rvExamGrid)?.apply {
-            layoutManager = GridLayoutManager(this@ExamActivity, 5)
-            this.adapter = adapter
-        }
+        sheet.findViewById<RecyclerView>(R.id.rvExamGrid)?.adapter = adapter
         sheet.findViewById<MaterialButton>(R.id.btnSheetSubmit)?.setOnClickListener {
             sheet.dismiss()
             confirmSubmit()
         }
-        sheet.setOnDismissListener { gridSheet = null; gridAdapter = null }
+        sheet.setOnDismissListener {
+            gridSheet = null
+            gridAdapter = null
+        }
 
         gridSheet = sheet
         gridAdapter = adapter
@@ -265,10 +273,16 @@ class ExamActivity : AppCompatActivity() {
                 add(resources.getQuantityString(R.plurals.exam_flagged_questions, flagged, flagged))
             }
         }
-        val message = if (details.isEmpty()) getString(R.string.exam_submit_all_answered)
-        else getString(R.string.exam_submit_pending, details.joinToString(getString(R.string.list_and)))
+        val message = if (details.isEmpty()) {
+            getString(R.string.exam_submit_all_answered)
+        } else {
+            getString(R.string.exam_submit_pending, details.joinToString(getString(R.string.list_and)))
+        }
         AuthUiHelper.showConfirm(
-            this, getString(R.string.exam_submit_title), message, getString(R.string.exam_submit)
+            this,
+            getString(R.string.exam_submit_title),
+            message,
+            getString(R.string.exam_submit)
         ) { viewModel.submit() }
     }
 
@@ -326,15 +340,18 @@ class ExamActivity : AppCompatActivity() {
         val grade = outcome.grade
         startActivity(
             ReviewActivity.intent(
-                context   = this,
+                context = this,
                 subjectId = config.subjectId,
-                topicId   = config.range.mode.topicId,
-                score     = grade.correct,
-                results   = outcome.results,
+                topicId = config.range.mode.topicId,
+                score = grade.correct,
+                results = outcome.results,
                 scoreText = getString(
-                    R.string.exam_review_score, ExamGrader.format(grade.grade), grade.correct, grade.total
+                    R.string.exam_review_score,
+                    ExamGrader.format(grade.grade),
+                    grade.correct,
+                    grade.total
                 ),
-                exam      = config
+                exam = config
             )
         )
         finish()

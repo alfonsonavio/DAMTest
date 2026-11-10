@@ -11,6 +11,12 @@ object StudyTopics {
     private const val CASO = "caso_"
     private const val REPASO = "repaso_"
 
+    /** Topics of the "first half" general test and exam. */
+    val FIRST_HALF = 1..10
+
+    /** Topics of the "second half" general test and exam. */
+    val SECOND_HALF = 11..20
+
     /** Id of topic number [number], e.g. "tema_3". */
     fun temaId(number: Int): String = "$TEMA$number"
 
@@ -21,10 +27,10 @@ object StudyTopics {
     val ORDER: Comparator<String> = compareBy<String>(
         { id ->
             when {
-                id.startsWith(TEMA)   -> 0
-                id.startsWith(CASO)   -> 1
+                id.startsWith(TEMA) -> 0
+                id.startsWith(CASO) -> 1
                 id.startsWith(REPASO) -> 2
-                else                  -> 3
+                else -> 3
             }
         },
         { id -> id.substringAfter('_').toIntOrNull() ?: Int.MAX_VALUE },

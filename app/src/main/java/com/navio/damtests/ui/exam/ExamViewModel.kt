@@ -8,7 +8,9 @@ import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.exam.ExamGrade
 import com.navio.damtests.data.exam.ExamGrader
 import com.navio.damtests.data.local.entity.Question
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.quiz.correctOptionText
 import com.navio.damtests.data.quiz.shuffle
 import com.navio.damtests.ui.quiz.QuestionResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +19,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Exam mode: a timed test with no feedback until it is handed in.
@@ -34,19 +38,14 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ExamViewModel @Inject constructor(
-    private val repository: QuizRepository,
+    private val quizRepository: QuizRepository,
+    private val progressRepository: ProgressRepository,
     private val clock: ExamClock
 ) : ViewModel() {
 
     /** A question with its options in the order shown, fixed for the whole exam. */
     data class ExamQuestion(val question: Question, val options: List<String>) {
-        val correctOption: String
-            get() = when (question.correctOptionIndex) {
-                0    -> question.optionA
-                1    -> question.optionB
-                2    -> question.optionC
-                else -> question.optionD
-            }
+        val correctOption: String get() = question.correctOptionText
     }
 
     data class ExamState(
@@ -89,7 +88,7 @@ class ExamViewModel @Inject constructor(
         this.config = config
 
         viewModelScope.launch {
-            val questions = repository.getExamQuestions(config.subjectId, config.range, config.size)
+            val questions = quizRepository.getExamQuestions(config.subjectId, config.range, config.size)
                 .map { ExamQuestion(it, it.shuffle().shuffledOptions) }
 
             if (questions.isEmpty()) {
@@ -99,7 +98,7 @@ class ExamViewModel @Inject constructor(
 
             // The time depends on the questions actually drawn
             val duration = Exam.durationSeconds(questions.size)
-            deadline = clock.now() + duration * 1000
+            deadline = clock.now() + duration.seconds.inWholeMilliseconds
             _state.value = ExamState(loading = false, questions = questions, remainingSeconds = duration)
         }
     }
@@ -108,8 +107,11 @@ class ExamViewModel @Inject constructor(
     fun selectOption(optionIndex: Int) {
         if (isClosed()) return
         _state.update { s ->
-            val answers = if (s.answers[s.currentIndex] == optionIndex) s.answers - s.currentIndex
-            else s.answers + (s.currentIndex to optionIndex)
+            val answers = if (s.answers[s.currentIndex] == optionIndex) {
+                s.answers - s.currentIndex
+            } else {
+                s.answers + (s.currentIndex to optionIndex)
+            }
             s.copy(answers = answers)
         }
     }
@@ -118,8 +120,11 @@ class ExamViewModel @Inject constructor(
     fun toggleFlag() {
         if (isClosed()) return
         _state.update { s ->
-            val flagged = if (s.currentIndex in s.flagged) s.flagged - s.currentIndex
-            else s.flagged + s.currentIndex
+            val flagged = if (s.currentIndex in s.flagged) {
+                s.flagged - s.currentIndex
+            } else {
+                s.flagged + s.currentIndex
+            }
             s.copy(flagged = flagged)
         }
     }
@@ -142,7 +147,7 @@ class ExamViewModel @Inject constructor(
      */
     fun refreshTimer() {
         if (isClosed() || deadline == 0L) return
-        val remaining = ((deadline - clock.now()) / 1000).coerceAtLeast(0)
+        val remaining = (deadline - clock.now()).milliseconds.inWholeSeconds.coerceAtLeast(0)
         _state.update { it.copy(remainingSeconds = remaining) }
         if (remaining == 0L) finish(timeUp = true)
     }
@@ -158,12 +163,12 @@ class ExamViewModel @Inject constructor(
         val results = s.questions.mapIndexed { i, q ->
             val selected = s.answers[i] ?: QuestionResult.NOT_ANSWERED
             val isCorrect = selected != QuestionResult.NOT_ANSWERED &&
-                    q.options[selected] == q.correctOption
+                q.options[selected] == q.correctOption
             QuestionResult(q.question, selected, q.options, isCorrect)
         }
         val correct = results.count { it.isCorrect }
-        val blank   = results.count { !it.isAnswered }
-        val grade   = ExamGrader.grade(correct, results.size - correct - blank, blank, config.penalized)
+        val blank = results.count { !it.isAnswered }
+        val grade = ExamGrader.grade(correct, results.size - correct - blank, blank, config.penalized)
 
         _outcome.value = ExamOutcome(grade, results, timeUp)
         if (timeUp) _state.update { it.copy(remainingSeconds = 0) }
@@ -179,14 +184,14 @@ class ExamViewModel @Inject constructor(
         viewModelScope.launch {
             // The attempt goes first: it is a single local write, so it is kept
             // even if the user leaves the screen straight away.
-            repository.recordTestAttempt(
+            progressRepository.recordTestAttempt(
                 subjectId = config.subjectId,
                 topicId = config.range.mode.topicId,
                 score = correct,
                 totalQuestions = results.size
             )
             results.filter { it.isAnswered }
-                .forEach { repository.recordAnswer(it.question, it.isCorrect) }
+                .forEach { progressRepository.recordAnswer(it.question, it.isCorrect) }
         }
     }
 }

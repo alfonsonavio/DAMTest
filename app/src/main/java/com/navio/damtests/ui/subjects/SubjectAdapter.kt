@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.navio.damtests.R
+import com.navio.damtests.core.markOf
 import com.navio.damtests.data.local.entity.Subject
 import com.navio.damtests.data.local.entity.TopicProgress
 
@@ -46,10 +47,7 @@ class SubjectAdapter(
                 stats.setText(R.string.subject_no_tests)
             } else {
                 val numTests = progress.sumOf { it.attemptsCount }
-                val totalScore = progress.sumOf { it.lastScore }
-                val totalQuestions = progress.sumOf { it.totalQuestions }
-
-                val avg = if (totalQuestions > 0) (totalScore.toDouble() / totalQuestions * 10) else 0.0
+                val avg = markOf(progress.sumOf { it.lastScore }, progress.sumOf { it.totalQuestions })
 
                 stats.text = itemView.resources.getQuantityString(R.plurals.subject_stats, numTests, numTests, avg)
             }

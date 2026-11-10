@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.navio.damtests.core.suspendRunCatching
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,6 +25,7 @@ class AuthManager @Inject constructor(
     val currentUser: FirebaseUser? get() = auth.currentUser
     val isLoggedIn: Boolean get() = auth.currentUser != null
     val currentUid: String? get() = auth.currentUser?.uid
+
     /** The user's name, or null if the account has none (the UI shows a default). */
     val displayName: String? get() = auth.currentUser?.displayName?.takeIf { it.isNotBlank() }
     val email: String get() = auth.currentUser?.email ?: ""
@@ -33,53 +35,37 @@ class AuthManager @Inject constructor(
 
     // --- Email / Password ---
 
-    suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser> {
-        return try {
-            val result = auth.signInWithEmailAndPassword(email, password).await()
-            Result.success(result.user!!)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser> = suspendRunCatching {
+        val result = auth.signInWithEmailAndPassword(email, password).await()
+        result.user!!
     }
 
     suspend fun register(
         email: String,
         password: String,
         displayName: String
-    ): Result<FirebaseUser> {
-        return try {
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            val user = result.user!!
-            val profileUpdate = UserProfileChangeRequest.Builder()
-                .setDisplayName(displayName)
-                .build()
-            user.updateProfile(profileUpdate).await()
-            Result.success(user)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    ): Result<FirebaseUser> = suspendRunCatching {
+        val result = auth.createUserWithEmailAndPassword(email, password).await()
+        val user = result.user!!
+        val profileUpdate = UserProfileChangeRequest.Builder()
+            .setDisplayName(displayName)
+            .build()
+        user.updateProfile(profileUpdate).await()
+        user
     }
 
-    suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
-        return try {
-            auth.sendPasswordResetEmail(email).await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun sendPasswordResetEmail(email: String): Result<Unit> = suspendRunCatching {
+        auth.sendPasswordResetEmail(email).await()
+        Unit
     }
 
     // --- Google Sign-In ---
 
     /** Signs in to Firebase with a Google ID token from [GoogleCredentialClient]. */
-    suspend fun signInWithGoogleIdToken(idToken: String): Result<FirebaseUser> {
-        return try {
-            val credential = GoogleAuthProvider.getCredential(idToken, null)
-            val result = auth.signInWithCredential(credential).await()
-            Result.success(result.user!!)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun signInWithGoogleIdToken(idToken: String): Result<FirebaseUser> = suspendRunCatching {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        val result = auth.signInWithCredential(credential).await()
+        result.user!!
     }
 
     // --- Session ---
