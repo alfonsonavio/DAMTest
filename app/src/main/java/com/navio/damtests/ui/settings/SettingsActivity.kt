@@ -144,6 +144,7 @@ class SettingsActivity : AppCompatActivity() {
             .setHour(settings.reminderHour)
             .setMinute(settings.reminderMinute)
             .setTitleText(R.string.settings_reminder_hour_label)
+            .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
             .build()
         listenToTimePicker(picker)
         picker.show(supportFragmentManager, TIME_PICKER_TAG)

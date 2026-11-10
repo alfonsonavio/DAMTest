@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Static analysis in CI** — every push and pull request runs detekt (with
+  the ktlint formatting rules) and Android Lint before the unit tests, and any
+  finding fails the build; the reports are uploaded with the run. Rules are in
+  `config/detekt/detekt.yml`, and `gradlew detekt --auto-correct` fixes the
+  formatting locally.
 - **Varied streak reminders** — the streak warning now picks one of four
   messages ("¡No pierdas tu racha!", "Tu racha te espera", "¡Racha en
   peligro!", "Sigue sumando"), like the everyday reminders already did.
@@ -107,6 +112,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Google account, a clear message is shown; closing the picker shows nothing.
 
 ### Fixed
+- **Reminder picker opens on the clock** — the Material time picker could
+  open on the keyboard input; it now always starts on the clock.
 - **Tests always have their full length** — a test of 20 sometimes had 19
   questions: some questions appear in more than one topic, and duplicates
   were removed after picking the 20. The database now picks different

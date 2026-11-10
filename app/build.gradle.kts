@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.room)
+    alias(libs.plugins.detekt)
 }
 
 android {
@@ -40,6 +41,17 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    // Android Lint: any warning fails the build, so the code stays clean.
+    // Dependency updates are reviewed on purpose, not forced by the build.
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+        checkReleaseBuilds = true
+        disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion")
+        textReport = true
+        textOutput = file("build/reports/lint-results.txt")
+    }
 }
 
 kotlin {
@@ -51,6 +63,24 @@ kotlin {
 // APKs and bundles are named "DAMTest-<version>-<build type>"
 base {
     archivesName.set("DAMTest-${android.defaultConfig.versionName}")
+}
+
+// detekt: Kotlin static analysis (code smells, complexity, naming) plus the
+// ktlint formatting rules. "gradlew detekt --auto-correct" fixes the formatting.
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    source.setFrom("src/main/java", "src/test/java")
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        md.required.set(true)
+        txt.required.set(false)
+        xml.required.set(false)
+        sarif.required.set(false)
+    }
 }
 
 // Room exports each database version's schema to app/schemas (versioned in
@@ -105,6 +135,9 @@ dependencies {
     // Networking and serialization
     implementation(libs.okhttp)
     implementation(libs.gson)
+
+    // Static analysis: ktlint formatting rules for detekt
+    detektPlugins(libs.detekt.formatting)
 
     // Unit tests
     testImplementation(libs.junit)
