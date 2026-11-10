@@ -1,6 +1,5 @@
 package com.navio.damtests.ui.subjects
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -14,12 +13,12 @@ import com.navio.damtests.FirebaseSyncManager
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.PdfReleaseRepository
 import com.navio.damtests.R
-import com.navio.damtests.TopicSelectionActivity
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.data.SubjectCatalog
 import com.navio.damtests.data.local.entity.Subject
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.ui.SubjectAdapter
+import com.navio.damtests.ui.topics.TopicSelectionActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -99,10 +98,7 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
             }
 
             if (hasContent) {
-                startActivity(
-                    Intent(requireContext(), TopicSelectionActivity::class.java)
-                        .putExtra("SUBJECT_ID", subject.id)
-                )
+                startActivity(TopicSelectionActivity.intent(requireContext(), subject.id))
             } else {
                 AuthUiHelper.showInfo(
                     requireContext(),
@@ -115,7 +111,7 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
 
     private suspend fun subjectHasContent(subject: Subject): Boolean =
         repository.subjectHasContent(subject.id) ||
-            PdfReleaseRepository.getTopicIdsWithPdf(requireContext(), subject.id).isNotEmpty()
+                PdfReleaseRepository.getTopicIdsWithPdf(requireContext(), subject.id).isNotEmpty()
 
     private companion object {
         const val SYNC_WAIT_MS = 60_000L

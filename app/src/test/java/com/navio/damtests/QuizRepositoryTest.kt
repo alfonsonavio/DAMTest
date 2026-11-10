@@ -132,55 +132,23 @@ class QuizRepositoryTest {
     }
 
     @Test
-    fun `subject with up to 10 topics only gets the full general test`() = runTest {
-        coEvery { dao.getUniqueTopicIds("sistemas") } returns listOf("tema_1", "tema_2", "tema_10")
+    fun `study topics merge db and pdf topics in list order`() = runTest {
+        coEvery { dao.getUniqueTopicIds("programacion") } returns listOf("tema_10", "caso_1", "tema_2")
 
-        val ids = repository.getUniqueTopicsForSubject("sistemas").map { it.id }
+        val topics = repository.getStudyTopics("programacion", setOf("tema_2", "tema_20", "repaso_1"))
 
-        assertTrue(ids.contains("-1"))
-        assertTrue(ids.contains("-4"))
-        assertFalse(ids.contains("-2"))
-        assertFalse(ids.contains("-3"))
+        assertEquals(listOf("tema_2", "tema_10", "tema_20", "caso_1", "repaso_1"), topics.map { it.id })
+        assertEquals("Tema 10", topics[1].title)
     }
 
     @Test
-    fun `subject with topics on both halves gets the 1-10 and 11-20 tests`() = runTest {
+    fun `practice options come from the topics with questions`() = runTest {
         coEvery { dao.getUniqueTopicIds("programacion") } returns listOf("tema_1", "tema_12")
 
-        val ids = repository.getUniqueTopicsForSubject("programacion").map { it.id }
+        val options = repository.getPracticeOptions("programacion")
 
-        assertTrue(ids.containsAll(listOf("-1", "-2", "-3", "-4")))
-    }
-
-    @Test
-    fun `subject without tema topics gets no general test`() = runTest {
-        coEvery { dao.getUniqueTopicIds("ipe") } returns listOf("caso_1")
-
-        val ids = repository.getUniqueTopicsForSubject("ipe").map { it.id }
-
-        assertFalse(ids.contains("-1"))
-        assertTrue(ids.contains("-4"))
-    }
-
-    @Test
-    fun `getUniqueTopicsForSubject merges db topics and pdf topics`() = runTest {
-        coEvery { dao.getUniqueTopicIds("programacion") } returns listOf("tema_1")
-        val pdfTopics = setOf("tema_1", "tema_20")
-
-        val topics = repository.getUniqueTopicsForSubject("programacion", pdfTopics)
-
-        val ids = topics.map { it.id }
-        assertTrue(ids.contains("tema_1"))
-        assertTrue(ids.contains("tema_20"))
-    }
-
-    @Test
-    fun `getUniqueTopicsForSubject with only pdfs lists no general tests`() = runTest {
-        coEvery { dao.getUniqueTopicIds("acceso_datos") } returns emptyList()
-
-        val topics = repository.getUniqueTopicsForSubject("acceso_datos", setOf("tema_1"))
-
-        assertEquals(listOf("tema_1"), topics.map { it.id })
+        assertTrue(options.hasGeneralTest)
+        assertTrue(options.hasHalves)
     }
 
     // --- Statistics cloud sync ---
@@ -273,25 +241,7 @@ class QuizRepositoryTest {
         coVerify(exactly = 1) { dao.getFavoriteQuestions(null) }
     }
 
-    @Test
-    fun `subject list shows the favourites row after smart review`() = runTest {
-        coEvery { dao.getUniqueTopicIds("programacion") } returns listOf("tema_1")
-
-        val ids = repository.getUniqueTopicsForSubject("programacion", emptySet()).map { it.id }
-
-        assertTrue(ids.indexOf("-5") == ids.indexOf("-4") + 1)
-    }
-
     // --- Exam mode ---
-
-    @Test
-    fun `subjects with tema topics list the exam mode`() = runTest {
-        coEvery { dao.getUniqueTopicIds("programacion") } returns listOf("tema_1")
-
-        val ids = repository.getUniqueTopicsForSubject("programacion").map { it.id }
-
-        assertTrue(ids.contains("-6"))
-    }
 
     @Test
     fun `exam of topics 11-20 counts and draws only those topics`() = runTest {
