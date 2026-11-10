@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.navio.damtests.data.exam.Exam
 import com.navio.damtests.data.exam.ExamClock
+import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.exam.ExamGrade
 import com.navio.damtests.data.exam.ExamGrader
-import com.navio.damtests.data.exam.ExamRange
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.shuffle
@@ -78,22 +78,18 @@ class ExamViewModel @Inject constructor(
     private val _outcome = MutableStateFlow<ExamOutcome?>(null)
     val outcome: StateFlow<ExamOutcome?> = _outcome
 
-    private var subjectId = ""
-    private var range = ExamRange.ALL
-    private var penalized = false
+    private lateinit var config: ExamConfig
     private var deadline = 0L
     private var started = false
 
     /** Loads the questions and starts the clock. Ignored after the first call. */
-    fun start(subjectId: String, range: ExamRange, size: Int, penalized: Boolean) {
+    fun start(config: ExamConfig) {
         if (started) return
         started = true
-        this.subjectId = subjectId
-        this.range = range
-        this.penalized = penalized
+        this.config = config
 
         viewModelScope.launch {
-            val questions = repository.getExamQuestions(subjectId, range, size)
+            val questions = repository.getExamQuestions(config.subjectId, config.range, config.size)
                 .map { ExamQuestion(it, it.shuffle().shuffledOptions) }
 
             if (questions.isEmpty()) {
@@ -167,7 +163,7 @@ class ExamViewModel @Inject constructor(
         }
         val correct = results.count { it.isCorrect }
         val blank   = results.count { !it.isAnswered }
-        val grade   = ExamGrader.grade(correct, results.size - correct - blank, blank, penalized)
+        val grade   = ExamGrader.grade(correct, results.size - correct - blank, blank, config.penalized)
 
         _outcome.value = ExamOutcome(grade, results, timeUp)
         if (timeUp) _state.update { it.copy(remainingSeconds = 0) }
@@ -184,8 +180,8 @@ class ExamViewModel @Inject constructor(
             // The attempt goes first: it is a single local write, so it is kept
             // even if the user leaves the screen straight away.
             repository.recordTestAttempt(
-                subjectId = subjectId,
-                topicId = range.attemptTopicId,
+                subjectId = config.subjectId,
+                topicId = config.range.mode.topicId,
                 score = correct,
                 totalQuestions = results.size
             )

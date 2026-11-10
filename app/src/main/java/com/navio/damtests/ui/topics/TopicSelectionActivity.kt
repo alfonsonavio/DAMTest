@@ -17,9 +17,10 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.navio.damtests.R
 import com.navio.damtests.data.catalog.SubjectCatalog
+import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.exam.ExamRange
-import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.ui.common.AuthUiHelper
 import com.navio.damtests.ui.exam.ExamActivity
@@ -171,7 +172,7 @@ class TopicSelectionActivity : AppCompatActivity() {
             return
         }
         ExamSetupDialog.show(this, ranges) { range, size, penalized ->
-            ExamActivity.start(this, subjectId, range, size, penalized)
+            startActivity(ExamActivity.intent(this, ExamConfig(subjectId, range, size, penalized)))
         }
     }
 
@@ -181,7 +182,7 @@ class TopicSelectionActivity : AppCompatActivity() {
                 this, getString(R.string.practice_review_title), getString(R.string.practice_review_empty)
             )
         } else {
-            openTopic(SMART_REVIEW_TOPIC_ID)
+            openTopic(TestMode.SMART_REVIEW.topicId)
         }
     }
 
@@ -191,25 +192,25 @@ class TopicSelectionActivity : AppCompatActivity() {
                 this, getString(R.string.practice_favorites_title), getString(R.string.practice_favorites_empty)
             )
         } else {
-            openTopic(Favorites.TOPIC_ID)
+            openTopic(TestMode.FAVORITES.topicId)
         }
     }
 
     /** The whole syllabus, or a half of it when the subject has both. */
     private fun chooseGeneralTest() {
         if (!viewModel.state.value.practice.hasHalves) {
-            openTopic(GENERAL_TEST_ALL)
+            openTopic(TestMode.GENERAL_ALL.topicId)
             return
         }
         val options = listOf(
-            R.string.general_test_all to GENERAL_TEST_ALL,
-            R.string.general_test_first_half to GENERAL_TEST_FIRST_HALF,
-            R.string.general_test_second_half to GENERAL_TEST_SECOND_HALF
+            R.string.general_test_all to TestMode.GENERAL_ALL,
+            R.string.general_test_first_half to TestMode.GENERAL_FIRST_HALF,
+            R.string.general_test_second_half to TestMode.GENERAL_SECOND_HALF
         )
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.practice_general_title)
             .setItems(options.map { getString(it.first) }.toTypedArray()) { _, which ->
-                openTopic(options[which].second)
+                openTopic(options[which].second.topicId)
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
@@ -220,11 +221,11 @@ class TopicSelectionActivity : AppCompatActivity() {
     /** Opens a test, offering to resume it if it was left half-way. */
     private fun openTopic(topicId: String) {
         lifecycleScope.launch {
-            val isPracticeMode = topicId.startsWith(SPECIAL_TOPIC_PREFIX)
+            val isTestMode = TestMode.fromTopicId(topicId) != null
             when {
                 sessionStore.load()?.isFor(subjectId, topicId) == true ->
                     QuizLauncher.open(this@TopicSelectionActivity, sessionStore, subjectId, topicId)
-                isPracticeMode || repository.hasQuestions(subjectId, topicId) ->
+                isTestMode || repository.hasQuestions(subjectId, topicId) ->
                     QuizLauncher.start(this@TopicSelectionActivity, subjectId, topicId, resume = false)
                 else -> AuthUiHelper.showInfo(
                     this@TopicSelectionActivity,
@@ -238,11 +239,6 @@ class TopicSelectionActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_SUBJECT_ID = "SUBJECT_ID"
 
-        private const val SPECIAL_TOPIC_PREFIX = "-"
-        private const val GENERAL_TEST_ALL = "-1"
-        private const val GENERAL_TEST_FIRST_HALF = "-2"
-        private const val GENERAL_TEST_SECOND_HALF = "-3"
-        private const val SMART_REVIEW_TOPIC_ID = "-4"
         private const val INACTIVE_ALPHA = 0.6f
 
         fun intent(context: Context, subjectId: String): Intent =

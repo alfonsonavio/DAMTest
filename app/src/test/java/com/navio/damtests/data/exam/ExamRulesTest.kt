@@ -1,8 +1,10 @@
 package com.navio.damtests.data.exam
 
+import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.ui.exam.ExamSetupDialog
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -30,11 +32,10 @@ class ExamRulesTest {
     }
 
     @Test
-    fun `exam attempt ids are recognised and other topics are not`() {
-        assertTrue(Exam.isExamTopic("-6"))
-        assertEquals(ExamRange.SECOND_HALF, ExamRange.fromAttemptTopicId("-8"))
-        assertFalse(Exam.isExamTopic("-4"))
-        assertFalse(Exam.isExamTopic("tema_1"))
+    fun `each exam range is found from its attempt topic id`() {
+        ExamRange.entries.forEach { assertEquals(it, ExamRange.fromTopicId(it.mode.topicId)) }
+        assertNull(ExamRange.fromTopicId(TestMode.SMART_REVIEW.topicId))
+        assertNull(ExamRange.fromTopicId("tema_1"))
     }
 
     // --- Setup ranges ---

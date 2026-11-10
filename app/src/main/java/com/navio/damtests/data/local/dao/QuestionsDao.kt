@@ -10,6 +10,7 @@ import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.QuestionStats
 import com.navio.damtests.data.local.entity.TestAttempt
 import com.navio.damtests.data.local.entity.TopicProgress
+import com.navio.damtests.data.quiz.TestMode
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -124,10 +125,14 @@ interface QuestionsDao {
 
     /**
      * Scored attempts for a set of subjects (a course), newest last. Practice
-     * tests (smart review "-4" and favourites "-5") are stored for the study
-     * streak but excluded here, so they never affect the statistics.
+     * tests (smart review and favourites) are stored for the study streak but
+     * excluded here, so they never affect the statistics.
      */
-    @Query("SELECT * FROM test_attempts WHERE subjectId IN (:subjectIds) AND topicId NOT IN ('-4', '-5') ORDER BY timestamp ASC")
+    @Query(
+        "SELECT * FROM test_attempts WHERE subjectId IN (:subjectIds) " +
+            "AND topicId NOT IN ('" + TestMode.Ids.SMART_REVIEW + "', '" + TestMode.Ids.FAVORITES + "') " +
+            "ORDER BY timestamp ASC"
+    )
     suspend fun getAttemptsForSubjects(subjectIds: List<String>): List<TestAttempt>
 
     /** When every finished test happened (smart review included), for the study streak. */

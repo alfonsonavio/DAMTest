@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.navio.damtests.R
 import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.ui.quiz.QuizLauncher
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,7 +56,7 @@ class FavoritesActivity : AppCompatActivity() {
         rv.adapter = adapter
 
         btnPractice.setOnClickListener {
-            QuizLauncher.open(this, sessionStore, Favorites.ALL_SUBJECTS, Favorites.TOPIC_ID)
+            QuizLauncher.open(this, sessionStore, Favorites.ALL_SUBJECTS, TestMode.FAVORITES.topicId)
         }
 
         lifecycleScope.launch {
