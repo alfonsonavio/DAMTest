@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Privacy policy** — published with GitHub Pages at
+  `alfonsonavio.github.io/DAMTest/privacy/` and linked from Settings: what data
+  the app uses, who processes it, and how to delete it.
 - **Static analysis in CI** — every push and pull request runs detekt (with
   the ktlint formatting rules) and Android Lint before the unit tests, and any
   finding fails the build; the reports are uploaded with the run. Rules are in
@@ -48,6 +51,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **No Firebase Analytics** — it was included but never used, and it still
+  collected usage data on its own. Removed, so the app sends nothing it
+  doesn't need.
 - **Data layer split by responsibility** — the single `QuestionsDao` (41
   queries) is now one DAO per table plus `UserDataDao` for the logout wipe,
   and `QuizRepository` keeps only the question bank and the tests built from
