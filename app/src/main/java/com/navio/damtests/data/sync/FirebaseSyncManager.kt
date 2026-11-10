@@ -2,6 +2,7 @@ package com.navio.damtests.data.sync
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.edit
 import com.google.firebase.database.FirebaseDatabase
 import com.navio.damtests.core.suspendRunCatching
 import com.navio.damtests.data.local.entity.Question
@@ -82,7 +83,7 @@ class FirebaseSyncManager(private val context: Context, private val repository: 
 
             if (questionsList.isNotEmpty()) {
                 repository.updateTopicQuestions(subjectId, topicId, questionsList)
-                prefs.edit().putInt(prefKey(subjectId, topicId), topic.version).apply()
+                prefs.edit { putInt(prefKey(subjectId, topicId), topic.version) }
             }
         }.onFailure { Log.e(TAG, "Error downloading [$subjectId/$topicId]: ${it.message}") }
     }

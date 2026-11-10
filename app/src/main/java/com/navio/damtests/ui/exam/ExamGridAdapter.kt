@@ -32,7 +32,7 @@ class ExamGridAdapter(
         val flagged = position in state.flagged
         val current = position == state.currentIndex
 
-        holder.cell.text = "${position + 1}"
+        holder.cell.text = ctx.getString(R.string.number, position + 1)
         holder.cell.setTextColor(ctx.getColor(if (answered) R.color.text_on_dark else R.color.text_primary))
         holder.cell.background = GradientDrawable().apply {
             cornerRadius = ctx.resources.getDimension(R.dimen.exam_cell_corner_radius)

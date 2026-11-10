@@ -5,6 +5,7 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.PluralsRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
@@ -62,7 +63,7 @@ class RegisterActivity : AppCompatActivity() {
         progressOverlay = findViewById(R.id.progressOverlay)
 
         // Permanent helper text so the user knows the password rules upfront
-        tilPassword.helperText = getString(R.string.register_password_rules, MIN_PASSWORD_LENGTH)
+        tilPassword.helperText = passwordLengthText(R.plurals.register_password_rules)
 
         // Clear each field's error as soon as the user edits it
         etName.doAfterTextChanged { tilName.error = null }
@@ -133,11 +134,15 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun passwordError(password: String): String? = when {
         password.isBlank() -> getString(R.string.register_error_password_empty)
-        password.length < MIN_PASSWORD_LENGTH -> getString(R.string.register_error_password_short, MIN_PASSWORD_LENGTH)
+        password.length < MIN_PASSWORD_LENGTH -> passwordLengthText(R.plurals.register_error_password_short)
         !password.any { it.isDigit() } -> getString(R.string.register_error_password_digit)
         !password.any { it.isLetter() } -> getString(R.string.register_error_password_letter)
         else -> null
     }
+
+    /** A text that names the minimum password length, in singular or plural. */
+    private fun passwordLengthText(@PluralsRes textRes: Int): String =
+        resources.getQuantityString(textRes, MIN_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH)
 
     private fun confirmError(password: String, confirm: String): String? =
         if (confirm != password || confirm.isBlank()) getString(R.string.error_passwords_no_match) else null

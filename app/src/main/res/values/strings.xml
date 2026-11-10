@@ -1,4 +1,9 @@
-<resources>
+<!--
+    The texts are in Spanish (tools:locale), so Lint checks their spelling and
+    plurals as Spanish. Spanish plurals also have "many" (whole millions,
+    "1 millón de…"): it uses the same text as "other".
+-->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="es">
     <string name="app_name">DAM Tests</string>
 
     <!-- Common -->
@@ -16,6 +21,8 @@
     <string name="list_and">" y "</string>
     <string name="list_separator">" · "</string>
     <string name="percent">%1$d%%</string>
+    <!-- A plain number, formatted for the device's language -->
+    <string name="number">%1$d</string>
     <string name="score_one_decimal">%1$.1f</string>
     <string name="time_hh_mm">%1$02d:%2$02d</string>
     <string name="subject_and_topic">%1$s · %2$s</string>
@@ -57,6 +64,7 @@
     <string name="subject_no_tests">Sin tests realizados</string>
     <plurals name="subject_stats">
         <item quantity="one">%1$d test · %2$.1f de media</item>
+        <item quantity="many">%1$d tests · %2$.1f de media</item>
         <item quantity="other">%1$d tests · %2$.1f de media</item>
     </plurals>
     <string name="subjects_downloading_title">Descargando preguntas</string>
@@ -69,13 +77,13 @@
     <string name="topic_case">Caso práctico %1$s</string>
     <string name="topic_final_review">Repaso final</string>
     <string name="mode_general_all">Test general (todo)</string>
-    <string name="mode_general_first_half">Test general (temas 1-10)</string>
-    <string name="mode_general_second_half">Test general (temas 11-20)</string>
+    <string name="mode_general_first_half">Test general (temas 1–10)</string>
+    <string name="mode_general_second_half">Test general (temas 11–20)</string>
     <string name="mode_smart_review">Repaso inteligente</string>
     <string name="mode_favorites">Preguntas favoritas</string>
     <string name="mode_exam_all">Examen (todo)</string>
-    <string name="mode_exam_first_half">Examen (temas 1-10)</string>
-    <string name="mode_exam_second_half">Examen (temas 11-20)</string>
+    <string name="mode_exam_first_half">Examen (temas 1–10)</string>
+    <string name="mode_exam_second_half">Examen (temas 11–20)</string>
 
     <!-- Subject screen: practice modes and topics -->
     <string name="practice_header">PRACTICAR</string>
@@ -89,6 +97,7 @@
     <string name="practice_review_none">Sin fallos todavía</string>
     <plurals name="practice_review_count">
         <item quantity="one">%d pregunta fallada</item>
+        <item quantity="many">%d preguntas falladas</item>
         <item quantity="other">%d preguntas falladas</item>
     </plurals>
     <string name="practice_review_empty">Aún no tienes fallos que repasar en esta asignatura. Haz algún test y vuelve.</string>
@@ -99,12 +108,13 @@
     <string name="practice_favorites_none">Ninguna marcada</string>
     <plurals name="practice_favorites_count">
         <item quantity="one">%d marcada</item>
+        <item quantity="many">%d marcadas</item>
         <item quantity="other">%d marcadas</item>
     </plurals>
     <string name="practice_favorites_empty">Aún no tienes favoritas en esta asignatura. Márcalas con la estrella ★ durante un test o en la revisión.</string>
     <string name="general_test_all">Todo el temario</string>
-    <string name="general_test_first_half">Temas 1-10</string>
-    <string name="general_test_second_half">Temas 11-20</string>
+    <string name="general_test_first_half">Temas 1–10</string>
+    <string name="general_test_second_half">Temas 11–20</string>
     <string name="topics_header">TEMAS (%d)</string>
     <string name="topic_not_done">Sin hacer</string>
     <string name="topic_last_score">%d%%</string>
@@ -134,12 +144,15 @@
     <string name="results_title">¡Test Finalizado!</string>
     <plurals name="quiz_result_message">
         <item quantity="one">Has acertado %1$d pregunta.</item>
+        <item quantity="many">Has acertado %1$d preguntas.</item>
         <item quantity="other">Has acertado %1$d preguntas.</item>
     </plurals>
     <string name="results_review">VER REVISIÓN</string>
 
     <!-- Review -->
     <string name="review_final_score">Resultado final: %1$d / %2$d</string>
+    <!-- Number and text of a question in the review list -->
+    <string name="review_question_title">%1$d. %2$s</string>
     <string name="review_menu">MENÚ</string>
     <string name="review_repeat">REPETIR</string>
     <string name="review_report">REPORTAR</string>
@@ -163,17 +176,21 @@
     <string name="exam_setup_topics">Temas</string>
     <string name="exam_setup_questions">Preguntas</string>
     <string name="exam_setup_penalty">Los fallos restan</string>
-    <string name="exam_setup_penalty_description">Cada fallo resta 1/3 de acierto. Las preguntas en blanco no restan.</string>
+    <string name="exam_setup_penalty_description">Cada fallo resta ⅓ de acierto. Las preguntas en blanco no restan.</string>
     <string name="exam_setup_start">EMPEZAR EXAMEN</string>
     <string name="exam_range_all">Todos los temas</string>
-    <string name="exam_range_first_half">Temas 1-10</string>
-    <string name="exam_range_second_half">Temas 11-20</string>
+    <string name="exam_range_first_half">Temas 1–10</string>
+    <string name="exam_range_second_half">Temas 11–20</string>
     <string name="exam_size_option">%1$d · %2$s</string>
     <string name="exam_duration_minutes">%1$d min</string>
     <string name="exam_duration_minutes_seconds">%1$d min %2$d s</string>
     <string name="exam_exit_description">Abandonar examen</string>
     <string name="exam_question_count">Pregunta %1$d de %2$d</string>
-    <string name="exam_answered_count">%1$d de %2$d respondidas</string>
+    <plurals name="exam_answered_count">
+        <item quantity="one">%1$d de %2$d respondida</item>
+        <item quantity="many">%1$d de %2$d respondidas</item>
+        <item quantity="other">%1$d de %2$d respondidas</item>
+    </plurals>
     <string name="exam_timer">⏱ %1$d:%2$02d</string>
     <string name="exam_flag">MARCAR COMO DUDOSA</string>
     <string name="exam_flagged">DUDOSA</string>
@@ -196,26 +213,32 @@
     <string name="exam_submit_pending">Tienes %1$s. Después ya no podrás cambiar nada.</string>
     <plurals name="exam_blank_questions">
         <item quantity="one">%d pregunta en blanco</item>
+        <item quantity="many">%d preguntas en blanco</item>
         <item quantity="other">%d preguntas en blanco</item>
     </plurals>
     <plurals name="exam_answered">
         <item quantity="one">%d respondida</item>
+        <item quantity="many">%d respondidas</item>
         <item quantity="other">%d respondidas</item>
     </plurals>
     <plurals name="exam_blank">
         <item quantity="one">%d en blanco</item>
+        <item quantity="many">%d en blanco</item>
         <item quantity="other">%d en blanco</item>
     </plurals>
     <plurals name="exam_correct">
         <item quantity="one">%d acierto</item>
+        <item quantity="many">%d aciertos</item>
         <item quantity="other">%d aciertos</item>
     </plurals>
     <plurals name="exam_wrong">
         <item quantity="one">%d fallo</item>
+        <item quantity="many">%d fallos</item>
         <item quantity="other">%d fallos</item>
     </plurals>
     <plurals name="exam_flagged_questions">
         <item quantity="one">%d dudosa</item>
+        <item quantity="many">%d dudosas</item>
         <item quantity="other">%d dudosas</item>
     </plurals>
     <string name="exam_exit_title">¿Abandonar el examen?</string>
@@ -224,7 +247,7 @@
     <string name="exam_result_submitted">Examen entregado</string>
     <string name="exam_result_time_up">¡Se acabó el tiempo!</string>
     <string name="exam_result_out_of_ten">/ 10</string>
-    <string name="exam_result_penalty_note">Con penalización: cada fallo resta 1/3</string>
+    <string name="exam_result_penalty_note">Con penalización: cada fallo resta ⅓</string>
     <string name="exam_result_review">VER CORRECCIÓN</string>
     <string name="exam_review_score">Nota: %1$s / 10 · %2$d de %3$d</string>
 
@@ -282,10 +305,18 @@
     <string name="already_have_account">¿Ya tienes cuenta? Inicia sesión</string>
     <string name="register_success_title">¡Cuenta creada!</string>
     <string name="register_success_message">Ya puedes iniciar sesión con tus credenciales</string>
-    <string name="register_password_rules">Mínimo %1$d caracteres, con al menos una letra y un número</string>
+    <plurals name="register_password_rules">
+        <item quantity="one">Mínimo %1$d carácter, con al menos una letra y un número</item>
+        <item quantity="many">Mínimo %1$d caracteres, con al menos una letra y un número</item>
+        <item quantity="other">Mínimo %1$d caracteres, con al menos una letra y un número</item>
+    </plurals>
     <string name="register_error_name">Introduce tu nombre</string>
     <string name="register_error_password_empty">Introduce una contraseña</string>
-    <string name="register_error_password_short">Debe tener al menos %1$d caracteres</string>
+    <plurals name="register_error_password_short">
+        <item quantity="one">Debe tener al menos %1$d carácter</item>
+        <item quantity="many">Debe tener al menos %1$d caracteres</item>
+        <item quantity="other">Debe tener al menos %1$d caracteres</item>
+    </plurals>
     <string name="register_error_password_digit">Debe incluir al menos un número</string>
     <string name="register_error_password_letter">Debe incluir al menos una letra</string>
     <string name="error_missing_data_title">Faltan datos</string>
@@ -377,21 +408,25 @@
     <string name="reminder_streak_title">🔥 ¡No pierdas tu racha!</string>
     <plurals name="reminder_streak_body">
         <item quantity="one">Llevas %d día de racha. Haz un test hoy para no perderla.</item>
+        <item quantity="many">Llevas %d días de racha. Haz un test hoy para no perderla.</item>
         <item quantity="other">Llevas %d días de racha. Haz un test hoy para no perderla.</item>
     </plurals>
     <string name="reminder_streak_waiting_title">🔥 Tu racha te espera</string>
     <plurals name="reminder_streak_waiting_body">
         <item quantity="one">Llevas %d día de racha. ¿Sumamos el segundo?</item>
+        <item quantity="many">%d días seguidos estudiando. ¿Sumamos uno más?</item>
         <item quantity="other">%d días seguidos estudiando. ¿Sumamos uno más?</item>
     </plurals>
     <string name="reminder_streak_danger_title">🔥 ¡Racha en peligro!</string>
     <plurals name="reminder_streak_danger_body">
         <item quantity="one">Si hoy no haces un test, perderás tu racha de %d día.</item>
+        <item quantity="many">Si hoy no haces un test, perderás tus %d días de racha.</item>
         <item quantity="other">Si hoy no haces un test, perderás tus %d días de racha.</item>
     </plurals>
     <string name="reminder_streak_one_more_title">🔥 Sigue sumando</string>
     <plurals name="reminder_streak_one_more_body">
         <item quantity="one">Llevas %d día. Un test rápido y tu racha sigue creciendo.</item>
+        <item quantity="many">Llevas %d días. Un test rápido y tu racha sigue creciendo.</item>
         <item quantity="other">Llevas %d días. Un test rápido y tu racha sigue creciendo.</item>
     </plurals>
 </resources>

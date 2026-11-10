@@ -46,7 +46,8 @@ class ReviewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val res = results[position]
-        holder.tvQuestion.text = "${position + 1}. ${res.question.text}"
+        holder.tvQuestion.text =
+            holder.itemView.context.getString(R.string.review_question_title, position + 1, res.question.text)
         holder.tvOptions.text = optionsText(holder.itemView.context, res)
         holder.btnReport.setOnClickListener { onReportClick(res) }
         bindFavorite(holder, res)

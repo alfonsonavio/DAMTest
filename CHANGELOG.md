@@ -60,6 +60,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   registration form, review list, question sync) are split into small ones,
   and only `suspendRunCatching` catches every exception, for the Firebase,
   Credential Manager and AI SDKs that don't document what they throw.
+- **Clean for Android Lint** — `strings.xml` is declared as Spanish, so Lint
+  checks its spelling and plurals as Spanish (every plural has the "many"
+  form). Topic ranges use an en dash ("Temas 1–10") and the exam penalty the
+  ⅓ character. Numbers on screen go through string resources, the decorative
+  subject icon is skipped by screen readers, and the screens no longer paint
+  the same background as the theme twice. Removed unused colours, styles, a
+  drawable, an animation, the leftover `fab_margin` dimensions and the
+  pre-Android 8 notification check; the launcher icon moved out of the
+  redundant `-v26` folder.
 - **Material time picker for the reminder** — the reminder time uses the
   Material 3 clock picker, in the app's colours and always in 24 h format,
   instead of the old system dialog with its own pink accent.
@@ -130,6 +139,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   had failed. Cancellation now always stops the work.
 - **A topic is never left half-updated** — a new version of a topic's
   questions replaces the old one in a single database transaction.
+- **Singular texts** — the exam said "1 de 1 respondidas" and the password
+  rules always used the plural; they now agree with the number.
 - **Aligned options in the review** — the first option lost its indentation
   when it was neither the right answer nor the user's choice.
 - **Reminder picker opens on the clock** — the Material time picker could

@@ -60,7 +60,7 @@ object ExamSetupDialog {
             Exam.availableSizes(ranges[range] ?: 0).forEach { size ->
                 val duration = Exam.durationLabel(size).asString(context)
                 val label = context.getString(R.string.exam_size_option, size, duration)
-                cgSize.addView(choiceChip(context, label, tag = size))
+                cgSize.addView(choiceChip(cgSize, label, tag = size))
             }
             // Default size when possible, otherwise the largest one available
             val sizes = (0 until cgSize.childCount).map { cgSize.getChildAt(it) as Chip }
@@ -68,7 +68,7 @@ object ExamSetupDialog {
         }
 
         ranges.keys.forEach { range ->
-            cgRange.addView(choiceChip(context, context.getString(range.labelRes), tag = range))
+            cgRange.addView(choiceChip(cgRange, context.getString(range.labelRes), tag = range))
         }
         cgRange.setOnCheckedStateChangeListener { group, ids ->
             val range = ids.firstOrNull()?.let { group.findViewById<Chip>(it).tag as ExamRange }
@@ -88,8 +88,8 @@ object ExamSetupDialog {
         dialog.show()
     }
 
-    private fun choiceChip(context: Context, text: String, tag: Any): Chip =
-        (LayoutInflater.from(context).inflate(R.layout.item_exam_chip, null) as Chip).apply {
+    private fun choiceChip(group: ChipGroup, text: String, tag: Any): Chip =
+        (LayoutInflater.from(group.context).inflate(R.layout.item_exam_chip, group, false) as Chip).apply {
             id = View.generateViewId()
             this.text = text
             this.tag = tag
