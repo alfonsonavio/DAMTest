@@ -23,6 +23,7 @@ import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.report.ReportRepository
+import com.navio.damtests.ui.common.setupEdgeToEdge
 import com.navio.damtests.ui.exam.ExamActivity
 import com.navio.damtests.ui.main.MainActivity
 import com.navio.damtests.ui.quiz.QuestionResult
@@ -41,6 +42,7 @@ class ReviewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge(darkTop = false)
         setContentView(R.layout.activity_review)
 
         // All data arrives via Intent (see [intent]) — no global singleton needed

@@ -15,6 +15,7 @@ import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.sync.UserProgressRepository
 import com.navio.damtests.ui.common.AuthError
 import com.navio.damtests.ui.common.AuthUiHelper
+import com.navio.damtests.ui.common.setupEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,6 +41,7 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge(darkTop = false)
         setContentView(R.layout.activity_register)
 
         tilName            = findViewById(R.id.tilName)

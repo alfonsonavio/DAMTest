@@ -3,6 +3,7 @@ package com.navio.damtests.ui.main
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +23,8 @@ import com.navio.damtests.data.sync.FirebaseSyncManager
 import com.navio.damtests.data.sync.StatsSyncRepository
 import com.navio.damtests.notifications.ReminderScheduler
 import com.navio.damtests.ui.auth.LoginActivity
+import com.navio.damtests.ui.common.setStatusBarDarkTop
+import com.navio.damtests.ui.common.setupEdgeToEdge
 import com.navio.damtests.update.UpdateChecker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -51,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge(darkTop = true)
 
         if (!authManager.isLoggedIn) {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -93,6 +97,13 @@ class MainActivity : AppCompatActivity() {
         val navController = navHost.navController
         findViewById<BottomNavigationView>(R.id.bottomNav)
             .setupWithNavController(navController)
+
+        // Home starts with the navy header; the other tabs are light
+        val nightMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            setStatusBarDarkTop(darkTop = destination.id == R.id.homeFragment, nightMode = nightMode)
+        }
     }
 
     private fun requestNotificationPermissionIfNeeded() {

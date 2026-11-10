@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import com.google.android.material.appbar.MaterialToolbar
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -23,6 +23,8 @@ import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.ui.common.AuthUiHelper
+import com.navio.damtests.ui.common.padForSystemBars
+import com.navio.damtests.ui.common.setupEdgeToEdge
 import com.navio.damtests.ui.exam.ExamActivity
 import com.navio.damtests.ui.exam.ExamSetupDialog
 import com.navio.damtests.ui.quiz.QuizLauncher
@@ -56,19 +58,20 @@ class TopicSelectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge(darkTop = true)
         setContentView(R.layout.activity_topic_selection)
 
         subjectId = intent.getStringExtra(EXTRA_SUBJECT_ID) ?: return finish()
 
-        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar_topics))
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar_topics)
+        toolbar.padForSystemBars(top = true)
+        setSupportActionBar(toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             title     = SubjectCatalog.nameFor(subjectId).asString(this@TopicSelectionActivity)
                 .uppercase(resources.configuration.locales[0])
             elevation = 0f
         }
-        @Suppress("DEPRECATION")
-        window.statusBarColor = getColor(R.color.brand_navy)
 
         bindViews()
         setupPracticeCards()
@@ -78,6 +81,7 @@ class TopicSelectionActivity : AppCompatActivity() {
             onPdfClick   = { row -> pdfOpener.open(subjectId, row.topic.id) }
         )
         findViewById<RecyclerView>(R.id.rvTopics).apply {
+            padForSystemBars(bottom = true)
             layoutManager = LinearLayoutManager(this@TopicSelectionActivity)
             adapter = this@TopicSelectionActivity.adapter
         }

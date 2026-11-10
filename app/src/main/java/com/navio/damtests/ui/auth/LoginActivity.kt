@@ -16,6 +16,7 @@ import com.navio.damtests.data.sync.SessionBackupRepository
 import com.navio.damtests.data.sync.StatsSyncRepository
 import com.navio.damtests.data.sync.UserProgressRepository
 import com.navio.damtests.ui.common.AuthUiHelper
+import com.navio.damtests.ui.common.setupEdgeToEdge
 import com.navio.damtests.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -51,6 +52,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge(darkTop = false)
 
         if (authManager.isLoggedIn) {
             goToMain()

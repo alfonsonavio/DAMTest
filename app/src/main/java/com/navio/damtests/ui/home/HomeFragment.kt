@@ -22,6 +22,7 @@ import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.sync.StatsSyncRepository
 import com.navio.damtests.ui.common.AuthUiHelper
+import com.navio.damtests.ui.common.padForSystemBars
 import com.navio.damtests.ui.favorites.FavoritesActivity
 import com.navio.damtests.ui.quiz.QuizLauncher
 import com.navio.damtests.ui.settings.SettingsActivity
@@ -46,6 +47,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.findViewById<View>(R.id.homeHeader).padForSystemBars(top = true)
 
         val tvGreeting     = view.findViewById<TextView>(R.id.tvGreeting)
         val tvName         = view.findViewById<TextView>(R.id.tvName)

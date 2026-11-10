@@ -26,6 +26,7 @@ import com.navio.damtests.R
 import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.exam.ExamGrader
 import com.navio.damtests.ui.common.AuthUiHelper
+import com.navio.damtests.ui.common.setupEdgeToEdge
 import com.navio.damtests.ui.review.ReviewActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -61,6 +62,7 @@ class ExamActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge(darkTop = false)
         setContentView(R.layout.activity_exam)
         // A timed exam shouldn't be interrupted by the screen switching off
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
