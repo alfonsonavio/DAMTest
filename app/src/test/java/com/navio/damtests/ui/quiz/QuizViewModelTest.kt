@@ -1,7 +1,9 @@
 package com.navio.damtests.ui.quiz
 
 import com.navio.damtests.ai.FastExplainer
+import com.navio.damtests.data.favorites.FavoritesRepository
 import com.navio.damtests.data.local.entity.Question
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSession
@@ -30,7 +32,7 @@ import org.junit.Test
 /**
  * Unit tests for QuizViewModel.
  *
- * The ViewModel depends on QuizRepository, which we replace with a MockK fake.
+ * The ViewModel's repositories are replaced with MockK fakes.
  * The @get:Rule MainDispatcherRule swaps Dispatchers.Main for a test dispatcher
  * so viewModelScope coroutines run synchronously during tests.
  *
@@ -44,7 +46,9 @@ class QuizViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private lateinit var repository: QuizRepository
+    private lateinit var quizRepository: QuizRepository
+    private lateinit var progressRepository: ProgressRepository
+    private lateinit var favoritesRepository: FavoritesRepository
     private lateinit var sessionStore: QuizSessionStore
     private lateinit var fastExplainer: FastExplainer
     private lateinit var viewModel: QuizViewModel
@@ -64,16 +68,18 @@ class QuizViewModelTest {
 
     @Before
     fun setUp() {
-        repository = mockk(relaxed = true)
+        quizRepository = mockk(relaxed = true)
+        progressRepository = mockk(relaxed = true)
+        favoritesRepository = mockk(relaxed = true)
         sessionStore = mockk(relaxed = true)
         fastExplainer = mockk(relaxed = true)
-        viewModel = QuizViewModel(repository, sessionStore, fastExplainer)
+        viewModel = QuizViewModel(quizRepository, progressRepository, favoritesRepository, sessionStore, fastExplainer)
     }
 
     @Test
     fun `loadQuestions populates questions and clears loading`() = runTest {
         val questions = listOf(question(1), question(2))
-        coEvery { repository.getQuestionsByTopic("programacion", "tema_1", 10) } returns questions
+        coEvery { quizRepository.getQuestionsByTopic("programacion", "tema_1", 10) } returns questions
 
         viewModel.loadQuestions("programacion", "tema_1")
 
@@ -87,7 +93,7 @@ class QuizViewModelTest {
     fun `checkAnswer with correct answer increases score`() = runTest {
         // Question 1 has correctOptionIndex = 0, so optionA ("A1") is correct
         val q = question(1, correct = 0)
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
         viewModel.loadQuestions("programacion", "tema_1")
 
         // The shuffled options shown on screen — order doesn't matter for scoring,
@@ -102,7 +108,7 @@ class QuizViewModelTest {
     @Test
     fun `checkAnswer with wrong answer does not increase score`() = runTest {
         val q = question(1, correct = 0) // "A1" is correct
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
         viewModel.loadQuestions("programacion", "tema_1")
 
         val shuffled = listOf("A1", "B1", "C1", "D1")
@@ -115,7 +121,7 @@ class QuizViewModelTest {
     @Test
     fun `checkAnswer sets currentAnswerState with correct flag`() = runTest {
         val q = question(1, correct = 0)
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
@@ -128,7 +134,7 @@ class QuizViewModelTest {
     @Test
     fun `second checkAnswer on same question is ignored`() = runTest {
         val q = question(1, correct = 0)
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
         viewModel.loadQuestions("programacion", "tema_1")
 
         val shuffled = listOf("A1", "B1", "C1", "D1")
@@ -142,7 +148,7 @@ class QuizViewModelTest {
     @Test
     fun `goToNextQuestion advances index`() = runTest {
         val questions = listOf(question(1), question(2), question(3))
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns questions
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns questions
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
@@ -155,22 +161,22 @@ class QuizViewModelTest {
     @Test
     fun `goToNextQuestion on last question finishes test and saves progress`() = runTest {
         val questions = listOf(question(1))
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns questions
-        coEvery { repository.getProgress(any(), any()) } returns null
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns questions
+        coEvery { progressRepository.getProgress(any(), any()) } returns null
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // last question → finish
 
         assertTrue(viewModel.isTestFinished.value)
-        // Progress should have been saved through the repository
-        coVerify { repository.updateProgress(any()) }
+        // Progress should have been saved through the progress repository
+        coVerify { progressRepository.updateProgress(any()) }
     }
 
     @Test
     fun `getResults returns one result per answered question`() = runTest {
         val questions = listOf(question(1), question(2))
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns questions
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns questions
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
@@ -183,41 +189,41 @@ class QuizViewModelTest {
     @Test
     fun `checkAnswer records question stats`() = runTest {
         val q = question(1, correct = 0)
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(q)
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1")) // correct
 
         // The ViewModel must record the outcome for smart review
-        coVerify { repository.recordAnswer(q, true) }
+        coVerify { progressRepository.recordAnswer(q, true) }
     }
 
     @Test
     fun `finishing a normal test records an attempt in history`() = runTest {
         val questions = listOf(question(1))
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns questions
-        coEvery { repository.getProgress(any(), any()) } returns null
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns questions
+        coEvery { progressRepository.getProgress(any(), any()) } returns null
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // finishes
 
-        coVerify { repository.recordTestAttempt("programacion", "tema_1", any(), any()) }
+        coVerify { progressRepository.recordTestAttempt("programacion", "tema_1", any(), any()) }
     }
 
     @Test
     fun `finishing a test records the attempt before saving progress`() = runTest {
         val questions = listOf(question(1))
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns questions
-        coEvery { repository.getProgress(any(), any()) } returns null
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns questions
+        coEvery { progressRepository.getProgress(any(), any()) } returns null
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // finishes
 
         coVerifyOrder {
-            repository.recordTestAttempt("programacion", "tema_1", any(), any())
-            repository.updateProgress(any())
+            progressRepository.recordTestAttempt("programacion", "tema_1", any(), any())
+            progressRepository.updateProgress(any())
         }
     }
 
@@ -226,21 +232,21 @@ class QuizViewModelTest {
         // Simulates the old bug: the progress save hangs (slow or offline cloud)
         // and the user leaves the screen. The attempt must already be recorded.
         val questions = listOf(question(1))
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns questions
-        coEvery { repository.getProgress(any(), any()) } returns null
-        coEvery { repository.updateProgress(any()) } coAnswers { awaitCancellation() }
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns questions
+        coEvery { progressRepository.getProgress(any(), any()) } returns null
+        coEvery { progressRepository.updateProgress(any()) } coAnswers { awaitCancellation() }
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // finishes; progress save hangs
 
-        coVerify(exactly = 1) { repository.recordTestAttempt("programacion", "tema_1", any(), any()) }
+        coVerify(exactly = 1) { progressRepository.recordTestAttempt("programacion", "tema_1", any(), any()) }
     }
 
     @Test
     fun `finishing smart review records a practice attempt but no progress`() = runTest {
         val questions = listOf(question(1))
-        coEvery { repository.getSmartReviewQuestions(any(), any()) } returns questions
+        coEvery { quizRepository.getSmartReviewQuestions(any(), any()) } returns questions
         viewModel.loadQuestions("programacion", TestMode.SMART_REVIEW.topicId) // smart review
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
@@ -249,14 +255,14 @@ class QuizViewModelTest {
         // Smart review counts for the study streak (its attempt is stored and the
         // statistics ignore it) but saves no score or topic progress
         coVerify(exactly = 1) {
-            repository.recordTestAttempt("programacion", TestMode.SMART_REVIEW.topicId, any(), any())
+            progressRepository.recordTestAttempt("programacion", TestMode.SMART_REVIEW.topicId, any(), any())
         }
-        coVerify(exactly = 0) { repository.updateProgress(any()) }
+        coVerify(exactly = 0) { progressRepository.updateProgress(any()) }
     }
 
     @Test
     fun `favourites test loads favourite questions of every subject`() = runTest {
-        coEvery { repository.getFavoriteQuestions("all", any()) } returns listOf(question(1), question(2))
+        coEvery { favoritesRepository.getFavoriteQuestions("all", any()) } returns listOf(question(1), question(2))
 
         viewModel.loadQuestions("all", TestMode.FAVORITES.topicId)
 
@@ -265,21 +271,21 @@ class QuizViewModelTest {
 
     @Test
     fun `finishing the favourites test records a practice attempt but no progress`() = runTest {
-        coEvery { repository.getFavoriteQuestions(any(), any()) } returns listOf(question(1))
+        coEvery { favoritesRepository.getFavoriteQuestions(any(), any()) } returns listOf(question(1))
         viewModel.loadQuestions("all", TestMode.FAVORITES.topicId)
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // finishes
 
-        coVerify(exactly = 1) { repository.recordTestAttempt("all", TestMode.FAVORITES.topicId, any(), any()) }
-        coVerify(exactly = 0) { repository.updateProgress(any()) }
+        coVerify(exactly = 1) { progressRepository.recordTestAttempt("all", TestMode.FAVORITES.topicId, any(), any()) }
+        coVerify(exactly = 0) { progressRepository.updateProgress(any()) }
     }
 
     @Test
     fun `toggleFavorite marks the question on screen and unmarks it when already favourite`() = runTest {
         val favoriteIds = MutableStateFlow<Set<String>>(emptySet())
-        every { repository.getFavoriteIds() } returns favoriteIds
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
+        every { favoritesRepository.getFavoriteIds() } returns favoriteIds
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
         viewModel.loadQuestions("programacion", "tema_1")
         // The star collects the flow while the quiz screen is visible. An unconfined
         // dispatcher subscribes right away (runTest's own one would wait for a yield)
@@ -288,12 +294,12 @@ class QuizViewModelTest {
         }
 
         viewModel.toggleFavorite()
-        coVerify(exactly = 1) { repository.setFavorite(match { it.stableId == "q1" }, true, any()) }
+        coVerify(exactly = 1) { favoritesRepository.setFavorite(match { it.stableId == "q1" }, true, any()) }
 
         favoriteIds.value = setOf("q1")
         assertTrue(viewModel.isCurrentFavorite.value)
         viewModel.toggleFavorite()
-        coVerify(exactly = 1) { repository.setFavorite(match { it.stableId == "q1" }, false, any()) }
+        coVerify(exactly = 1) { favoritesRepository.setFavorite(match { it.stableId == "q1" }, false, any()) }
         job.cancel()
     }
 
@@ -309,7 +315,7 @@ class QuizViewModelTest {
 
     @Test
     fun `checkAnswer saves the test in progress`() = runTest {
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
@@ -326,7 +332,7 @@ class QuizViewModelTest {
 
     @Test
     fun `finishing the test clears the saved session`() = runTest {
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
@@ -338,7 +344,7 @@ class QuizViewModelTest {
     @Test
     fun `resume restores position, score and answers`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 2, score = 2)
-        coEvery { repository.getQuestionsInOrder(listOf("q1", "q2", "q3")) } returns
+        coEvery { quizRepository.getQuestionsInOrder(listOf("q1", "q2", "q3")) } returns
             listOf(question(1), question(2), question(3))
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
@@ -348,14 +354,14 @@ class QuizViewModelTest {
         assertEquals(2, viewModel.score.value)
         assertEquals(2, viewModel.getResults().size)
         assertFalse(viewModel.isTestFinished.value)
-        coVerify(exactly = 0) { repository.getQuestionsByTopic(any(), any(), any()) }
+        coVerify(exactly = 0) { quizRepository.getQuestionsByTopic(any(), any(), any()) }
     }
 
     @Test
     fun `resume starts a new test when saved questions are gone`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 1, score = 1)
-        coEvery { repository.getQuestionsInOrder(any()) } returns null
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(7))
+        coEvery { quizRepository.getQuestionsInOrder(any()) } returns null
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(7))
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
 
@@ -367,21 +373,21 @@ class QuizViewModelTest {
     @Test
     fun `resume of a test with every question answered finishes it`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 3, score = 3)
-        coEvery { repository.getQuestionsInOrder(any()) } returns
+        coEvery { quizRepository.getQuestionsInOrder(any()) } returns
             listOf(question(1), question(2), question(3))
-        coEvery { repository.getProgress(any(), any()) } returns null
+        coEvery { progressRepository.getProgress(any(), any()) } returns null
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
 
         assertTrue(viewModel.isTestFinished.value)
-        coVerify { repository.updateProgress(any()) }
+        coVerify { progressRepository.updateProgress(any()) }
     }
 
     // --- Stable question state (survives leaving the app / rotating) ---
 
     @Test
     fun `current question keeps the same option order until the next question`() = runTest {
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
         viewModel.loadQuestions("programacion", "tema_1")
 
         val first = viewModel.currentQuestion.value!!
@@ -401,7 +407,7 @@ class QuizViewModelTest {
     @Test
     fun `resumed question shows the options exactly as they were answered`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 2, score = 2)
-        coEvery { repository.getQuestionsInOrder(any()) } returns listOf(question(1), question(2), question(3))
+        coEvery { quizRepository.getQuestionsInOrder(any()) } returns listOf(question(1), question(2), question(3))
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
 
@@ -411,7 +417,7 @@ class QuizViewModelTest {
 
     @Test
     fun `wrong answer asks the AI once and correct answer never does`() = runTest {
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
         coEvery { fastExplainer.explainQuickly(any(), any(), any()) } returns "Mal | Bien"
         viewModel.loadQuestions("programacion", "tema_1")
 
@@ -428,7 +434,7 @@ class QuizViewModelTest {
 
     @Test
     fun `moving to the next question clears the AI feedback`() = runTest {
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
         coEvery { fastExplainer.explainQuickly(any(), any(), any()) } returns "Mal | Bien"
         viewModel.loadQuestions("programacion", "tema_1")
 
@@ -440,7 +446,7 @@ class QuizViewModelTest {
 
     @Test
     fun `AI failure is reported as an error state`() = runTest {
-        coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
+        coEvery { quizRepository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
         coEvery { fastExplainer.explainQuickly(any(), any(), any()) } throws RuntimeException("offline")
         viewModel.loadQuestions("programacion", "tema_1")
 
@@ -451,7 +457,7 @@ class QuizViewModelTest {
 
     @Test
     fun `a test with no questions is reported instead of loading forever`() = runTest {
-        coEvery { repository.getQuestionsForRange(any(), any(), any()) } returns emptyList()
+        coEvery { quizRepository.getQuestionsForRange(any(), any(), any()) } returns emptyList()
 
         viewModel.loadQuestions("sistemas", TestMode.GENERAL_SECOND_HALF.topicId)
 
@@ -461,14 +467,14 @@ class QuizViewModelTest {
 
     @Test
     fun `a general test is saved under its own id, not its first question's topic`() = runTest {
-        coEvery { repository.getRandomQuestionsForGeneralTest(any(), any()) } returns listOf(question(1))
-        coEvery { repository.getProgress(any(), any()) } returns null
+        coEvery { quizRepository.getRandomQuestionsForGeneralTest(any(), any()) } returns listOf(question(1))
+        coEvery { progressRepository.getProgress(any(), any()) } returns null
         viewModel.loadQuestions("programacion", TestMode.GENERAL_ALL.topicId)
 
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
         viewModel.goToNextQuestion() // finishes
 
-        coVerify { repository.recordTestAttempt("programacion", TestMode.GENERAL_ALL.topicId, any(), any()) }
-        coVerify { repository.updateProgress(match { it.topicId == TestMode.GENERAL_ALL.topicId }) }
+        coVerify { progressRepository.recordTestAttempt("programacion", TestMode.GENERAL_ALL.topicId, any(), any()) }
+        coVerify { progressRepository.updateProgress(match { it.topicId == TestMode.GENERAL_ALL.topicId }) }
     }
 }

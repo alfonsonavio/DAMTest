@@ -1,7 +1,7 @@
 package com.navio.damtests.data.sync
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.navio.damtests.data.local.dao.QuestionsDao
+import com.navio.damtests.data.local.dao.TopicProgressDao
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class CloudBackup @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val questionsDao: QuestionsDao,
+    private val topicProgressDao: TopicProgressDao,
     private val userProgressRepository: UserProgressRepository,
     private val statsSyncRepository: StatsSyncRepository,
     private val sessionBackupRepository: SessionBackupRepository
@@ -25,7 +25,7 @@ class CloudBackup @Inject constructor(
 
     /** Returns once the server has confirmed everything. Throws if it can't. */
     suspend fun confirmAll(uid: String) {
-        userProgressRepository.pushAllProgress(uid, questionsDao.getAllProgressOnce())
+        userProgressRepository.pushAllProgress(uid, topicProgressDao.getAllProgressOnce())
         statsSyncRepository.pushAll(uid)
         sessionBackupRepository.backup(uid)
         firestore.waitForPendingWrites().await()

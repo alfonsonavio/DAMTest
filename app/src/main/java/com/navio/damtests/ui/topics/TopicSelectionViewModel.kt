@@ -3,8 +3,10 @@ package com.navio.damtests.ui.topics
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.navio.damtests.data.favorites.FavoritesRepository
 import com.navio.damtests.data.local.entity.Topic
 import com.navio.damtests.data.pdf.PdfReleaseRepository
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.topics.PracticeOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +27,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class TopicSelectionViewModel @Inject constructor(
-    private val repository: QuizRepository,
+    private val quizRepository: QuizRepository,
+    private val progressRepository: ProgressRepository,
+    private val favoritesRepository: FavoritesRepository,
     @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
@@ -52,9 +56,9 @@ class TopicSelectionViewModel @Inject constructor(
         .flatMapLatest { loaded ->
             if (loaded == null) return@flatMapLatest flowOf(UiState())
             combine(
-                repository.getProgressFlow(loaded.subjectId),
-                repository.getFailedCountFlow(loaded.subjectId),
-                repository.getFavoriteCountFlow(loaded.subjectId)
+                progressRepository.getProgressFlow(loaded.subjectId),
+                progressRepository.getFailedCountFlow(loaded.subjectId),
+                favoritesRepository.getFavoriteCountFlow(loaded.subjectId)
             ) { progress, failed, favorites ->
                 UiState(
                     loading = false,
@@ -74,9 +78,9 @@ class TopicSelectionViewModel @Inject constructor(
             val pdfTopicIds = PdfReleaseRepository.getTopicIdsWithPdf(appContext, subjectId)
             content.value = Content(
                 subjectId = subjectId,
-                topics = repository.getStudyTopics(subjectId, pdfTopicIds),
+                topics = quizRepository.getStudyTopics(subjectId, pdfTopicIds),
                 pdfTopicIds = pdfTopicIds,
-                practice = repository.getPracticeOptions(subjectId)
+                practice = quizRepository.getPracticeOptions(subjectId)
             )
         }
     }

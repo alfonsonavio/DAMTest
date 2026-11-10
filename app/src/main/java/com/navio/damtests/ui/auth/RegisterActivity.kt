@@ -14,7 +14,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.navio.damtests.R
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.core.suspendRunCatching
-import com.navio.damtests.data.local.dao.QuestionsDao
+import com.navio.damtests.data.local.dao.TopicProgressDao
 import com.navio.damtests.data.sync.UserProgressRepository
 import com.navio.damtests.ui.common.AuthError
 import com.navio.damtests.ui.common.AuthUiHelper
@@ -30,7 +30,7 @@ class RegisterActivity : AppCompatActivity() {
 
     @Inject lateinit var userProgressRepository: UserProgressRepository
 
-    @Inject lateinit var questionsDao: QuestionsDao
+    @Inject lateinit var topicProgressDao: TopicProgressDao
 
     private lateinit var tilName: TextInputLayout
     private lateinit var tilEmail: TextInputLayout
@@ -146,7 +146,7 @@ class RegisterActivity : AppCompatActivity() {
         val uid = authManager.currentUid
         if (uid != null) {
             // Best effort: the account is already created, so this must not stop registering
-            suspendRunCatching { userProgressRepository.uploadAllProgress(uid, questionsDao.getAllProgressOnce()) }
+            suspendRunCatching { userProgressRepository.uploadAllProgress(uid, topicProgressDao.getAllProgressOnce()) }
                 .onFailure { Log.w(TAG, "Could not upload the local progress: ${it.message}") }
         }
 

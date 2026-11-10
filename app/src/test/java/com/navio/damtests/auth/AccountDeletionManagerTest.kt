@@ -1,7 +1,7 @@
 package com.navio.damtests.auth
 
 import com.navio.damtests.data.local.LocalUserData
-import com.navio.damtests.data.local.dao.QuestionsDao
+import com.navio.damtests.data.local.dao.UserDataDao
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.sync.CloudUserDataRepository
 import com.navio.damtests.data.sync.StatsSyncRepository
@@ -22,7 +22,7 @@ class AccountDeletionManagerTest {
     private lateinit var authManager: AuthManager
     private lateinit var googleClient: GoogleCredentialClient
     private lateinit var cloudUserData: CloudUserDataRepository
-    private lateinit var dao: QuestionsDao
+    private lateinit var userDataDao: UserDataDao
     private lateinit var sessionStore: QuizSessionStore
     private lateinit var statsRepo: StatsSyncRepository
     private lateinit var manager: AccountDeletionManager
@@ -34,13 +34,13 @@ class AccountDeletionManagerTest {
         authManager = mockk(relaxed = true)
         googleClient = mockk(relaxed = true)
         cloudUserData = mockk(relaxed = true)
-        dao = mockk(relaxed = true)
+        userDataDao = mockk(relaxed = true)
         sessionStore = mockk(relaxed = true)
         statsRepo = mockk(relaxed = true)
         manager = AccountDeletionManager(
             authManager = authManager,
             cloudUserData = cloudUserData,
-            localUserData = LocalUserData(dao, sessionStore, statsRepo),
+            localUserData = LocalUserData(userDataDao, sessionStore, statsRepo),
             googleCredentialClient = googleClient
         )
 
@@ -55,7 +55,7 @@ class AccountDeletionManagerTest {
         coVerifyOrder {
             cloudUserData.deleteAll("user123")
             authManager.deleteCurrentUser()
-            dao.clearUserData()
+            userDataDao.clearUserData()
             authManager.signOut()
             googleClient.clearCredentialState()
         }
@@ -71,7 +71,7 @@ class AccountDeletionManagerTest {
 
         coVerify(exactly = 0) { cloudUserData.deleteAll(any()) }
         coVerify(exactly = 0) { authManager.deleteCurrentUser() }
-        coVerify(exactly = 0) { dao.clearUserData() }
+        coVerify(exactly = 0) { userDataDao.clearUserData() }
     }
 
     @Test
@@ -81,7 +81,7 @@ class AccountDeletionManagerTest {
         assertEquals(AccountDeletionManager.Result.FAILED, manager.deleteAccount(now))
 
         coVerify(exactly = 0) { authManager.deleteCurrentUser() }
-        coVerify(exactly = 0) { dao.clearUserData() }
+        coVerify(exactly = 0) { userDataDao.clearUserData() }
         verify(exactly = 0) { authManager.signOut() }
     }
 
@@ -93,7 +93,7 @@ class AccountDeletionManagerTest {
             AccountDeletionManager.Result.DATA_DELETED_ACCOUNT_PENDING,
             manager.deleteAccount(now)
         )
-        coVerify { dao.clearUserData() }
+        coVerify { userDataDao.clearUserData() }
         verify { authManager.signOut() }
     }
 }

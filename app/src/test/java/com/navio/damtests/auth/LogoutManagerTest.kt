@@ -4,7 +4,8 @@ import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.navio.damtests.data.local.LocalUserData
-import com.navio.damtests.data.local.dao.QuestionsDao
+import com.navio.damtests.data.local.dao.TopicProgressDao
+import com.navio.damtests.data.local.dao.UserDataDao
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.sync.CloudBackup
 import com.navio.damtests.data.sync.SessionBackupRepository
@@ -34,7 +35,8 @@ class LogoutManagerTest {
     private lateinit var authManager: AuthManager
     private lateinit var googleClient: GoogleCredentialClient
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var dao: QuestionsDao
+    private lateinit var progressDao: TopicProgressDao
+    private lateinit var userDataDao: UserDataDao
     private lateinit var sessionStore: QuizSessionStore
     private lateinit var progressRepo: UserProgressRepository
     private lateinit var statsRepo: StatsSyncRepository
@@ -59,15 +61,16 @@ class LogoutManagerTest {
         authManager = mockk(relaxed = true)
         googleClient = mockk(relaxed = true)
         firestore = mockk(relaxed = true)
-        dao = mockk(relaxed = true)
+        progressDao = mockk(relaxed = true)
+        userDataDao = mockk(relaxed = true)
         sessionStore = mockk(relaxed = true)
         progressRepo = mockk(relaxed = true)
         statsRepo = mockk(relaxed = true)
         sessionBackup = mockk(relaxed = true)
         logoutManager = LogoutManager(
             authManager = authManager,
-            cloudBackup = CloudBackup(firestore, dao, progressRepo, statsRepo, sessionBackup),
-            localUserData = LocalUserData(dao, sessionStore, statsRepo),
+            cloudBackup = CloudBackup(firestore, progressDao, progressRepo, statsRepo, sessionBackup),
+            localUserData = LocalUserData(userDataDao, sessionStore, statsRepo),
             googleCredentialClient = googleClient
         )
 
@@ -90,7 +93,7 @@ class LogoutManagerTest {
             statsRepo.pushAll("user123")
             sessionBackup.backup("user123")
             firestore.waitForPendingWrites()
-            dao.clearUserData()
+            userDataDao.clearUserData()
             authManager.signOut()
             googleClient.clearCredentialState()
         }
@@ -106,7 +109,7 @@ class LogoutManagerTest {
 
         assertFalse(signedOut)
         coVerify(exactly = 0) { googleClient.clearCredentialState() }
-        coVerify(exactly = 0) { dao.clearUserData() }
+        coVerify(exactly = 0) { userDataDao.clearUserData() }
         verify(exactly = 0) { sessionStore.clear() }
         verify(exactly = 0) { authManager.signOut() }
     }
@@ -116,7 +119,7 @@ class LogoutManagerTest {
         coEvery { statsRepo.pushAll(any()) } throws RuntimeException("server error")
 
         assertFalse(logoutManager.backupAndSignOut())
-        coVerify(exactly = 0) { dao.clearUserData() }
+        coVerify(exactly = 0) { userDataDao.clearUserData() }
         verify(exactly = 0) { authManager.signOut() }
     }
 
@@ -125,7 +128,7 @@ class LogoutManagerTest {
         every { firestore.waitForPendingWrites() } returns completedTask(RuntimeException("not confirmed"))
 
         assertFalse(logoutManager.backupAndSignOut())
-        coVerify(exactly = 0) { dao.clearUserData() }
+        coVerify(exactly = 0) { userDataDao.clearUserData() }
         verify(exactly = 0) { authManager.signOut() }
     }
 }

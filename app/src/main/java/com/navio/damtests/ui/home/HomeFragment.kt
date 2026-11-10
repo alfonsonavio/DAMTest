@@ -19,7 +19,7 @@ import com.navio.damtests.core.markOf
 import com.navio.damtests.data.catalog.SubjectCatalog
 import com.navio.damtests.data.catalog.TopicNames
 import com.navio.damtests.data.local.entity.TopicProgress
-import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSession
 import com.navio.damtests.data.session.QuizSessionStore
@@ -43,7 +43,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var progressRepository: ProgressRepository
 
     @Inject lateinit var authManager: AuthManager
 
@@ -86,7 +86,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 statsSyncRepository.syncedAt.collect {
-                    tvStreak.text = getString(R.string.home_streak, repository.getStreak().days)
+                    tvStreak.text = getString(R.string.home_streak, progressRepository.getStreak().days)
                 }
             }
         }
@@ -95,7 +95,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun observeProgress(view: View) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.getAllProgress().collect { allProgress ->
+                progressRepository.getAllProgress().collect { allProgress ->
                     renderQuickStats(view, allProgress)
                     // A test left half-way takes priority: the card resumes it.
                     val session = sessionStore.load()
@@ -164,7 +164,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
      */
     private fun pickSubjectForSmartReview() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val available = SubjectCatalog.all.filter { repository.subjectHasFailures(it.id) }
+            val available = SubjectCatalog.all.filter { progressRepository.subjectHasFailures(it.id) }
 
             if (available.isEmpty()) {
                 AuthUiHelper.showInfo(

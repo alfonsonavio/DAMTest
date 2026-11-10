@@ -11,7 +11,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.navio.damtests.R
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.GoogleCredentialClient
-import com.navio.damtests.data.local.dao.QuestionsDao
+import com.navio.damtests.data.local.dao.TopicProgressDao
 import com.navio.damtests.data.sync.SessionBackupRepository
 import com.navio.damtests.data.sync.StatsSyncRepository
 import com.navio.damtests.data.sync.UserProgressRepository
@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
     @Inject lateinit var userProgressRepository: UserProgressRepository
 
-    @Inject lateinit var questionsDao: QuestionsDao
+    @Inject lateinit var topicProgressDao: TopicProgressDao
 
     @Inject lateinit var statsSyncRepository: StatsSyncRepository
 
@@ -177,10 +177,10 @@ class LoginActivity : AppCompatActivity() {
         if (uid != null) {
             // Merge cloud + local progress in the background — don't block the UI
             try {
-                val localProgress = questionsDao.getAllProgressOnce()
+                val localProgress = topicProgressDao.getAllProgressOnce()
                 val cloudProgress = userProgressRepository.downloadAllProgress(uid)
                 val merged = userProgressRepository.mergeProgress(localProgress, cloudProgress)
-                merged.forEach { questionsDao.saveProgress(it) }
+                merged.forEach { topicProgressDao.saveProgress(it) }
             } catch (_: Exception) {
                 // Sync failure shouldn't block login
             }

@@ -1,6 +1,6 @@
 package com.navio.damtests.data.local
 
-import com.navio.damtests.data.local.dao.QuestionsDao
+import com.navio.damtests.data.local.dao.UserDataDao
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.sync.StatsSyncRepository
 import javax.inject.Inject
@@ -14,13 +14,13 @@ import javax.inject.Singleton
  */
 @Singleton
 class LocalUserData @Inject constructor(
-    private val questionsDao: QuestionsDao,
+    private val userDataDao: UserDataDao,
     private val sessionStore: QuizSessionStore,
     private val statsSyncRepository: StatsSyncRepository
 ) {
 
     suspend fun clear(uid: String) {
-        questionsDao.clearUserData()
+        userDataDao.clearUserData()
         sessionStore.clear()
         statsSyncRepository.forgetSyncState(uid)
     }

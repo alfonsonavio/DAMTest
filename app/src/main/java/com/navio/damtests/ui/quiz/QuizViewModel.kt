@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.core.suspendRunCatching
+import com.navio.damtests.data.favorites.FavoritesRepository
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.quiz.correctOptionText
@@ -26,7 +28,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class QuizViewModel @Inject constructor(
-    private val repository: QuizRepository,
+    private val quizRepository: QuizRepository,
+    private val progressRepository: ProgressRepository,
+    private val favoritesRepository: FavoritesRepository,
     private val sessionStore: QuizSessionStore,
     private val fastExplainer: FastExplainer
 ) : ViewModel() {
@@ -83,7 +87,7 @@ class QuizViewModel @Inject constructor(
 
     /** Whether the question on screen is marked as favourite. */
     val isCurrentFavorite: StateFlow<Boolean> by lazy {
-        combine(_currentQuestion, repository.getFavoriteIds()) { current, ids ->
+        combine(_currentQuestion, favoritesRepository.getFavoriteIds()) { current, ids ->
             current != null && current.question.stableId in ids
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
     }
@@ -92,7 +96,7 @@ class QuizViewModel @Inject constructor(
     fun toggleFavorite() {
         val question = _currentQuestion.value?.question ?: return
         val favorite = !isCurrentFavorite.value
-        viewModelScope.launch { repository.setFavorite(question, favorite) }
+        viewModelScope.launch { favoritesRepository.setFavorite(question, favorite) }
     }
 
     /** Instant AI feedback for a wrong answer to the current question. */
@@ -153,15 +157,15 @@ class QuizViewModel @Inject constructor(
             val limit = if (mode != null) MODE_TEST_SIZE else TOPIC_TEST_SIZE
 
             _questions.value = when (mode) {
-                TestMode.GENERAL_ALL -> repository.getRandomQuestionsForGeneralTest(subjectId, limit)
+                TestMode.GENERAL_ALL -> quizRepository.getRandomQuestionsForGeneralTest(subjectId, limit)
                 TestMode.GENERAL_FIRST_HALF ->
-                    repository.getQuestionsForRange(subjectId, StudyTopics.FIRST_HALF, limit)
+                    quizRepository.getQuestionsForRange(subjectId, StudyTopics.FIRST_HALF, limit)
                 TestMode.GENERAL_SECOND_HALF ->
-                    repository.getQuestionsForRange(subjectId, StudyTopics.SECOND_HALF, limit)
-                TestMode.SMART_REVIEW -> repository.getSmartReviewQuestions(subjectId, limit)
-                TestMode.FAVORITES -> repository.getFavoriteQuestions(subjectId, limit)
+                    quizRepository.getQuestionsForRange(subjectId, StudyTopics.SECOND_HALF, limit)
+                TestMode.SMART_REVIEW -> quizRepository.getSmartReviewQuestions(subjectId, limit)
+                TestMode.FAVORITES -> favoritesRepository.getFavoriteQuestions(subjectId, limit)
                 // Exams have their own screen; a regular topic loads its questions
-                else -> repository.getQuestionsByTopic(subjectId, topicId, limit)
+                else -> quizRepository.getQuestionsByTopic(subjectId, topicId, limit)
             }.distinctBy { it.text } // prevent duplicates if Room has stale rows
 
             showQuestion(0)
@@ -191,7 +195,7 @@ class QuizViewModel @Inject constructor(
         if (isCorrect) _score.value += 1
 
         viewModelScope.launch {
-            repository.recordAnswer(currentQuestion, isCorrect)
+            progressRepository.recordAnswer(currentQuestion, isCorrect)
         }
         saveSession()
 
@@ -304,7 +308,7 @@ class QuizViewModel @Inject constructor(
      */
     private suspend fun restoreSession(subjectId: String, topicId: String): Boolean {
         val session = sessionStore.load()?.takeIf { it.isFor(subjectId, topicId) } ?: return false
-        val questions = repository.getQuestionsInOrder(session.questionIds)
+        val questions = quizRepository.getQuestionsInOrder(session.questionIds)
         if (questions == null || session.answeredCount > questions.size) {
             sessionStore.clear()
             return false
@@ -326,7 +330,7 @@ class QuizViewModel @Inject constructor(
      */
     private fun recordPracticeAttempt(subjectId: String, topicId: String) {
         viewModelScope.launch {
-            repository.recordTestAttempt(
+            progressRepository.recordTestAttempt(
                 subjectId = subjectId,
                 topicId = topicId,
                 score = _score.value,
@@ -342,17 +346,17 @@ class QuizViewModel @Inject constructor(
             // before anything that touches the network guarantees it reaches
             // Statistics even if the coroutine is cancelled afterwards.
             // Reached only for non-smart-review tests (guarded in finishTest).
-            repository.recordTestAttempt(
+            progressRepository.recordTestAttempt(
                 subjectId = subjectId,
                 topicId = topicId,
                 score = _score.value,
                 totalQuestions = _questions.value.size
             )
 
-            val previous = repository.getProgress(subjectId, topicId)
+            val previous = progressRepository.getProgress(subjectId, topicId)
             val newAttemptsCount = (previous?.attemptsCount ?: 0) + 1
 
-            repository.updateProgress(
+            progressRepository.updateProgress(
                 TopicProgress(
                     subjectId = subjectId,
                     topicId = topicId,

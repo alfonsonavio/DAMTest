@@ -13,7 +13,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.navio.damtests.R
 import com.navio.damtests.data.favorites.Favorites
-import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.favorites.FavoritesRepository
 import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.ui.common.padForSystemBars
@@ -30,7 +30,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FavoritesActivity : AppCompatActivity() {
 
-    @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var favoritesRepository: FavoritesRepository
 
     @Inject lateinit var sessionStore: QuizSessionStore
 
@@ -49,11 +49,11 @@ class FavoritesActivity : AppCompatActivity() {
 
         val adapter = FavoritesAdapter(onRemoveClick = { question ->
             lifecycleScope.launch {
-                repository.setFavorite(question, favorite = false)
+                favoritesRepository.setFavorite(question, favorite = false)
                 // Removing is one tap away from a mistake: offer to undo it
                 Snackbar.make(rv, R.string.favorites_removed, Snackbar.LENGTH_LONG)
                     .setAction(R.string.undo) {
-                        lifecycleScope.launch { repository.setFavorite(question, favorite = true) }
+                        lifecycleScope.launch { favoritesRepository.setFavorite(question, favorite = true) }
                     }
                     .show()
             }
@@ -67,7 +67,7 @@ class FavoritesActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.getFavoriteQuestionsFlow().collect { favorites ->
+                favoritesRepository.getFavoriteQuestionsFlow().collect { favorites ->
                     adapter.submitList(favorites)
                     val empty = favorites.isEmpty()
                     rv.visibility = if (empty) View.GONE else View.VISIBLE
