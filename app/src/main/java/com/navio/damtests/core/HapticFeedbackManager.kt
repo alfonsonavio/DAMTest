@@ -13,9 +13,7 @@ import androidx.core.content.getSystemService
  * Distinguishes a correct answer (a single soft tick) from a wrong one (a
  * stronger double buzz), so the feedback is recognisable without looking.
  *
- * Designed to be toggleable: [enabled] gates every vibration. Once the settings
- * screen exists (planned with the UI redesign), wire a user preference to
- * [enabled] and no other code needs to change.
+ * [enabled] gates every vibration; it follows the "Vibración" setting.
  */
 class HapticFeedbackManager(
     private val context: Context,
@@ -27,6 +25,7 @@ class HapticFeedbackManager(
             val manager = context.getSystemService<VibratorManager>()
             manager?.defaultVibrator
         } else {
+            // Before Android 12 the vibrator is a system service of its own
             @Suppress("DEPRECATION")
             context.getSystemService<Vibrator>()
         }
@@ -46,17 +45,16 @@ class HapticFeedbackManager(
         val vib = vibrator ?: return
         if (!vib.hasVibrator()) return
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Some devices don't support amplitude control; fall back to timings only.
-            val effect = if (vib.hasAmplitudeControl()) {
-                VibrationEffect.createWaveform(timings, amplitudes, -1)
-            } else {
-                VibrationEffect.createWaveform(timings, -1)
-            }
-            vib.vibrate(effect)
+        // Some devices don't support amplitude control; fall back to timings only.
+        val effect = if (vib.hasAmplitudeControl()) {
+            VibrationEffect.createWaveform(timings, amplitudes, NO_REPEAT)
         } else {
-            @Suppress("DEPRECATION")
-            vib.vibrate(timings, -1)
+            VibrationEffect.createWaveform(timings, NO_REPEAT)
         }
+        vib.vibrate(effect)
+    }
+
+    private companion object {
+        const val NO_REPEAT = -1
     }
 }

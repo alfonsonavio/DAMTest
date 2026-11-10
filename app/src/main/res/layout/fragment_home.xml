@@ -14,16 +14,17 @@
         android:orientation="vertical">
 
         <!-- ===== Cabecera navy =====
-             paddingTop 52dp reserva la barra de estado SIN usar
-             fitsSystemWindows (que anulaba el padding horizontal). -->
+             Llega hasta arriba, detrás de la barra de estado: el código le
+             suma la altura real de la barra al paddingTop. -->
         <LinearLayout
+            android:id="@+id/homeHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@color/brand_navy"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:paddingTop="52dp"
+            android:paddingTop="24dp"
             android:paddingBottom="24dp">
 
             <LinearLayout
@@ -168,8 +169,10 @@
                             android:layout_marginTop="10dp"
                             android:visibility="gone"
                             app:indicatorColor="@color/text_on_dark"
+                            app:indicatorTrackGapSize="0dp"
                             app:trackColor="@color/brand_primary_light"
                             app:trackCornerRadius="4dp"
+                            app:trackStopIndicatorSize="0dp"
                             app:trackThickness="4dp" />
                     </LinearLayout>
                     <TextView

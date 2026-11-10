@@ -25,6 +25,8 @@ import com.navio.damtests.data.settings.SettingsManager
 import com.navio.damtests.notifications.ReminderScheduler
 import com.navio.damtests.ui.auth.LoginActivity
 import com.navio.damtests.ui.common.AuthUiHelper
+import com.navio.damtests.ui.common.padForSystemBars
+import com.navio.damtests.ui.common.setupEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -59,7 +61,10 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge(darkTop = true)
         setContentView(R.layout.activity_settings)
+        findViewById<View>(R.id.settingsHeader).padForSystemBars(top = true)
+        findViewById<View>(R.id.settingsRoot).padForSystemBars(bottom = true)
 
         setupProfile()
         setupReminders()
