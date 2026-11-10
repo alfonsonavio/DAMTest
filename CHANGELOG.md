@@ -43,6 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **Material time picker for the reminder** — the reminder time uses the
+  Material 3 clock picker, in the app's colours and always in 24 h format,
+  instead of the old system dialog with its own pink accent.
 - **Edge-to-edge on every screen** — the app now draws behind the status and
   navigation bars on every Android version (Android 15 already forced it),
   instead of the deprecated `statusBarColor`. Headers get the real status bar
@@ -104,6 +107,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Google account, a clear message is shown; closing the picker shows nothing.
 
 ### Fixed
+- **Tests always have their full length** — a test of 20 sometimes had 19
+  questions: some questions appear in more than one topic, and duplicates
+  were removed after picking the 20. The database now picks different
+  questions directly, and the exam counts only different questions when it
+  offers its sizes.
 - **Subject screen details** — the back arrow was dark grey on the navy
   toolbar, and the topic and "continue" progress bars drew a stray dot at
   their end (Material 3's stop indicator); both are gone.
