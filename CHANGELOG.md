@@ -71,6 +71,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Google account, a clear message is shown; closing the picker shows nothing.
 
 ### Fixed
+- **Reminder minutes** — the daily reminder only kept the hour: choosing 6:45
+  scheduled it at 6:00 and Settings showed "06:00". The minutes are now saved,
+  shown and used; reminders set before keep their time at minute 0. The delay
+  to the next reminder uses java.time, so daylight saving changes are handled.
 - **Review explanations no longer hang** — the "Ver explicación" request waits
   at most 20 seconds for Gemini, retries once when Gemini is busy (503 "high
   demand") and otherwise falls back to Groq with the same prompt, so there is
