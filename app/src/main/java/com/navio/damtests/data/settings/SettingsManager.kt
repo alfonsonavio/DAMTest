@@ -11,7 +11,7 @@ import javax.inject.Singleton
  * User preferences, persisted with SharedPreferences.
  *
  * Central place for the settings screen's toggles so the rest of the app reads
- * from one source: reminders on/off, reminder hour, and haptics on/off.
+ * from one source: reminders on/off, reminder time, and haptics on/off.
  */
 @Singleton
 class SettingsManager @Inject constructor(
@@ -27,6 +27,11 @@ class SettingsManager @Inject constructor(
     var reminderHour: Int
         get() = prefs.getInt(KEY_REMINDER_HOUR, DEFAULT_HOUR)
         set(value) = prefs.edit { putInt(KEY_REMINDER_HOUR, value) }
+
+    /** Minute (0-59) for the daily reminder; 0 for users who set it before minutes existed. */
+    var reminderMinute: Int
+        get() = prefs.getInt(KEY_REMINDER_MINUTE, DEFAULT_MINUTE)
+        set(value) = prefs.edit { putInt(KEY_REMINDER_MINUTE, value) }
 
     var hapticsEnabled: Boolean
         get() = prefs.getBoolean(KEY_HAPTICS, true)
@@ -48,9 +53,11 @@ class SettingsManager @Inject constructor(
         private const val PREFS_NAME = "damtest_settings"
         private const val KEY_REMINDERS = "reminders_enabled"
         private const val KEY_REMINDER_HOUR = "reminder_hour"
+        private const val KEY_REMINDER_MINUTE = "reminder_minute"
         private const val KEY_HAPTICS = "haptics_enabled"
         private const val KEY_THEME_MODE = "theme_mode"
         const val DEFAULT_HOUR = 18
+        const val DEFAULT_MINUTE = 0
 
         const val THEME_SYSTEM = 0
         const val THEME_LIGHT = 1

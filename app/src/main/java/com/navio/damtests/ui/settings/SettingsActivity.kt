@@ -51,7 +51,7 @@ class SettingsActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) {
-            ReminderScheduler.schedule(this, settings.reminderHour, replace = true)
+            ReminderScheduler.schedule(this, settings.reminderHour, settings.reminderMinute, replace = true)
         } else {
             switchReminders.isChecked = false
             showNotificationsBlocked()
@@ -107,15 +107,15 @@ class SettingsActivity : AppCompatActivity() {
 
         switch.isChecked = settings.remindersEnabled
         updateHourRowState(rowHour, tvHour, settings.remindersEnabled)
-        tvHour.text = formatHour(settings.reminderHour)
+        tvHour.text = formatTime(settings.reminderHour, settings.reminderMinute)
 
         switch.setOnCheckedChangeListener { _, isChecked ->
             settings.remindersEnabled = isChecked
             updateHourRowState(rowHour, tvHour, isChecked)
-            // Apply immediately (replace=true so a re-enable picks up the current hour)
+            // Apply immediately (replace=true so a re-enable picks up the current time)
             if (isChecked) {
                 if (hasNotificationPermission()) {
-                    ReminderScheduler.schedule(this, settings.reminderHour, replace = true)
+                    ReminderScheduler.schedule(this, settings.reminderHour, settings.reminderMinute, replace = true)
                 } else {
                     notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
@@ -128,20 +128,21 @@ class SettingsActivity : AppCompatActivity() {
             if (!settings.remindersEnabled) return@setOnClickListener
             android.app.TimePickerDialog(
                 this,
-                { _, hour, _ ->
+                { _, hour, minute ->
                     settings.reminderHour = hour
-                    tvHour.text = formatHour(hour)
-                    // Reschedule with the new hour
-                    ReminderScheduler.schedule(this, hour, replace = true)
+                    settings.reminderMinute = minute
+                    tvHour.text = formatTime(hour, minute)
+                    // Reschedule with the new time
+                    ReminderScheduler.schedule(this, hour, minute, replace = true)
                 },
-                settings.reminderHour, 0, true
+                settings.reminderHour, settings.reminderMinute, true
             ).show()
         }
     }
 
     private fun hasNotificationPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
 
     /**
@@ -218,7 +219,7 @@ class SettingsActivity : AppCompatActivity() {
                 context = this,
                 title = "Eliminar cuenta",
                 message = "Se borrarán tu cuenta y todos tus datos: progreso, estadísticas " +
-                    "y el test que tengas a medias. Esta acción no se puede deshacer.",
+                        "y el test que tengas a medias. Esta acción no se puede deshacer.",
                 confirmText = "Eliminar"
             ) { deleteAccount() }
         }
@@ -248,15 +249,15 @@ class SettingsActivity : AppCompatActivity() {
                         this@SettingsActivity,
                         "Casi listo",
                         "Tus datos se han borrado, pero no se ha podido eliminar la cuenta. " +
-                            "Inicia sesión de nuevo y repite la eliminación para terminar."
+                                "Inicia sesión de nuevo y repite la eliminación para terminar."
                     ) { goToLogin() }
                 }
                 AccountDeletionManager.Result.NEEDS_RECENT_LOGIN -> AuthUiHelper.showInfo(
                     this@SettingsActivity,
                     "Vuelve a iniciar sesión",
                     "Por seguridad, para eliminar la cuenta tienes que haber iniciado sesión " +
-                        "hace poco. Cierra sesión, vuelve a entrar y repite la eliminación. " +
-                        "No se ha borrado nada."
+                            "hace poco. Cierra sesión, vuelve a entrar y repite la eliminación. " +
+                            "No se ha borrado nada."
                 )
                 AccountDeletionManager.Result.FAILED -> AuthUiHelper.showInfo(
                     this@SettingsActivity,
@@ -279,5 +280,6 @@ class SettingsActivity : AppCompatActivity() {
         row.isClickable = enabled
     }
 
-    private fun formatHour(hour: Int): String = String.format(Locale.getDefault(), "%02d:00", hour)
+    private fun formatTime(hour: Int, minute: Int): String =
+        String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
 }
