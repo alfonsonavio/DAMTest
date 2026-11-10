@@ -1,9 +1,11 @@
 package com.navio.damtests.ui.exam
 
 import com.navio.damtests.data.exam.ExamClock
+import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.exam.ExamRange
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.testing.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -53,7 +55,7 @@ class ExamViewModelTest {
     private fun startExam(count: Int, penalized: Boolean = false) {
         coEvery { repository.getExamQuestions("programacion", ExamRange.ALL, count) } returns
                 (1..count).map { question(it) }
-        viewModel.start("programacion", ExamRange.ALL, count, penalized)
+        viewModel.start(ExamConfig("programacion", ExamRange.ALL, count, penalized))
     }
 
     private fun correctIndexOfCurrent(): Int {
@@ -124,7 +126,7 @@ class ExamViewModelTest {
         viewModel.selectOption(correctIndexOfCurrent())
         viewModel.submit()
 
-        coVerify(exactly = 1) { repository.recordTestAttempt("programacion", "-6", 1, 2) }
+        coVerify(exactly = 1) { repository.recordTestAttempt("programacion", TestMode.EXAM_ALL.topicId, 1, 2) }
         coVerify(exactly = 1) { repository.recordAnswer(match { it.stableId == "q1" }, true) }
         coVerify(exactly = 0) { repository.recordAnswer(match { it.stableId == "q2" }, any()) }
         coVerify(exactly = 0) { repository.updateProgress(any()) }
@@ -171,7 +173,7 @@ class ExamViewModelTest {
     fun `an exam without questions reports it`() = runTest {
         coEvery { repository.getExamQuestions(any(), any(), any()) } returns emptyList()
 
-        viewModel.start("programacion", ExamRange.ALL, 20, false)
+        viewModel.start(ExamConfig("programacion", ExamRange.ALL, 20, false))
 
         assertTrue(viewModel.state.value.noQuestions)
     }

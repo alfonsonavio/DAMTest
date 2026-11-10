@@ -13,6 +13,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,8 +23,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.navio.damtests.R
+import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.exam.ExamGrader
-import com.navio.damtests.data.exam.ExamRange
 import com.navio.damtests.ui.common.AuthUiHelper
 import com.navio.damtests.ui.review.ReviewActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +39,7 @@ import kotlinx.coroutines.launch
 class ExamActivity : AppCompatActivity() {
 
     private val viewModel: ExamViewModel by viewModels()
+    private lateinit var config: ExamConfig
 
     private lateinit var tvCount: TextView
     private lateinit var tvTimer: TextView
@@ -79,15 +81,9 @@ class ExamActivity : AppCompatActivity() {
             findViewById(R.id.btnExamOptionD)
         )
 
-        val subjectId = intent.getStringExtra(EXTRA_SUBJECT_ID) ?: return finish()
-        val range     = ExamRange.fromAttemptTopicId(intent.getStringExtra(EXTRA_RANGE).orEmpty())
-            ?: ExamRange.ALL
-        viewModel.start(
-            subjectId,
-            range,
-            intent.getIntExtra(EXTRA_SIZE, 20),
-            intent.getBooleanExtra(EXTRA_PENALTY, false)
-        )
+        config = IntentCompat.getParcelableExtra(intent, EXTRA_CONFIG, ExamConfig::class.java)
+            ?: return finish()
+        viewModel.start(config)
 
         setupClicks()
         setupObservers()
@@ -309,19 +305,15 @@ class ExamActivity : AppCompatActivity() {
     private fun openReview(outcome: ExamViewModel.ExamOutcome) {
         val grade = outcome.grade
         startActivity(
-            Intent(this, ReviewActivity::class.java)
-                .putExtra("SUBJECT_ID", intent.getStringExtra(EXTRA_SUBJECT_ID))
-                .putExtra("TOPIC_ID", intent.getStringExtra(EXTRA_RANGE))
-                .putExtra("SCORE", grade.correct)
-                .putExtra("TOTAL", grade.total)
-                .putExtra(
-                    ReviewActivity.EXTRA_SCORE_TEXT,
-                    "Nota: ${ExamGrader.format(grade.grade)} / 10 · ${grade.correct} de ${grade.total}"
-                )
-                // To repeat the same exam from the review
-                .putExtra(EXTRA_SIZE, intent.getIntExtra(EXTRA_SIZE, 20))
-                .putExtra(EXTRA_PENALTY, grade.penalized)
-                .putParcelableArrayListExtra("RESULTS", ArrayList(outcome.results))
+            ReviewActivity.intent(
+                context   = this,
+                subjectId = config.subjectId,
+                topicId   = config.range.mode.topicId,
+                score     = grade.correct,
+                results   = outcome.results,
+                scoreText = "Nota: ${ExamGrader.format(grade.grade)} / 10 · ${grade.correct} de ${grade.total}",
+                exam      = config
+            )
         )
         finish()
     }
@@ -345,21 +337,10 @@ class ExamActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EXTRA_SUBJECT_ID = "SUBJECT_ID"
-        /** Attempt topic id of the [ExamRange] ("-6", "-7" or "-8"). */
-        const val EXTRA_RANGE = "EXAM_RANGE"
-        const val EXTRA_SIZE = "EXAM_SIZE"
-        const val EXTRA_PENALTY = "EXAM_PENALTY"
+        private const val EXTRA_CONFIG = "EXAM_CONFIG"
         private const val TIMER_TICK_MS = 1_000L
 
-        fun start(context: Context, subjectId: String, range: ExamRange, size: Int, penalized: Boolean) {
-            context.startActivity(
-                Intent(context, ExamActivity::class.java)
-                    .putExtra(EXTRA_SUBJECT_ID, subjectId)
-                    .putExtra(EXTRA_RANGE, range.attemptTopicId)
-                    .putExtra(EXTRA_SIZE, size)
-                    .putExtra(EXTRA_PENALTY, penalized)
-            )
-        }
+        fun intent(context: Context, config: ExamConfig): Intent =
+            Intent(context, ExamActivity::class.java).putExtra(EXTRA_CONFIG, config)
     }
 }

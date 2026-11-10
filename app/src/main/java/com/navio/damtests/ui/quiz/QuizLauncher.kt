@@ -1,7 +1,6 @@
 package com.navio.damtests.ui.quiz
 
 import android.content.Context
-import android.content.Intent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.navio.damtests.data.session.QuizSessionStore
 
@@ -33,11 +32,6 @@ object QuizLauncher {
     }
 
     fun start(context: Context, subjectId: String, topicId: String, resume: Boolean) {
-        context.startActivity(
-            Intent(context, QuizActivity::class.java)
-                .putExtra("SUBJECT_ID", subjectId)
-                .putExtra("TOPIC_ID", topicId)
-                .putExtra(QuizActivity.EXTRA_RESUME, resume)
-        )
+        context.startActivity(QuizActivity.intent(context, subjectId, topicId, resume))
     }
 }
