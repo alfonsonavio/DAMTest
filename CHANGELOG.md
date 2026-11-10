@@ -133,6 +133,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Google account, a clear message is shown; closing the picker shows nothing.
 
 ### Fixed
+- **Readable options after answering** — once a question was answered, the
+  disabled option buttons showed dark, faded text on the indigo background;
+  the text now stays white.
+- **Evolution chart without gaps** — the curve went below 0 between two tests
+  at 0 % and that stretch disappeared; it now never goes past its points. The
+  subtitle says what the chart shows: the percentage of each test.
 - **Closing a screen no longer reports a failure** — the background work
   (sign-in, sync, backups, explanations) caught every exception, including the
   cancellation a coroutine gets when its screen closes, and went on as if it
