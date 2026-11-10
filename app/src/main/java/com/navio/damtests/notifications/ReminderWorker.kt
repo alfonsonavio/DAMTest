@@ -7,7 +7,7 @@ import androidx.work.WorkerParameters
 import com.navio.damtests.R
 import com.navio.damtests.core.UiText
 import com.navio.damtests.core.suspendRunCatching
-import com.navio.damtests.data.local.dao.QuestionsDao
+import com.navio.damtests.data.local.dao.TestAttemptDao
 import com.navio.damtests.data.streak.StreakCalculator
 import com.navio.damtests.data.streak.StreakInfo
 import dagger.hilt.EntryPoint
@@ -33,14 +33,14 @@ class ReminderWorker(
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface ReminderEntryPoint {
-        fun questionsDao(): QuestionsDao
+        fun testAttemptDao(): TestAttemptDao
     }
 
     override suspend fun doWork(): Result {
         val streak = suspendRunCatching {
             val dao = EntryPointAccessors
                 .fromApplication(applicationContext, ReminderEntryPoint::class.java)
-                .questionsDao()
+                .testAttemptDao()
             StreakCalculator.calculate(dao.getAttemptTimestamps(), System.currentTimeMillis())
         }.getOrElse {
             Log.w(TAG, "Could not read the streak, sending a regular reminder: ${it.message}")

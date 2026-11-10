@@ -21,7 +21,7 @@ import com.navio.damtests.R
 import com.navio.damtests.ai.ExplanationService
 import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.data.exam.ExamConfig
-import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.favorites.FavoritesRepository
 import com.navio.damtests.data.report.ReportRepository
 import com.navio.damtests.ui.common.setupEdgeToEdge
 import com.navio.damtests.ui.exam.ExamActivity
@@ -38,7 +38,7 @@ class ReviewActivity : AppCompatActivity() {
 
     @Inject lateinit var reportRepository: ReportRepository
 
-    @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var favoritesRepository: FavoritesRepository
 
     @Inject lateinit var fastExplainer: FastExplainer
 
@@ -68,7 +68,7 @@ class ReviewActivity : AppCompatActivity() {
             onExplainClick = { result -> showAiExplanation(result) },
             onReportClick = { result -> showReportDialog(result) },
             onFavoriteClick = { result, favorite ->
-                lifecycleScope.launch { repository.setFavorite(result.question, favorite) }
+                lifecycleScope.launch { favoritesRepository.setFavorite(result.question, favorite) }
             }
         )
         rv.adapter = adapter
@@ -76,7 +76,7 @@ class ReviewActivity : AppCompatActivity() {
         // Stars update live when a question is marked or unmarked
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.getFavoriteIds().collect { ids -> adapter.updateFavorites(ids) }
+                favoritesRepository.getFavoriteIds().collect { ids -> adapter.updateFavorites(ids) }
             }
         }
 

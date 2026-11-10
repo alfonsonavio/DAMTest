@@ -4,6 +4,7 @@ import com.navio.damtests.data.exam.ExamClock
 import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.exam.ExamRange
 import com.navio.damtests.data.local.entity.Question
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.testing.MainDispatcherRule
@@ -28,7 +29,8 @@ class ExamViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private lateinit var repository: QuizRepository
+    private lateinit var quizRepository: QuizRepository
+    private lateinit var progressRepository: ProgressRepository
     private lateinit var clock: ExamClock
     private lateinit var viewModel: ExamViewModel
     private var now = 0L
@@ -45,15 +47,16 @@ class ExamViewModelTest {
 
     @Before
     fun setUp() {
-        repository = mockk(relaxed = true)
+        quizRepository = mockk(relaxed = true)
+        progressRepository = mockk(relaxed = true)
         clock = mockk()
         every { clock.now() } answers { now }
-        viewModel = ExamViewModel(repository, clock)
+        viewModel = ExamViewModel(quizRepository, progressRepository, clock)
     }
 
     /** Starts an exam with [count] questions and returns how to pick the correct option. */
     private fun startExam(count: Int, penalized: Boolean = false) {
-        coEvery { repository.getExamQuestions("programacion", ExamRange.ALL, count) } returns
+        coEvery { quizRepository.getExamQuestions("programacion", ExamRange.ALL, count) } returns
             (1..count).map { question(it) }
         viewModel.start(ExamConfig("programacion", ExamRange.ALL, count, penalized))
     }
@@ -126,10 +129,10 @@ class ExamViewModelTest {
         viewModel.selectOption(correctIndexOfCurrent())
         viewModel.submit()
 
-        coVerify(exactly = 1) { repository.recordTestAttempt("programacion", TestMode.EXAM_ALL.topicId, 1, 2) }
-        coVerify(exactly = 1) { repository.recordAnswer(match { it.stableId == "q1" }, true) }
-        coVerify(exactly = 0) { repository.recordAnswer(match { it.stableId == "q2" }, any()) }
-        coVerify(exactly = 0) { repository.updateProgress(any()) }
+        coVerify(exactly = 1) { progressRepository.recordTestAttempt("programacion", TestMode.EXAM_ALL.topicId, 1, 2) }
+        coVerify(exactly = 1) { progressRepository.recordAnswer(match { it.stableId == "q1" }, true) }
+        coVerify(exactly = 0) { progressRepository.recordAnswer(match { it.stableId == "q2" }, any()) }
+        coVerify(exactly = 0) { progressRepository.updateProgress(any()) }
     }
 
     @Test
@@ -156,7 +159,7 @@ class ExamViewModelTest {
         viewModel.submit()
 
         assertTrue(viewModel.state.value.answers.isEmpty())
-        coVerify(exactly = 1) { repository.recordTestAttempt(any(), any(), any(), any()) }
+        coVerify(exactly = 1) { progressRepository.recordTestAttempt(any(), any(), any(), any()) }
     }
 
     @Test
@@ -171,7 +174,7 @@ class ExamViewModelTest {
 
     @Test
     fun `an exam without questions reports it`() = runTest {
-        coEvery { repository.getExamQuestions(any(), any(), any()) } returns emptyList()
+        coEvery { quizRepository.getExamQuestions(any(), any(), any()) } returns emptyList()
 
         viewModel.start(ExamConfig("programacion", ExamRange.ALL, 20, false))
 

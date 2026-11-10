@@ -10,7 +10,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Source
 import com.navio.damtests.core.suspendRunCatching
-import com.navio.damtests.data.local.dao.QuestionsDao
+import com.navio.damtests.data.local.dao.FavoriteQuestionDao
+import com.navio.damtests.data.local.dao.QuestionStatsDao
+import com.navio.damtests.data.local.dao.TestAttemptDao
 import com.navio.damtests.data.local.entity.FavoriteQuestion
 import com.navio.damtests.data.local.entity.QuestionStats
 import com.navio.damtests.data.local.entity.TestAttempt
@@ -42,7 +44,9 @@ import javax.inject.Singleton
 @Singleton
 class StatsSyncRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val questionsDao: QuestionsDao,
+    private val testAttemptDao: TestAttemptDao,
+    private val questionStatsDao: QuestionStatsDao,
+    private val favoriteQuestionDao: FavoriteQuestionDao,
     @ApplicationContext context: Context
 ) {
 
@@ -96,24 +100,24 @@ class StatsSyncRepository @Inject constructor(
             val cloudFavorites = download(favorites(uid), "updatedAt", since).mapNotNull { it.toFavorite() }
 
             val attemptsPlan = StatsMerger.mergeAttempts(
-                local = questionsDao.getAllAttempts(),
+                local = testAttemptDao.getAllAttempts(),
                 cloud = cloudAttempts,
                 uploadLocalOnly = isFirstSync
             )
             val statsPlan = StatsMerger.mergeQuestionStats(
-                local = questionsDao.getAllQuestionStats(),
+                local = questionStatsDao.getAllQuestionStats(),
                 cloud = cloudStats,
                 uploadLocalNewer = isFirstSync
             )
             val favoritesPlan = StatsMerger.mergeFavorites(
-                local = questionsDao.getAllFavoriteRecords(),
+                local = favoriteQuestionDao.getAllFavoriteRecords(),
                 cloud = cloudFavorites,
                 uploadLocalNewer = isFirstSync
             )
 
-            if (attemptsPlan.toLocal.isNotEmpty()) questionsDao.insertTestAttempts(attemptsPlan.toLocal)
-            if (statsPlan.toLocal.isNotEmpty()) questionsDao.saveQuestionStatsList(statsPlan.toLocal)
-            if (favoritesPlan.toLocal.isNotEmpty()) questionsDao.saveFavorites(favoritesPlan.toLocal)
+            if (attemptsPlan.toLocal.isNotEmpty()) testAttemptDao.insertTestAttempts(attemptsPlan.toLocal)
+            if (statsPlan.toLocal.isNotEmpty()) questionStatsDao.saveQuestionStatsList(statsPlan.toLocal)
+            if (favoritesPlan.toLocal.isNotEmpty()) favoriteQuestionDao.saveFavorites(favoritesPlan.toLocal)
             uploadInBatches(uid, attemptsPlan.toCloud, statsPlan.toCloud, favoritesPlan.toCloud).forEach { task ->
                 task.addOnFailureListener { e -> Log.e(TAG, "Stats batch upload failed: ${e.message}") }
             }
@@ -162,17 +166,17 @@ class StatsSyncRepository @Inject constructor(
         val cloudFavorites = download(favorites(uid), "updatedAt", null).mapNotNull { it.toFavorite() }
 
         val attemptsToUpload = StatsMerger.mergeAttempts(
-            questionsDao.getAllAttempts(),
+            testAttemptDao.getAllAttempts(),
             cloudAttempts,
             uploadLocalOnly = true
         ).toCloud
         val statsToUpload = StatsMerger.mergeQuestionStats(
-            questionsDao.getAllQuestionStats(),
+            questionStatsDao.getAllQuestionStats(),
             cloudStats,
             uploadLocalNewer = true
         ).toCloud
         val favoritesToUpload = StatsMerger.mergeFavorites(
-            questionsDao.getAllFavoriteRecords(),
+            favoriteQuestionDao.getAllFavoriteRecords(),
             cloudFavorites,
             uploadLocalNewer = true
         ).toCloud

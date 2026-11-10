@@ -23,7 +23,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.navio.damtests.R
 import com.navio.damtests.data.catalog.SubjectCatalog
 import com.navio.damtests.data.catalog.TopicNames
-import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.statistics.EvolutionPoint
 import com.navio.damtests.data.statistics.StatisticsData
 import com.navio.damtests.data.statistics.SubjectAccuracy
@@ -42,7 +42,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
-    @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var progressRepository: ProgressRepository
 
     @Inject lateinit var statsSyncRepository: StatsSyncRepository
 
@@ -74,7 +74,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         loadJob?.cancel() // a newer load (e.g. a quick 1º/2º switch) wins
         loadJob = viewLifecycleOwner.lifecycleScope.launch {
             val subjectIds = subjectIdsForCourse(selectedCourse)
-            val data = repository.getStatistics(subjectIds)
+            val data = progressRepository.getStatistics(subjectIds)
             render(view, data)
         }
     }

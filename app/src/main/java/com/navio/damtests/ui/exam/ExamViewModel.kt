@@ -8,6 +8,7 @@ import com.navio.damtests.data.exam.ExamConfig
 import com.navio.damtests.data.exam.ExamGrade
 import com.navio.damtests.data.exam.ExamGrader
 import com.navio.damtests.data.local.entity.Question
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.correctOptionText
 import com.navio.damtests.data.quiz.shuffle
@@ -37,7 +38,8 @@ import kotlin.time.Duration.Companion.seconds
  */
 @HiltViewModel
 class ExamViewModel @Inject constructor(
-    private val repository: QuizRepository,
+    private val quizRepository: QuizRepository,
+    private val progressRepository: ProgressRepository,
     private val clock: ExamClock
 ) : ViewModel() {
 
@@ -86,7 +88,7 @@ class ExamViewModel @Inject constructor(
         this.config = config
 
         viewModelScope.launch {
-            val questions = repository.getExamQuestions(config.subjectId, config.range, config.size)
+            val questions = quizRepository.getExamQuestions(config.subjectId, config.range, config.size)
                 .map { ExamQuestion(it, it.shuffle().shuffledOptions) }
 
             if (questions.isEmpty()) {
@@ -182,14 +184,14 @@ class ExamViewModel @Inject constructor(
         viewModelScope.launch {
             // The attempt goes first: it is a single local write, so it is kept
             // even if the user leaves the screen straight away.
-            repository.recordTestAttempt(
+            progressRepository.recordTestAttempt(
                 subjectId = config.subjectId,
                 topicId = config.range.mode.topicId,
                 score = correct,
                 totalQuestions = results.size
             )
             results.filter { it.isAnswered }
-                .forEach { repository.recordAnswer(it.question, it.isCorrect) }
+                .forEach { progressRepository.recordAnswer(it.question, it.isCorrect) }
         }
     }
 }

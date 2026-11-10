@@ -40,7 +40,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TopicSelectionActivity : AppCompatActivity() {
 
-    @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var quizRepository: QuizRepository
 
     @Inject lateinit var sessionStore: QuizSessionStore
 
@@ -185,7 +185,7 @@ class TopicSelectionActivity : AppCompatActivity() {
     // --- Practice modes ---
 
     private suspend fun showExamSetup() {
-        val counts = ExamRange.entries.associateWith { repository.countExamQuestions(subjectId, it) }
+        val counts = ExamRange.entries.associateWith { quizRepository.countExamQuestions(subjectId, it) }
         val ranges = ExamSetupDialog.availableRanges(counts)
         if (ranges.isEmpty()) {
             AuthUiHelper.showInfo(this, getString(R.string.no_questions_title), getString(R.string.no_questions_yet))
@@ -249,7 +249,7 @@ class TopicSelectionActivity : AppCompatActivity() {
             when {
                 sessionStore.load()?.isFor(subjectId, topicId) == true ->
                     QuizLauncher.open(this@TopicSelectionActivity, sessionStore, subjectId, topicId)
-                isTestMode || repository.hasQuestions(subjectId, topicId) ->
+                isTestMode || quizRepository.hasQuestions(subjectId, topicId) ->
                     QuizLauncher.start(this@TopicSelectionActivity, subjectId, topicId, resume = false)
                 else -> AuthUiHelper.showInfo(
                     this@TopicSelectionActivity,
