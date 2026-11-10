@@ -145,10 +145,10 @@ class ExamActivity : AppCompatActivity() {
             return
         }
 
-        tvCount.text = "Pregunta ${state.currentIndex + 1} de ${state.total}"
+        tvCount.text = getString(R.string.exam_question_count, state.currentIndex + 1, state.total)
         progressBar.max = state.total
         progressBar.progress = state.answeredCount
-        tvAnswered.text = "${state.answeredCount} de ${state.total} respondidas"
+        tvAnswered.text = getString(R.string.exam_answered_count, state.answeredCount, state.total)
         renderTimer(state.remainingSeconds)
 
         tvQuestion.text = current.question.text
@@ -159,7 +159,7 @@ class ExamActivity : AppCompatActivity() {
         }
 
         val flagged = state.currentIndex in state.flagged
-        btnFlag.text = if (flagged) "DUDOSA" else "MARCAR COMO DUDOSA"
+        btnFlag.setText(if (flagged) R.string.exam_flagged else R.string.exam_flag)
         btnFlag.iconTint = ColorStateList.valueOf(
             getColor(if (flagged) R.color.favorite_star else R.color.text_muted)
         )
@@ -169,7 +169,7 @@ class ExamActivity : AppCompatActivity() {
         btnContext.setOnClickListener { contextText?.let { showContext(it) } }
 
         btnPrevious.isEnabled = state.currentIndex > 0
-        btnNext.text = if (state.isLast) "ENTREGAR" else "SIGUIENTE"
+        btnNext.setText(if (state.isLast) R.string.exam_submit else R.string.exam_next)
 
         gridAdapter?.update(state)
         gridSheet?.findViewById<TextView>(R.id.tvSheetSummary)?.text = summary(state)
@@ -187,14 +187,17 @@ class ExamActivity : AppCompatActivity() {
     }
 
     private fun renderTimer(remaining: Long) {
-        tvTimer.text = "⏱ %d:%02d".format(remaining / 60, remaining % 60)
-        tvTimer.setTextColor(getColor(if (remaining <= 60) R.color.state_error else R.color.text_primary))
+        tvTimer.text = getString(R.string.exam_timer, remaining / SECONDS_PER_MINUTE, remaining % SECONDS_PER_MINUTE)
+        val timerColor = if (remaining <= LAST_MINUTE_SECONDS) R.color.state_error else R.color.text_primary
+        tvTimer.setTextColor(getColor(timerColor))
 
         // Warn once when crossing 5 and 1 minutes (not after a rotation)
         if (lastRemaining > 0 && viewModel.outcome.value == null) {
             when {
-                lastRemaining > 300 && remaining <= 300 -> warn("Quedan 5 minutos")
-                lastRemaining > 60 && remaining <= 60   -> warn("Queda 1 minuto")
+                lastRemaining > FIVE_MINUTES_SECONDS && remaining <= FIVE_MINUTES_SECONDS ->
+                    warn(getString(R.string.exam_warning_five_minutes))
+                lastRemaining > LAST_MINUTE_SECONDS && remaining <= LAST_MINUTE_SECONDS ->
+                    warn(getString(R.string.exam_warning_one_minute))
             }
         }
         lastRemaining = remaining
@@ -206,8 +209,18 @@ class ExamActivity : AppCompatActivity() {
 
     private fun summary(state: ExamViewModel.ExamState): String {
         val blank = state.total - state.answeredCount
-        return "${state.answeredCount} respondidas · $blank en blanco · ${state.flagged.size} dudosas"
+        return counts(
+            R.plurals.exam_answered to state.answeredCount,
+            R.plurals.exam_blank to blank,
+            R.plurals.exam_flagged_questions to state.flagged.size
+        )
     }
+
+    /** "9 respondidas · 1 en blanco · 1 dudosa": each count with its own plural. */
+    private fun counts(vararg parts: Pair<Int, Int>): String =
+        parts.joinToString(getString(R.string.list_separator)) { (plural, count) ->
+            resources.getQuantityString(plural, count, count)
+        }
 
     // --- Question grid ---
 
@@ -244,16 +257,17 @@ class ExamActivity : AppCompatActivity() {
         val state = viewModel.state.value
         val blank = state.total - state.answeredCount
         val details = buildList {
-            if (blank > 0) add(if (blank == 1) "1 pregunta en blanco" else "$blank preguntas en blanco")
+            if (blank > 0) add(resources.getQuantityString(R.plurals.exam_blank_questions, blank, blank))
             if (state.flagged.isNotEmpty()) {
-                add(if (state.flagged.size == 1) "1 dudosa" else "${state.flagged.size} dudosas")
+                val flagged = state.flagged.size
+                add(resources.getQuantityString(R.plurals.exam_flagged_questions, flagged, flagged))
             }
         }
-        val message = if (details.isEmpty()) "Has respondido todas las preguntas."
-        else "Tienes ${details.joinToString(" y ")}. Después ya no podrás cambiar nada."
-        AuthUiHelper.showConfirm(this, "¿Entregar el examen?", message, "ENTREGAR") {
-            viewModel.submit()
-        }
+        val message = if (details.isEmpty()) getString(R.string.exam_submit_all_answered)
+        else getString(R.string.exam_submit_pending, details.joinToString(getString(R.string.list_and)))
+        AuthUiHelper.showConfirm(
+            this, getString(R.string.exam_submit_title), message, getString(R.string.exam_submit)
+        ) { viewModel.submit() }
     }
 
     private fun confirmExit() {
@@ -263,9 +277,9 @@ class ExamActivity : AppCompatActivity() {
         }
         AuthUiHelper.showConfirm(
             this,
-            "¿Abandonar el examen?",
-            "Se perderán tus respuestas y no contará como test.",
-            "ABANDONAR"
+            getString(R.string.exam_exit_title),
+            getString(R.string.exam_exit_message),
+            getString(R.string.exam_exit_confirm)
         ) { finish() }
     }
 
@@ -280,13 +294,17 @@ class ExamActivity : AppCompatActivity() {
 
         val grade = outcome.grade
         view.findViewById<TextView>(R.id.tvExamResultTitle).text =
-            if (outcome.timeUp) "¡Se acabó el tiempo!" else "Examen entregado"
+            getString(if (outcome.timeUp) R.string.exam_result_time_up else R.string.exam_result_submitted)
         view.findViewById<TextView>(R.id.tvExamGrade).apply {
             text = ExamGrader.format(grade.grade)
             setTextColor(getColor(if (grade.passed) R.color.state_success else R.color.state_error))
         }
         view.findViewById<TextView>(R.id.tvExamBreakdown).text =
-            "${grade.correct} aciertos · ${grade.wrong} fallos · ${grade.blank} en blanco"
+            counts(
+                R.plurals.exam_correct to grade.correct,
+                R.plurals.exam_wrong to grade.wrong,
+                R.plurals.exam_blank to grade.blank
+            )
         view.findViewById<TextView>(R.id.tvExamPenaltyNote).visibility =
             if (grade.penalized) View.VISIBLE else View.GONE
 
@@ -311,7 +329,9 @@ class ExamActivity : AppCompatActivity() {
                 topicId   = config.range.mode.topicId,
                 score     = grade.correct,
                 results   = outcome.results,
-                scoreText = "Nota: ${ExamGrader.format(grade.grade)} / 10 · ${grade.correct} de ${grade.total}",
+                scoreText = getString(
+                    R.string.exam_review_score, ExamGrader.format(grade.grade), grade.correct, grade.total
+                ),
                 exam      = config
             )
         )
@@ -339,6 +359,9 @@ class ExamActivity : AppCompatActivity() {
     companion object {
         private const val EXTRA_CONFIG = "EXAM_CONFIG"
         private const val TIMER_TICK_MS = 1_000L
+        private const val SECONDS_PER_MINUTE = 60
+        private const val LAST_MINUTE_SECONDS = 60
+        private const val FIVE_MINUTES_SECONDS = 300
 
         fun intent(context: Context, config: ExamConfig): Intent =
             Intent(context, ExamActivity::class.java).putExtra(EXTRA_CONFIG, config)

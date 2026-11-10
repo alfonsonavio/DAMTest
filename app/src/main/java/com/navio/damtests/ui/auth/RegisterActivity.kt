@@ -13,6 +13,7 @@ import com.navio.damtests.R
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.sync.UserProgressRepository
+import com.navio.damtests.ui.common.AuthError
 import com.navio.damtests.ui.common.AuthUiHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -54,7 +55,7 @@ class RegisterActivity : AppCompatActivity() {
         progressOverlay    = findViewById(R.id.progressOverlay)
 
         // Permanent helper text so the user knows the password rules upfront
-        tilPassword.helperText = "Mínimo 8 caracteres, con al menos una letra y un número"
+        tilPassword.helperText = getString(R.string.register_password_rules, MIN_PASSWORD_LENGTH)
 
         // Clear each field's error as soon as the user edits it
         etName.doAfterTextChanged { tilName.error = null }
@@ -83,11 +84,13 @@ class RegisterActivity : AppCompatActivity() {
                 onFailure = {
                     setLoading(false)
                     // Server-side errors (email taken, no connection) → field or dialog
-                    val msg = AuthUiHelper.translateError(this@RegisterActivity, it)
-                    if (msg.contains("correo", true)) {
-                        tilEmail.error = msg
+                    val error = AuthError.from(it)
+                    if (error.affectsEmail) {
+                        tilEmail.error = getString(error.messageRes)
                     } else {
-                        AuthUiHelper.showInfo(this@RegisterActivity, "Error", msg)
+                        AuthUiHelper.showInfo(
+                            this@RegisterActivity, getString(R.string.error_title), getString(error.messageRes)
+                        )
                     }
                 }
             )
@@ -103,26 +106,26 @@ class RegisterActivity : AppCompatActivity() {
         var firstErrorField: View? = null
 
         if (name.isBlank()) {
-            tilName.error = "Introduce tu nombre"
+            tilName.error = getString(R.string.register_error_name)
             firstErrorField = firstErrorField ?: etName
             valid = false
         }
 
         if (email.isBlank()) {
-            tilEmail.error = "Introduce tu correo"
+            tilEmail.error = getString(R.string.error_missing_email)
             firstErrorField = firstErrorField ?: etEmail
             valid = false
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            tilEmail.error = "El correo no tiene un formato válido"
+            tilEmail.error = getString(R.string.auth_error_invalid_email)
             firstErrorField = firstErrorField ?: etEmail
             valid = false
         }
 
         val passwordError = when {
-            password.isBlank()            -> "Introduce una contraseña"
-            password.length < 8           -> "Debe tener al menos 8 caracteres"
-            !password.any { it.isDigit() } -> "Debe incluir al menos un número"
-            !password.any { it.isLetter() } -> "Debe incluir al menos una letra"
+            password.isBlank()                    -> getString(R.string.register_error_password_empty)
+            password.length < MIN_PASSWORD_LENGTH -> getString(R.string.register_error_password_short, MIN_PASSWORD_LENGTH)
+            !password.any { it.isDigit() }        -> getString(R.string.register_error_password_digit)
+            !password.any { it.isLetter() }       -> getString(R.string.register_error_password_letter)
             else -> null
         }
         if (passwordError != null) {
@@ -132,7 +135,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         if (confirm != password || confirm.isBlank()) {
-            tilPasswordConfirm.error = "Las contraseñas no coinciden"
+            tilPasswordConfirm.error = getString(R.string.error_passwords_no_match)
             firstErrorField = firstErrorField ?: etPasswordConfirm
             valid = false
         }
@@ -158,5 +161,9 @@ class RegisterActivity : AppCompatActivity() {
     private fun setLoading(loading: Boolean) {
         progressOverlay.visibility = if (loading) View.VISIBLE else View.GONE
         btnRegister.isEnabled = !loading
+    }
+
+    private companion object {
+        const val MIN_PASSWORD_LENGTH = 8
     }
 }

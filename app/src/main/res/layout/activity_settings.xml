@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,13 +25,13 @@
             android:layout_height="44dp"
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Volver"
+            android:contentDescription="@string/back"
             app:tint="@color/text_on_dark" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ajustes"
+            android:text="@string/settings_title"
             android:textColor="@color/text_on_dark"
             android:textAppearance="@style/TextAppearance.DAMTest.Title"
             android:layout_marginStart="4dp" />
@@ -69,7 +70,7 @@
                         android:id="@+id/tvAvatar"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:text="A"
+                        tools:text="A"
                         android:gravity="center"
                         android:textColor="@color/text_on_dark"
                         android:textAppearance="@style/TextAppearance.DAMTest.Title"
@@ -84,7 +85,7 @@
                             android:id="@+id/tvProfileName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Usuario"
+                            tools:text="Usuario"
                             android:textAppearance="@style/TextAppearance.DAMTest.CardTitle" />
                         <TextView
                             android:id="@+id/tvProfileEmail"
@@ -97,7 +98,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Sección Notificaciones -->
-            <TextView style="@style/SettingsSectionHeader" android:text="NOTIFICACIONES" />
+            <TextView style="@style/SettingsSectionHeader" android:text="@string/settings_section_notifications" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -107,13 +108,13 @@
                     <!-- Recordatorios on/off -->
                     <LinearLayout style="@style/SettingsRow">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="🔔" android:textSize="18sp" />
+                            android:text="@string/icon_bell" android:textSize="18sp" />
                         <LinearLayout style="@style/SettingsRowText">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Recordatorios de estudio"
+                                android:text="@string/settings_reminder_title"
                                 android:textAppearance="@style/TextAppearance.DAMTest.Body" />
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Un aviso diario para practicar"
+                                android:text="@string/settings_reminder_subtitle"
                                 android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
                         </LinearLayout>
                         <com.google.android.material.materialswitch.MaterialSwitch
@@ -129,17 +130,17 @@
                         android:clickable="true" android:focusable="true"
                         android:background="?attr/selectableItemBackground">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="🕐" android:textSize="18sp" />
+                            android:text="@string/icon_clock" android:textSize="18sp" />
                         <LinearLayout style="@style/SettingsRowText">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Hora del recordatorio"
+                                android:text="@string/settings_reminder_hour_label"
                                 android:textAppearance="@style/TextAppearance.DAMTest.Body" />
                         </LinearLayout>
                         <TextView
                             android:id="@+id/tvReminderHour"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="18:00"
+                            tools:text="18:00"
                             android:textColor="@color/brand_primary"
                             android:textAppearance="@style/TextAppearance.DAMTest.Body"
                             android:textStyle="bold"
@@ -151,7 +152,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Sección Experiencia -->
-            <TextView style="@style/SettingsSectionHeader" android:text="EXPERIENCIA" />
+            <TextView style="@style/SettingsSectionHeader" android:text="@string/settings_section_experience" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -163,20 +164,20 @@
                         android:clickable="true" android:focusable="true"
                         android:background="?attr/selectableItemBackground">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="🎨" android:textSize="18sp" />
+                            android:text="@string/icon_palette" android:textSize="18sp" />
                         <LinearLayout style="@style/SettingsRowText">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Tema"
+                                android:text="@string/settings_theme_title"
                                 android:textAppearance="@style/TextAppearance.DAMTest.Body" />
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Claro, oscuro o el del sistema"
+                                android:text="@string/settings_theme_subtitle"
                                 android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
                         </LinearLayout>
                         <TextView
                             android:id="@+id/tvThemeValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Sistema"
+                            tools:text="Sistema"
                             android:textColor="@color/brand_primary"
                             android:textAppearance="@style/TextAppearance.DAMTest.Body"
                             android:textStyle="bold"
@@ -190,13 +191,13 @@
                     <!-- Vibración -->
                     <LinearLayout style="@style/SettingsRow">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:text="📳" android:textSize="18sp" />
+                            android:text="@string/icon_vibration" android:textSize="18sp" />
                         <LinearLayout style="@style/SettingsRowText">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Vibración"
+                                android:text="@string/settings_haptics_title"
                                 android:textAppearance="@style/TextAppearance.DAMTest.Body" />
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Al responder preguntas"
+                                android:text="@string/settings_haptics_subtitle"
                                 android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
                         </LinearLayout>
                         <com.google.android.material.materialswitch.MaterialSwitch
@@ -228,7 +229,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:padding="16dp">
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="🗑️" android:textSize="18sp" />
+                        android:text="@string/icon_trash" android:textSize="18sp" />
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -238,13 +239,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Eliminar cuenta"
+                            android:text="@string/delete_account_title"
                             android:textColor="@color/state_error"
                             android:textAppearance="@style/TextAppearance.DAMTest.Body" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Borra tu cuenta y todos tus datos"
+                            android:text="@string/delete_account_subtitle"
                             android:textAppearance="@style/TextAppearance.DAMTest.Caption" />
                     </LinearLayout>
                 </LinearLayout>
@@ -274,11 +275,11 @@
             android:background="?attr/selectableItemBackground"
             android:padding="16dp">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="🚪" android:textSize="18sp" />
+                android:text="@string/icon_door" android:textSize="18sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cerrar sesión"
+                android:text="@string/logout_title"
                 android:textColor="@color/state_error"
                 android:textAppearance="@style/TextAppearance.DAMTest.Body"
                 android:textStyle="bold"

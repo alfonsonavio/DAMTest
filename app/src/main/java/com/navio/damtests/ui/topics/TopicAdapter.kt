@@ -33,7 +33,7 @@ class TopicAdapter(
         val context = holder.itemView.context
         val percent = row.lastPercent
 
-        holder.tvName.text = row.topic.title
+        holder.tvName.text = row.topic.title.asString(context)
         holder.progress.progress = percent ?: 0
         if (percent == null) {
             holder.tvScore.text = context.getString(R.string.topic_not_done)

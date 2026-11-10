@@ -11,6 +11,9 @@ object StudyTopics {
     private const val CASO = "caso_"
     private const val REPASO = "repaso_"
 
+    /** Id of topic number [number], e.g. "tema_3". */
+    fun temaId(number: Int): String = "$TEMA$number"
+
     fun temaNumber(topicId: String): Int? =
         topicId.takeIf { it.startsWith(TEMA) }?.removePrefix(TEMA)?.toIntOrNull()
 

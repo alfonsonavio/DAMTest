@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Asignaturas"
+        android:text="@string/subjects_title"
         android:textAppearance="@style/TextAppearance.DAMTest.Headline"
         android:paddingHorizontal="20dp"
         android:paddingTop="24dp"
@@ -34,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="1º" />
+            android:text="@string/course_first" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCourse2"
@@ -42,7 +42,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="2º" />
+            android:text="@string/course_second" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <androidx.recyclerview.widget.RecyclerView

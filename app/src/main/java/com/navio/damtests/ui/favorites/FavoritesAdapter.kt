@@ -38,9 +38,14 @@ class FavoritesAdapter(
             2    -> q.optionC
             else -> q.optionD
         }
-        holder.tvSource.text   = "${SubjectCatalog.nameFor(q.subjectId)} · ${TopicNames.displayName(q.topicId)}"
+        val context = holder.itemView.context
+        holder.tvSource.text   = context.getString(
+            R.string.subject_and_topic,
+            SubjectCatalog.nameFor(q.subjectId).asString(context),
+            TopicNames.displayName(q.topicId).asString(context)
+        )
         holder.tvQuestion.text = q.text
-        holder.tvAnswer.text   = "✅ $correct"
+        holder.tvAnswer.text   = context.getString(R.string.favorites_correct_answer, correct)
         holder.btnRemove.setOnClickListener { onRemoveClick(q) }
     }
 

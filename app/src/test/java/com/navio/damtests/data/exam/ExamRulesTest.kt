@@ -1,9 +1,10 @@
 package com.navio.damtests.data.exam
 
+import com.navio.damtests.R
+import com.navio.damtests.core.UiText
 import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.ui.exam.ExamSetupDialog
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -27,8 +28,8 @@ class ExamRulesTest {
     @Test
     fun `each question gives a minute and a half`() {
         assertEquals(30 * 60L, Exam.durationSeconds(20))
-        assertEquals("45 min", Exam.durationLabel(30))
-        assertEquals("10 min 30 s", Exam.durationLabel(7))
+        assertEquals(UiText.Res(R.string.exam_duration_minutes, listOf(45L)), Exam.durationLabel(30))
+        assertEquals(UiText.Res(R.string.exam_duration_minutes_seconds, listOf(10L, 30L)), Exam.durationLabel(7))
     }
 
     @Test
