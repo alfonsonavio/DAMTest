@@ -120,7 +120,9 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         val dataSet = LineDataSet(entries, getString(R.string.statistics_chart_label)).apply {
             color = primary
             lineWidth = LINE_WIDTH_DP
-            mode = LineDataSet.Mode.CUBIC_BEZIER // smooth curve
+            // Smooth curve that never goes past its points: a cubic one overshoots
+            // below 0 between two 0 % tests and that stretch gets clipped.
+            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
             setDrawValues(false)
             setDrawCircles(true)
             setCircleColor(primary)
