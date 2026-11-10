@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.googleDevtoolsKsp)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    id("com.google.gms.google-services")
-    id("kotlin-parcelize")
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -20,8 +19,6 @@ android {
         targetSdk = 36
         versionCode = 4
         versionName = "1.1.2"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     applicationVariants.all {
@@ -49,85 +46,60 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
-        compose = true
         viewBinding = true
         buildConfig = true
     }
 }
 
 dependencies {
+    // AndroidX and Material
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.firebase.crashlytics.buildtools)
-    implementation(libs.material)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.activity)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.material)
 
     // Hilt — dependency injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    // Room — local database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
-    // Utilities
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("androidx.cardview:cardview:1.0.0")
-    implementation("com.google.android.material:material:1.11.0")
+    // Firebase (versions managed by the BoM)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.analytics)
+    implementation(libs.kotlinx.coroutines.play.services)
 
-    // AI
-    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    // Google sign-in via Credential Manager
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
-    // Firebase BoM — manages all Firebase SDK versions
-    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
+    // AI: Gemini, and Groq through its OpenAI-compatible API
+    implementation(libs.generativeai)
+    implementation(libs.openai.client)
 
-    // Firebase SDKs
-    implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-config")    // Remote Config
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore") // User progress sync
-    implementation("com.google.firebase:firebase-analytics")
+    // Statistics evolution chart
+    implementation(libs.mpandroidchart)
 
-    // Google Sign-In via Credential Manager
-    implementation("androidx.credentials:credentials:1.5.0")
-    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
-    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+    // Networking and serialization
+    implementation(libs.okhttp)
+    implementation(libs.gson)
 
-    // Networking
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
-    // Groq (via OpenAI-compatible client)
-    implementation("com.aallam.openai:openai-client:3.8.2")
-
-    // Unit testing
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.mockk:mockk:1.13.13")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("app.cash.turbine:turbine:1.1.0")
-
-    // WorkManager — scheduled study reminders
-    implementation("androidx.work:work-runtime-ktx:2.9.1")
-
-    // MPAndroidChart — statistics evolution chart
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    // Unit tests
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
