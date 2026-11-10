@@ -44,10 +44,10 @@ class SmartReviewSelectorTest {
 
     @Test
     fun `always failed question weighs more than always correct`() {
-        val failed  = stats("q1", seen = 10, wrong = 10, lastSeen = 1000L)
-        val correct = stats("q2", seen = 10, wrong = 0,  lastSeen = 1000L)
+        val failed = stats("q1", seen = 10, wrong = 10, lastSeen = 1000L)
+        val correct = stats("q2", seen = 10, wrong = 0, lastSeen = 1000L)
 
-        val wFailed  = selector.weightFor(failed,  now = 1000L)
+        val wFailed = selector.weightFor(failed, now = 1000L)
         val wCorrect = selector.weightFor(correct, now = 1000L)
 
         assertTrue("Failed question must weigh more", wFailed > wCorrect)
@@ -56,8 +56,8 @@ class SmartReviewSelectorTest {
     @Test
     fun `staleness increases weight for old questions`() {
         val stats = stats("q1", seen = 4, wrong = 0, lastSeen = 0L)
-        val recent = selector.weightFor(stats, now = 0L)                     // just seen
-        val old    = selector.weightFor(stats, now = 8L * 24 * 60 * 60 * 1000) // 8 days later
+        val recent = selector.weightFor(stats, now = 0L) // just seen
+        val old = selector.weightFor(stats, now = 8L * 24 * 60 * 60 * 1000) // 8 days later
 
         assertTrue("Older question must weigh more", old > recent)
     }

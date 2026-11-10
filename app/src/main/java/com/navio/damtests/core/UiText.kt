@@ -18,9 +18,11 @@ sealed interface UiText {
     /** Text that is data, not copy (e.g. an unknown subject id shown as is). */
     data class Raw(val text: String) : UiText
 
+    // Android's getString takes varargs: spreading a few arguments is the only way
+    @Suppress("SpreadOperator")
     fun asString(context: Context): String = when (this) {
-        is Res    -> context.getString(id, *args.toTypedArray())
+        is Res -> context.getString(id, *args.toTypedArray())
         is Plural -> context.resources.getQuantityString(id, count, *args.toTypedArray())
-        is Raw    -> text
+        is Raw -> text
     }
 }

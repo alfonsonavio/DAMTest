@@ -5,7 +5,9 @@ import android.util.Log
 import androidx.core.content.edit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONException
 import org.json.JSONObject
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -75,7 +77,7 @@ object PdfReleaseRepository {
             }
             cachedAssetNames = names
             names
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             Log.e(TAG, "Failed to fetch PDF list, using the last known one: ${e.message}")
             stored ?: emptySet()
         }
@@ -90,18 +92,21 @@ object PdfReleaseRepository {
             connection.setRequestProperty("User-Agent", "DAMTest-Android")
 
             val code = connection.responseCode
-            if (code != HttpURLConnection.HTTP_OK) error("GitHub API answered $code")
+            if (code != HttpURLConnection.HTTP_OK) throw IOException("GitHub API answered $code")
 
-            val json = connection.inputStream.bufferedReader().use { it.readText() }
-            val assets = JSONObject(json).getJSONArray("assets")
-            val names = mutableSetOf<String>()
-            for (i in 0 until assets.length()) {
-                names.add(assets.getJSONObject(i).getString("name"))
-            }
+            val names = parseAssetNames(connection.inputStream.bufferedReader().use { it.readText() })
             Log.d(TAG, "Fetched ${names.size} release assets")
             return names
         } finally {
             connection.disconnect()
         }
+    }
+
+    /** Names of the release's files. An unexpected answer is reported as an [IOException]. */
+    private fun parseAssetNames(json: String): Set<String> = try {
+        val assets = JSONObject(json).getJSONArray("assets")
+        (0 until assets.length()).mapTo(mutableSetOf()) { assets.getJSONObject(it).getString("name") }
+    } catch (e: JSONException) {
+        throw IOException("Unexpected answer from the GitHub API", e)
     }
 }

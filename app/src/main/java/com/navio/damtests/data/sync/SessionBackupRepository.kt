@@ -3,6 +3,7 @@ package com.navio.damtests.data.sync
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
+import com.navio.damtests.core.suspendRunCatching
 import com.navio.damtests.data.session.QuizSessionStore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -38,14 +39,12 @@ class SessionBackupRepository @Inject constructor(
      * finished test can't come back later on another device.
      */
     suspend fun restore(uid: String) {
-        try {
+        suspendRunCatching {
             val doc = ref(uid).get(Source.SERVER).await()
             val json = doc.getString("json") ?: return
             if (sessionStore.exportJson() == null) sessionStore.importJson(json)
             ref(uid).delete()
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to restore saved test: ${e.message}")
-        }
+        }.onFailure { Log.e(TAG, "Failed to restore saved test: ${it.message}") }
     }
 
     private companion object {

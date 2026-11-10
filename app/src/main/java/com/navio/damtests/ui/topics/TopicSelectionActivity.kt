@@ -7,12 +7,12 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.appbar.MaterialToolbar
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.navio.damtests.R
@@ -40,7 +40,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TopicSelectionActivity : AppCompatActivity() {
 
-    @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var quizRepository: QuizRepository
+
     @Inject lateinit var sessionStore: QuizSessionStore
 
     private val viewModel: TopicSelectionViewModel by viewModels()
@@ -68,7 +69,7 @@ class TopicSelectionActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
-            title     = SubjectCatalog.nameFor(subjectId).asString(this@TopicSelectionActivity)
+            title = SubjectCatalog.nameFor(subjectId).asString(this@TopicSelectionActivity)
                 .uppercase(resources.configuration.locales[0])
             elevation = 0f
         }
@@ -78,7 +79,7 @@ class TopicSelectionActivity : AppCompatActivity() {
 
         adapter = TopicAdapter(
             onTopicClick = { row -> openTopic(row.topic.id) },
-            onPdfClick   = { row -> pdfOpener.open(subjectId, row.topic.id) }
+            onPdfClick = { row -> pdfOpener.open(subjectId, row.topic.id) }
         )
         findViewById<RecyclerView>(R.id.rvTopics).apply {
             padForSystemBars(bottom = true)
@@ -103,11 +104,11 @@ class TopicSelectionActivity : AppCompatActivity() {
 
     private fun bindViews() {
         practiceSection = findViewById(R.id.practiceSection)
-        cardExam        = findViewById(R.id.cardExam)
-        cardReview      = findViewById(R.id.cardSmartReview)
+        cardExam = findViewById(R.id.cardExam)
+        cardReview = findViewById(R.id.cardSmartReview)
         cardGeneralTest = findViewById(R.id.cardGeneralTest)
-        cardFavorites   = findViewById(R.id.cardFavorites)
-        tvTopicsHeader  = findViewById(R.id.tvTopicsHeader)
+        cardFavorites = findViewById(R.id.cardFavorites)
+        tvTopicsHeader = findViewById(R.id.tvTopicsHeader)
     }
 
     private fun setupPracticeCards() {
@@ -139,27 +140,42 @@ class TopicSelectionActivity : AppCompatActivity() {
 
         // A subject with only PDFs so far has nothing to practise
         practiceSection.visibility = if (practice.hasQuestions) View.VISIBLE else View.GONE
-        cardExam.visibility        = if (practice.hasGeneralTest) View.VISIBLE else View.GONE
+        cardExam.visibility = if (practice.hasGeneralTest) View.VISIBLE else View.GONE
         cardGeneralTest.visibility = if (practice.hasGeneralTest) View.VISIBLE else View.GONE
 
         setSubtitle(cardExam, getString(R.string.practice_exam_subtitle))
         setSubtitle(
             cardGeneralTest,
-            getString(if (practice.hasHalves) R.string.practice_general_subtitle_ranges
-            else R.string.practice_general_subtitle)
+            getString(
+                if (practice.hasHalves) {
+                    R.string.practice_general_subtitle_ranges
+                } else {
+                    R.string.practice_general_subtitle
+                }
+            )
         )
         setSubtitle(
             cardReview,
-            if (state.failedCount == 0) getString(R.string.practice_review_none)
-            else resources.getQuantityString(R.plurals.practice_review_count, state.failedCount, state.failedCount)
+            if (state.failedCount == 0) {
+                getString(R.string.practice_review_none)
+            } else {
+                resources.getQuantityString(R.plurals.practice_review_count, state.failedCount, state.failedCount)
+            }
         )
         setSubtitle(
             cardFavorites,
-            if (state.favoriteCount == 0) getString(R.string.practice_favorites_none)
-            else resources.getQuantityString(R.plurals.practice_favorites_count, state.favoriteCount, state.favoriteCount)
+            if (state.favoriteCount == 0) {
+                getString(R.string.practice_favorites_none)
+            } else {
+                resources.getQuantityString(
+                    R.plurals.practice_favorites_count,
+                    state.favoriteCount,
+                    state.favoriteCount
+                )
+            }
         )
         // Modes without anything to practise yet look inactive (but still explain why on tap)
-        cardReview.alpha    = if (state.failedCount == 0) INACTIVE_ALPHA else 1f
+        cardReview.alpha = if (state.failedCount == 0) INACTIVE_ALPHA else 1f
         cardFavorites.alpha = if (state.favoriteCount == 0) INACTIVE_ALPHA else 1f
 
         tvTopicsHeader.text = getString(R.string.topics_header, state.topics.size)
@@ -169,7 +185,7 @@ class TopicSelectionActivity : AppCompatActivity() {
     // --- Practice modes ---
 
     private suspend fun showExamSetup() {
-        val counts = ExamRange.entries.associateWith { repository.countExamQuestions(subjectId, it) }
+        val counts = ExamRange.entries.associateWith { quizRepository.countExamQuestions(subjectId, it) }
         val ranges = ExamSetupDialog.availableRanges(counts)
         if (ranges.isEmpty()) {
             AuthUiHelper.showInfo(this, getString(R.string.no_questions_title), getString(R.string.no_questions_yet))
@@ -183,7 +199,9 @@ class TopicSelectionActivity : AppCompatActivity() {
     private fun openSmartReview() {
         if (viewModel.state.value.failedCount == 0) {
             AuthUiHelper.showInfo(
-                this, getString(R.string.practice_review_title), getString(R.string.practice_review_empty)
+                this,
+                getString(R.string.practice_review_title),
+                getString(R.string.practice_review_empty)
             )
         } else {
             openTopic(TestMode.SMART_REVIEW.topicId)
@@ -193,7 +211,9 @@ class TopicSelectionActivity : AppCompatActivity() {
     private fun openFavorites() {
         if (viewModel.state.value.favoriteCount == 0) {
             AuthUiHelper.showInfo(
-                this, getString(R.string.practice_favorites_title), getString(R.string.practice_favorites_empty)
+                this,
+                getString(R.string.practice_favorites_title),
+                getString(R.string.practice_favorites_empty)
             )
         } else {
             openTopic(TestMode.FAVORITES.topicId)
@@ -229,7 +249,7 @@ class TopicSelectionActivity : AppCompatActivity() {
             when {
                 sessionStore.load()?.isFor(subjectId, topicId) == true ->
                     QuizLauncher.open(this@TopicSelectionActivity, sessionStore, subjectId, topicId)
-                isTestMode || repository.hasQuestions(subjectId, topicId) ->
+                isTestMode || quizRepository.hasQuestions(subjectId, topicId) ->
                     QuizLauncher.start(this@TopicSelectionActivity, subjectId, topicId, resume = false)
                 else -> AuthUiHelper.showInfo(
                     this@TopicSelectionActivity,

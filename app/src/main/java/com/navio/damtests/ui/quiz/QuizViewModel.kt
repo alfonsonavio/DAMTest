@@ -3,14 +3,19 @@ package com.navio.damtests.ui.quiz
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.navio.damtests.ai.FastExplainer
+import com.navio.damtests.core.suspendRunCatching
+import com.navio.damtests.data.favorites.FavoritesRepository
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.TestMode
+import com.navio.damtests.data.quiz.correctOptionText
 import com.navio.damtests.data.quiz.shuffle
 import com.navio.damtests.data.session.QuizSession
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.session.SavedAnswer
+import com.navio.damtests.data.topics.StudyTopics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +28,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class QuizViewModel @Inject constructor(
-    private val repository: QuizRepository,
+    private val quizRepository: QuizRepository,
+    private val progressRepository: ProgressRepository,
+    private val favoritesRepository: FavoritesRepository,
     private val sessionStore: QuizSessionStore,
     private val fastExplainer: FastExplainer
 ) : ViewModel() {
@@ -80,7 +87,7 @@ class QuizViewModel @Inject constructor(
 
     /** Whether the question on screen is marked as favourite. */
     val isCurrentFavorite: StateFlow<Boolean> by lazy {
-        combine(_currentQuestion, repository.getFavoriteIds()) { current, ids ->
+        combine(_currentQuestion, favoritesRepository.getFavoriteIds()) { current, ids ->
             current != null && current.question.stableId in ids
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
     }
@@ -89,12 +96,13 @@ class QuizViewModel @Inject constructor(
     fun toggleFavorite() {
         val question = _currentQuestion.value?.question ?: return
         val favorite = !isCurrentFavorite.value
-        viewModelScope.launch { repository.setFavorite(question, favorite) }
+        viewModelScope.launch { favoritesRepository.setFavorite(question, favorite) }
     }
 
     /** Instant AI feedback for a wrong answer to the current question. */
     sealed class AiFeedback {
         object Loading : AiFeedback()
+
         /** [wrong] is null when the model did not return the two-part format. */
         data class Ready(val wrong: String?, val correct: String) : AiFeedback()
         object Error : AiFeedback()
@@ -149,14 +157,16 @@ class QuizViewModel @Inject constructor(
             val limit = if (mode != null) MODE_TEST_SIZE else TOPIC_TEST_SIZE
 
             _questions.value = when (mode) {
-                TestMode.GENERAL_ALL         -> repository.getRandomQuestionsForGeneralTest(subjectId, limit)
-                TestMode.GENERAL_FIRST_HALF  -> repository.getQuestionsForRange(subjectId, 1, 10, limit)
-                TestMode.GENERAL_SECOND_HALF -> repository.getQuestionsForRange(subjectId, 11, 20, limit)
-                TestMode.SMART_REVIEW        -> repository.getSmartReviewQuestions(subjectId, limit)
-                TestMode.FAVORITES           -> repository.getFavoriteQuestions(subjectId, limit)
+                TestMode.GENERAL_ALL -> quizRepository.getRandomQuestionsForGeneralTest(subjectId, limit)
+                TestMode.GENERAL_FIRST_HALF ->
+                    quizRepository.getQuestionsForRange(subjectId, StudyTopics.FIRST_HALF, limit)
+                TestMode.GENERAL_SECOND_HALF ->
+                    quizRepository.getQuestionsForRange(subjectId, StudyTopics.SECOND_HALF, limit)
+                TestMode.SMART_REVIEW -> quizRepository.getSmartReviewQuestions(subjectId, limit)
+                TestMode.FAVORITES -> favoritesRepository.getFavoriteQuestions(subjectId, limit)
                 // Exams have their own screen; a regular topic loads its questions
-                else -> repository.getQuestionsByTopic(subjectId, topicId, limit)
-            }.distinctBy { it.text }  // prevent duplicates if Room has stale rows
+                else -> quizRepository.getQuestionsByTopic(subjectId, topicId, limit)
+            }.distinctBy { it.text } // prevent duplicates if Room has stale rows
 
             showQuestion(0)
             _noQuestions.value = _questions.value.isEmpty()
@@ -175,22 +185,17 @@ class QuizViewModel @Inject constructor(
         // Ignore extra taps after the answer is already recorded
         if (_currentAnswerState.value != null) return null
 
-        val correctText = when (currentQuestion.correctOptionIndex) {
-            0    -> currentQuestion.optionA
-            1    -> currentQuestion.optionB
-            2    -> currentQuestion.optionC
-            else -> currentQuestion.optionD
-        }
+        val correctText = currentQuestion.correctOptionText
 
-        val isCorrect      = selectedText == correctText
-        val uiIndex        = shuffledOptions.indexOf(selectedText)
+        val isCorrect = selectedText == correctText
+        val uiIndex = shuffledOptions.indexOf(selectedText)
         val correctUiIndex = shuffledOptions.indexOf(correctText)
 
         _resultsList.add(QuestionResult(currentQuestion, uiIndex, shuffledOptions, isCorrect))
         if (isCorrect) _score.value += 1
 
         viewModelScope.launch {
-            repository.recordAnswer(currentQuestion, isCorrect)
+            progressRepository.recordAnswer(currentQuestion, isCorrect)
         }
         saveSession()
 
@@ -233,16 +238,18 @@ class QuizViewModel @Inject constructor(
         aiJob?.cancel()
         _aiFeedback.value = AiFeedback.Loading
         aiJob = viewModelScope.launch {
-            _aiFeedback.value = try {
-                val response = fastExplainer.explainQuickly(question, chosen, correct)
-                val parts = response.split("|")
-                if (parts.size >= 2) AiFeedback.Ready(parts[0].trim(), parts[1].trim())
-                else AiFeedback.Ready(null, response.trim())
-            } catch (e: kotlinx.coroutines.CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                AiFeedback.Error
-            }
+            _aiFeedback.value = suspendRunCatching { fastExplainer.explainQuickly(question, chosen, correct) }
+                .fold(onSuccess = ::parseAiFeedback, onFailure = { AiFeedback.Error })
+        }
+    }
+
+    /** The fast model answers "why yours is wrong | why the right one is right". */
+    private fun parseAiFeedback(response: String): AiFeedback {
+        val parts = response.split("|")
+        return if (parts.size >= 2) {
+            AiFeedback.Ready(parts[0].trim(), parts[1].trim())
+        } else {
+            AiFeedback.Ready(null, response.trim())
         }
     }
 
@@ -283,13 +290,13 @@ class QuizViewModel @Inject constructor(
 
         sessionStore.save(
             QuizSession(
-                subjectId   = currentSubjectId,
-                topicId     = currentTopicId,
+                subjectId = currentSubjectId,
+                topicId = currentTopicId,
                 questionIds = questions.map { it.stableId },
-                answers     = _resultsList.map {
+                answers = _resultsList.map {
                     SavedAnswer(it.question.stableId, it.userSelectedIndex, it.shuffledOptions, it.isCorrect)
                 },
-                score       = _score.value
+                score = _score.value
             )
         )
     }
@@ -301,7 +308,7 @@ class QuizViewModel @Inject constructor(
      */
     private suspend fun restoreSession(subjectId: String, topicId: String): Boolean {
         val session = sessionStore.load()?.takeIf { it.isFor(subjectId, topicId) } ?: return false
-        val questions = repository.getQuestionsInOrder(session.questionIds)
+        val questions = quizRepository.getQuestionsInOrder(session.questionIds)
         if (questions == null || session.answeredCount > questions.size) {
             sessionStore.clear()
             return false
@@ -323,7 +330,7 @@ class QuizViewModel @Inject constructor(
      */
     private fun recordPracticeAttempt(subjectId: String, topicId: String) {
         viewModelScope.launch {
-            repository.recordTestAttempt(
+            progressRepository.recordTestAttempt(
                 subjectId = subjectId,
                 topicId = topicId,
                 score = _score.value,
@@ -339,24 +346,24 @@ class QuizViewModel @Inject constructor(
             // before anything that touches the network guarantees it reaches
             // Statistics even if the coroutine is cancelled afterwards.
             // Reached only for non-smart-review tests (guarded in finishTest).
-            repository.recordTestAttempt(
+            progressRepository.recordTestAttempt(
                 subjectId = subjectId,
                 topicId = topicId,
                 score = _score.value,
                 totalQuestions = _questions.value.size
             )
 
-            val previous         = repository.getProgress(subjectId, topicId)
+            val previous = progressRepository.getProgress(subjectId, topicId)
             val newAttemptsCount = (previous?.attemptsCount ?: 0) + 1
 
-            repository.updateProgress(
+            progressRepository.updateProgress(
                 TopicProgress(
-                    subjectId             = subjectId,
-                    topicId               = topicId,
-                    lastScore             = _score.value,
-                    totalQuestions        = _questions.value.size,
-                    attemptsCount         = newAttemptsCount,
-                    lastAttemptTimestamp  = System.currentTimeMillis()
+                    subjectId = subjectId,
+                    topicId = topicId,
+                    lastScore = _score.value,
+                    totalQuestions = _questions.value.size,
+                    attemptsCount = newAttemptsCount,
+                    lastAttemptTimestamp = System.currentTimeMillis()
                 )
             )
         }

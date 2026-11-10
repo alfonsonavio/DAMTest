@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -22,7 +23,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.navio.damtests.R
 import com.navio.damtests.data.catalog.SubjectCatalog
 import com.navio.damtests.data.catalog.TopicNames
-import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.statistics.EvolutionPoint
 import com.navio.damtests.data.statistics.StatisticsData
 import com.navio.damtests.data.statistics.SubjectAccuracy
@@ -41,7 +42,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
-    @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var progressRepository: ProgressRepository
+
     @Inject lateinit var statsSyncRepository: StatsSyncRepository
 
     private var selectedCourse = 1
@@ -72,13 +74,13 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         loadJob?.cancel() // a newer load (e.g. a quick 1º/2º switch) wins
         loadJob = viewLifecycleOwner.lifecycleScope.launch {
             val subjectIds = subjectIdsForCourse(selectedCourse)
-            val data = repository.getStatistics(subjectIds)
+            val data = progressRepository.getStatistics(subjectIds)
             render(view, data)
         }
     }
 
     private fun render(view: View, data: StatisticsData) {
-        val emptyState   = view.findViewById<LinearLayout>(R.id.emptyState)
+        val emptyState = view.findViewById<LinearLayout>(R.id.emptyState)
         val contentState = view.findViewById<LinearLayout>(R.id.contentState)
 
         if (data.isEmpty) {
@@ -90,9 +92,9 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         contentState.isVisible = true
 
         // KPIs
-        view.findViewById<TextView>(R.id.tvAccuracy).text = "${data.globalAccuracy}%"
-        view.findViewById<TextView>(R.id.tvTotalTests).text = data.totalTests.toString()
-        view.findViewById<TextView>(R.id.tvSubjectsStudied).text = data.bySubject.size.toString()
+        view.findViewById<TextView>(R.id.tvAccuracy).text = getString(R.string.percent, data.globalAccuracy)
+        view.findViewById<TextView>(R.id.tvTotalTests).text = getString(R.string.number, data.totalTests)
+        view.findViewById<TextView>(R.id.tvSubjectsStudied).text = getString(R.string.number, data.bySubject.size)
 
         renderEvolutionChart(view, data.evolution)
         renderSubjectBars(view, data.bySubject)
@@ -117,21 +119,21 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
         val dataSet = LineDataSet(entries, getString(R.string.statistics_chart_label)).apply {
             color = primary
-            lineWidth = 2.5f
-            mode = LineDataSet.Mode.CUBIC_BEZIER   // smooth curve
+            lineWidth = LINE_WIDTH_DP
+            mode = LineDataSet.Mode.CUBIC_BEZIER // smooth curve
             setDrawValues(false)
             setDrawCircles(true)
             setCircleColor(primary)
-            circleRadius = 4f
+            circleRadius = POINT_RADIUS_DP
             setDrawCircleHole(true)
-            circleHoleRadius = 2f
+            circleHoleRadius = POINT_HOLE_RADIUS_DP
             // Gradient fill fading downwards
             setDrawFilled(true)
             fillDrawable = GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 intArrayOf(
-                    (primary and 0x00FFFFFF) or 0x40000000, // ~25% alpha
-                    (primary and 0x00FFFFFF)                 // 0% alpha
+                    ColorUtils.setAlphaComponent(primary, FILL_TOP_ALPHA),
+                    ColorUtils.setAlphaComponent(primary, 0)
                 )
             )
             highLightColor = primary
@@ -147,7 +149,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
             axisRight.isEnabled = false
             axisLeft.apply {
                 axisMinimum = 0f
-                axisMaximum = 100f
+                axisMaximum = MAX_PERCENT
                 setDrawGridLines(true)
                 gridColor = ContextCompat.getColor(requireContext(), R.color.surface_border)
                 textColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
@@ -159,7 +161,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
                 setDrawAxisLine(false)
                 setDrawLabels(false)
             }
-            animateX(600)
+            animateX(CHART_ANIMATION_MS)
             invalidate()
         }
     }
@@ -178,9 +180,9 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
             bar.progress = item.accuracy
             // Tint the percentage text by level
             val colorRes = when {
-                item.accuracy >= 70 -> R.color.state_success
-                item.accuracy >= 45 -> R.color.brand_primary
-                else                -> R.color.state_error
+                item.accuracy >= GOOD_ACCURACY -> R.color.state_success
+                item.accuracy >= FAIR_ACCURACY -> R.color.brand_primary
+                else -> R.color.state_error
             }
             row.findViewById<TextView>(R.id.tvSubjectPercent)
                 .setTextColor(ContextCompat.getColor(requireContext(), colorRes))
@@ -215,4 +217,18 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
     private fun subjectIdsForCourse(course: Int): List<String> =
         SubjectCatalog.all.filter { it.course == course }.map { it.id }
+
+    private companion object {
+        // Evolution chart
+        const val LINE_WIDTH_DP = 2.5f
+        const val POINT_RADIUS_DP = 4f
+        const val POINT_HOLE_RADIUS_DP = 2f
+        const val FILL_TOP_ALPHA = 0x40 // ~25 %, fading to transparent
+        const val MAX_PERCENT = 100f
+        const val CHART_ANIMATION_MS = 600
+
+        // Accuracy (%) from which a subject bar is shown as good or fair
+        const val GOOD_ACCURACY = 70
+        const val FAIR_ACCURACY = 45
+    }
 }

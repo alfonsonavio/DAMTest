@@ -14,6 +14,7 @@ import com.navio.damtests.data.catalog.SubjectCatalog
 import com.navio.damtests.data.local.entity.Subject
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.data.pdf.PdfReleaseRepository
+import com.navio.damtests.data.progress.ProgressRepository
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.sync.FirebaseSyncManager
 import com.navio.damtests.ui.common.AuthUiHelper
@@ -36,7 +37,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
 
-    @Inject lateinit var repository: QuizRepository
+    @Inject lateinit var quizRepository: QuizRepository
+
+    @Inject lateinit var progressRepository: ProgressRepository
 
     private lateinit var rv: RecyclerView
     private var selectedCourse = 1
@@ -59,7 +62,7 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.getAllProgress().collect { progressList ->
+                progressRepository.getAllProgress().collect { progressList ->
                     latestProgress = progressList
                     renderSubjects()
                 }
@@ -109,8 +112,8 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
     }
 
     private suspend fun subjectHasContent(subject: Subject): Boolean =
-        repository.subjectHasContent(subject.id) ||
-                PdfReleaseRepository.getTopicIdsWithPdf(requireContext(), subject.id).isNotEmpty()
+        quizRepository.subjectHasContent(subject.id) ||
+            PdfReleaseRepository.getTopicIdsWithPdf(requireContext(), subject.id).isNotEmpty()
 
     private companion object {
         const val SYNC_WAIT_MS = 60_000L

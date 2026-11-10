@@ -1,5 +1,6 @@
 package com.navio.damtests.data.statistics
 
+import com.navio.damtests.core.percentOf
 import com.navio.damtests.data.local.entity.QuestionStats
 import com.navio.damtests.data.local.entity.TestAttempt
 
@@ -16,7 +17,7 @@ class StatisticsCalculator {
     companion object {
         private const val MAX_EVOLUTION_POINTS = 10
         private const val MAX_WEAK_TOPICS = 5
-        private const val WEAK_TOPIC_MIN_SEEN = 3   // ignore barely-seen topics
+        private const val WEAK_TOPIC_MIN_SEEN = 3 // ignore barely-seen topics
         private const val WEAK_TOPIC_MIN_FAILURE = 40 // only show topics failed ≥40%
     }
 
@@ -33,18 +34,18 @@ class StatisticsCalculator {
     ): StatisticsData {
         return StatisticsData(
             globalAccuracy = globalAccuracy(stats),
-            totalTests     = maxOf(completedTests ?: 0, attempts.size),
-            evolution      = evolution(attempts),
-            bySubject      = bySubject(stats),
-            weakestTopics  = weakestTopics(stats)
+            totalTests = maxOf(completedTests ?: 0, attempts.size),
+            evolution = evolution(attempts),
+            bySubject = bySubject(stats),
+            weakestTopics = weakestTopics(stats)
         )
     }
 
     /** % correct across every answered question. */
     private fun globalAccuracy(stats: List<QuestionStats>): Int {
-        val seen    = stats.sumOf { it.timesSeen }
+        val seen = stats.sumOf { it.timesSeen }
         val correct = stats.sumOf { it.timesCorrect }
-        return if (seen > 0) (correct * 100) / seen else 0
+        return percentOf(correct, seen)
     }
 
     /** The last [MAX_EVOLUTION_POINTS] attempts as score-% points, chronological. */
@@ -60,11 +61,11 @@ class StatisticsCalculator {
         return stats
             .groupBy { it.subjectId }
             .map { (subjectId, list) ->
-                val seen    = list.sumOf { it.timesSeen }
+                val seen = list.sumOf { it.timesSeen }
                 val correct = list.sumOf { it.timesCorrect }
                 SubjectAccuracy(
                     subjectId = subjectId,
-                    accuracy  = if (seen > 0) (correct * 100) / seen else 0
+                    accuracy = if (seen > 0) (correct * 100) / seen else 0
                 )
             }
             .sortedByDescending { it.accuracy }
@@ -81,10 +82,10 @@ class StatisticsCalculator {
 
         return byTopic.mapNotNull { (key, list) ->
             val (subjectId, topicId) = key
-            val seen  = list.sumOf { it.timesSeen }
+            val seen = list.sumOf { it.timesSeen }
             val wrong = list.sumOf { it.timesWrong }
             if (seen < WEAK_TOPIC_MIN_SEEN) return@mapNotNull null
-            val failurePercent = (wrong * 100) / seen
+            val failurePercent = percentOf(wrong, seen)
             if (failurePercent < WEAK_TOPIC_MIN_FAILURE) return@mapNotNull null
             WeakTopic(subjectId, topicId, failurePercent)
         }

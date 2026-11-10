@@ -46,27 +46,6 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <!-- Estilo de botón principal (periwinkle, texto Inter, esquinas 12dp) -->
-    <style name="Widget.DAMTest.Button" parent="Widget.Material3.Button">
-        <item name="backgroundTint">@color/brand_primary</item>
-        <item name="android:textColor">@color/text_on_dark</item>
-        <item name="android:textAppearance">@style/TextAppearance.DAMTest.Button</item>
-        <item name="cornerRadius">12dp</item>
-        <item name="android:paddingTop">14dp</item>
-        <item name="android:paddingBottom">14dp</item>
-    </style>
-
-    <!-- Botones de respuesta del quiz -->
-    <style name="Widget.DAMTest.QuizOption" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:textAppearance">@style/TextAppearance.DAMTest.Body</item>
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="strokeColor">@color/surface_border</item>
-        <item name="backgroundTint">@color/surface</item>
-        <item name="cornerRadius">12dp</item>
-        <item name="android:layout_marginBottom">12dp</item>
-        <item name="android:padding">16dp</item>
-        <item name="android:gravity">start|center_vertical</item>
-    </style>
 
     <style name="HomeStatPill">
         <item name="android:layout_width">0dp</item>

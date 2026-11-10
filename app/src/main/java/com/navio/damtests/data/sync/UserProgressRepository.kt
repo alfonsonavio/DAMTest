@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
+import com.navio.damtests.core.suspendRunCatching
 import com.navio.damtests.data.local.entity.TopicProgress
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -50,14 +51,13 @@ class UserProgressRepository @Inject constructor(
         Log.d(TAG, "Uploaded ${allProgress.size} progress records")
     }
 
-    suspend fun downloadAllProgress(uid: String): List<TopicProgress> {
-        return try {
+    suspend fun downloadAllProgress(uid: String): List<TopicProgress> =
+        suspendRunCatching {
             progressCollection(uid).get().await().documents.mapNotNull { it.toTopicProgress() }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to download progress: ${e.message}")
+        }.getOrElse {
+            Log.e(TAG, "Failed to download progress: ${it.message}")
             emptyList()
         }
-    }
 
     /**
      * Makes sure the server has every local progress record, and waits for the
@@ -90,21 +90,21 @@ class UserProgressRepository @Inject constructor(
         firestore.collection("users").document(uid).collection("progress")
 
     private fun TopicProgress.toMap() = mapOf(
-        "subjectId"            to subjectId,
-        "topicId"              to topicId,
-        "lastScore"            to lastScore,
-        "totalQuestions"       to totalQuestions,
-        "attemptsCount"        to attemptsCount,
+        "subjectId" to subjectId,
+        "topicId" to topicId,
+        "lastScore" to lastScore,
+        "totalQuestions" to totalQuestions,
+        "attemptsCount" to attemptsCount,
         "lastAttemptTimestamp" to lastAttemptTimestamp
     )
 
     private fun DocumentSnapshot.toTopicProgress(): TopicProgress? {
         return TopicProgress(
-            subjectId            = getString("subjectId") ?: return null,
-            topicId              = getString("topicId") ?: return null,
-            lastScore            = (getLong("lastScore") ?: 0).toInt(),
-            totalQuestions       = (getLong("totalQuestions") ?: 0).toInt(),
-            attemptsCount        = (getLong("attemptsCount") ?: 0).toInt(),
+            subjectId = getString("subjectId") ?: return null,
+            topicId = getString("topicId") ?: return null,
+            lastScore = (getLong("lastScore") ?: 0).toInt(),
+            totalQuestions = (getLong("totalQuestions") ?: 0).toInt(),
+            attemptsCount = (getLong("attemptsCount") ?: 0).toInt(),
             lastAttemptTimestamp = getLong("lastAttemptTimestamp") ?: 0L
         )
     }

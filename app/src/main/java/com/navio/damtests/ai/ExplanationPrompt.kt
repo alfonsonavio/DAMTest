@@ -1,6 +1,7 @@
 package com.navio.damtests.ai
 
 import com.navio.damtests.data.local.entity.Question
+import com.navio.damtests.data.quiz.correctOptionText
 
 /**
  * Prompt of the review's "Ver explicación", shared by every AI provider so
@@ -20,9 +21,7 @@ object ExplanationPrompt {
      *                      value for a question left blank in an exam.
      */
     fun build(question: Question, shownOptions: List<String>, selectedIndex: Int): String {
-        val correctText = listOf(question.optionA, question.optionB, question.optionC, question.optionD)
-            .getOrElse(question.correctOptionIndex) { question.optionA }
-        val correct = letter(shownOptions.indexOf(correctText))
+        val correct = letter(shownOptions.indexOf(question.correctOptionText))
         val answered = selectedIndex >= 0
 
         return buildString {
@@ -55,7 +54,10 @@ object ExplanationPrompt {
                 appendLine("2. Qué distingue a las otras opciones de la correcta.")
             }
             appendLine()
-            appendLine("Cuando nombres una opción, usa siempre su letra (a, b, c o d) tal y como aparece arriba; nunca uses números.")
+            appendLine(
+                "Cuando nombres una opción, usa siempre su letra (a, b, c o d) tal y como aparece arriba; " +
+                    "nunca uses números."
+            )
             appendLine("Sé pedagógico y conciso. No uses listas con guiones ni formato Markdown, solo texto plano.")
             append("Termina con una frase de ánimo breve.")
         }

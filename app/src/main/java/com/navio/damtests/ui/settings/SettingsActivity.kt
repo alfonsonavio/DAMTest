@@ -42,8 +42,11 @@ import javax.inject.Inject
 class SettingsActivity : AppCompatActivity() {
 
     @Inject lateinit var settings: SettingsManager
+
     @Inject lateinit var authManager: AuthManager
+
     @Inject lateinit var logoutManager: LogoutManager
+
     @Inject lateinit var accountDeletionManager: AccountDeletionManager
 
     private lateinit var switchReminders: MaterialSwitch
@@ -111,12 +114,12 @@ class SettingsActivity : AppCompatActivity() {
         val tvHour = findViewById<TextView>(R.id.tvReminderHour)
 
         switch.isChecked = settings.remindersEnabled
-        updateHourRowState(rowHour, tvHour, settings.remindersEnabled)
+        updateHourRowState(rowHour, settings.remindersEnabled)
         tvHour.text = formatTime(settings.reminderHour, settings.reminderMinute)
 
         switch.setOnCheckedChangeListener { _, isChecked ->
             settings.remindersEnabled = isChecked
-            updateHourRowState(rowHour, tvHour, isChecked)
+            updateHourRowState(rowHour, isChecked)
             // Apply immediately (replace=true so a re-enable picks up the current time)
             if (isChecked) {
                 if (hasNotificationPermission()) {
@@ -144,6 +147,7 @@ class SettingsActivity : AppCompatActivity() {
             .setHour(settings.reminderHour)
             .setMinute(settings.reminderMinute)
             .setTitleText(R.string.settings_reminder_hour_label)
+            .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
             .build()
         listenToTimePicker(picker)
         picker.show(supportFragmentManager, TIME_PICKER_TAG)
@@ -161,8 +165,8 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun hasNotificationPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
 
     /**
      * Explains why the reminder stayed off. If Android no longer shows the
@@ -290,8 +294,8 @@ class SettingsActivity : AppCompatActivity() {
         )
     }
 
-    private fun updateHourRowState(row: View, tvHour: TextView, enabled: Boolean) {
-        row.alpha = if (enabled) 1f else 0.4f
+    private fun updateHourRowState(row: View, enabled: Boolean) {
+        row.alpha = if (enabled) 1f else DISABLED_ROW_ALPHA
         row.isClickable = enabled
     }
 
@@ -300,5 +304,8 @@ class SettingsActivity : AppCompatActivity() {
 
     private companion object {
         const val TIME_PICKER_TAG = "reminder_time_picker"
+
+        /** The reminder time row looks disabled while reminders are off. */
+        const val DISABLED_ROW_ALPHA = 0.4f
     }
 }

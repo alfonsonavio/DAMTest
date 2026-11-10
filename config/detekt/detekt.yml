@@ -1,0 +1,41 @@
+# detekt configuration for DAMTest.
+# Builds on detekt's default rules (buildUponDefaultConfig = true): only the
+# differences from the defaults are listed here, each with its reason.
+
+config:
+  validation: true
+
+complexity:
+  TooManyFunctions:
+    # Activities and repositories group many small private helpers on purpose
+    thresholdInFiles: 20
+    thresholdInClasses: 20
+    thresholdInInterfaces: 20
+    thresholdInObjects: 20
+    ignorePrivate: true
+  LongParameterList:
+    # Intent builders take every value a screen needs
+    functionThreshold: 7
+    ignoreDefaultParameters: true
+
+style:
+  ReturnCount:
+    max: 3
+    excludeGuardClauses: true
+  MaxLineLength:
+    maxLineLength: 120
+  MagicNumber:
+    # Android layout code and tests use literal sizes and fixtures
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreEnums: true
+    ignoreNamedArgument: true
+
+naming:
+  FunctionNaming:
+    # Unit tests use descriptive names in backticks
+    excludes: ['**/test/**']
+
+formatting:
+  MaximumLineLength:
+    maxLineLength: 120

@@ -13,8 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  unit-tests:
-    name: Unit tests
+  checks:
+    name: Static analysis and unit tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -46,13 +46,17 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
 
-      - name: Run unit tests
-        run: ./gradlew testDebugUnitTest --stacktrace
+      # --continue runs every check even if one fails, so a single run shows all problems
+      - name: detekt, Android Lint and unit tests
+        run: ./gradlew detekt lintDebug testDebugUnitTest --continue --stacktrace
 
-      - name: Upload test report
+      - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-report
-          path: app/build/reports/tests/testDebugUnitTest
+          name: reports
+          path: |
+            app/build/reports/detekt
+            app/build/reports/lint-results*
+            app/build/reports/tests/testDebugUnitTest
           if-no-files-found: ignore

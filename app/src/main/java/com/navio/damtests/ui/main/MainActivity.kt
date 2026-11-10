@@ -43,8 +43,11 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var repository: QuizRepository
+
     @Inject lateinit var authManager: AuthManager
+
     @Inject lateinit var settingsManager: SettingsManager
+
     @Inject lateinit var statsSyncRepository: StatsSyncRepository
     private lateinit var syncManager: FirebaseSyncManager
 
