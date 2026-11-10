@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         // KEEP policy (replace=false) so an existing schedule isn't reset on every launch.
         if (settingsManager.remindersEnabled) {
             requestNotificationPermissionIfNeeded()
-            ReminderScheduler.schedule(this, settingsManager.reminderHour)
+            ReminderScheduler.schedule(this, settingsManager.reminderHour, settingsManager.reminderMinute)
         }
     }
 

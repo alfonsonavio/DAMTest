@@ -4,32 +4,34 @@ import android.content.Context
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import java.util.Calendar
+import java.time.Duration
+import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 /**
  * Schedules the daily study reminder via WorkManager.
  *
- * Fires once a day at the given hour. The hour comes from the user's settings
+ * Fires once a day at the given time. The time comes from the user's settings
  * (see SettingsManager); this object only knows how to schedule and cancel.
  */
 object ReminderScheduler {
 
     private const val WORK_NAME = "daily_study_reminder"
+    private const val REPEAT_DAYS = 1L
 
     /**
-     * Schedules the daily reminder at [hour]:00.
+     * Schedules the daily reminder at [hour]:[minute].
      *
      * @param replace when true, an existing schedule is replaced so a changed
-     *   hour takes effect immediately (used when the user updates the setting).
+     *   time takes effect immediately (used when the user updates the setting).
      *   When false (app startup) an existing schedule is kept, so its timing
      *   isn't reset on every launch.
      */
-    fun schedule(context: Context, hour: Int, replace: Boolean = false) {
-        val initialDelay = computeInitialDelayMillis(hour)
+    fun schedule(context: Context, hour: Int, minute: Int, replace: Boolean = false) {
+        val initialDelay = initialDelay(ZonedDateTime.now(), hour, minute)
 
-        val request = PeriodicWorkRequestBuilder<ReminderWorker>(1, TimeUnit.DAYS)
-            .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+        val request = PeriodicWorkRequestBuilder<ReminderWorker>(REPEAT_DAYS, TimeUnit.DAYS)
+            .setInitialDelay(initialDelay.toMillis(), TimeUnit.MILLISECONDS)
             .build()
 
         val policy = if (replace) {
@@ -46,15 +48,14 @@ object ReminderScheduler {
         WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
     }
 
-    /** Millis from now until the next [hour]:00. */
-    private fun computeInitialDelayMillis(hour: Int): Long {
-        val now = Calendar.getInstance()
-        val next = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            if (before(now)) add(Calendar.DAY_OF_MONTH, 1) // already past today → tomorrow
-        }
-        return next.timeInMillis - now.timeInMillis
+    /**
+     * Time from [now] until the next [hour]:[minute]: today if it is still
+     * ahead, otherwise tomorrow. Uses the zone of [now], so daylight saving
+     * changes are taken into account.
+     */
+    internal fun initialDelay(now: ZonedDateTime, hour: Int, minute: Int): Duration {
+        val today = now.withHour(hour).withMinute(minute).withSecond(0).withNano(0)
+        val next = if (today.isAfter(now)) today else today.plusDays(1)
+        return Duration.between(now, next)
     }
 }
