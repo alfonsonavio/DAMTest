@@ -1,5 +1,7 @@
 package com.navio.damtests.data.session
 
+import androidx.annotation.Keep
+
 /**
  * A test left half-way, saved so it can be resumed later.
  *
@@ -7,7 +9,11 @@ package com.navio.damtests.data.session
  * (it survives re-syncs) in the order they were shown. Each answer keeps the
  * options exactly as they were displayed, so the review screen at the end is
  * identical to an uninterrupted test.
+ *
+ * Kept by R8: it is saved, and backed up to Firestore, as JSON with these
+ * field names (Gson).
  */
+@Keep
 data class QuizSession(
     val subjectId: String,
     val topicId: String,
@@ -27,6 +33,7 @@ data class QuizSession(
 }
 
 /** One answered question of a [QuizSession]. */
+@Keep
 data class SavedAnswer(
     val stableId: String,
     val selectedIndex: Int,

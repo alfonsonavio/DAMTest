@@ -15,5 +15,9 @@
 .cxx
 local.properties
 app/google-services.json
+# Signing: the upload key and its passwords never go to the repo
+keystore.properties
+*.jks
+*.keystore
 app/release/
 .kotlin/
