@@ -17,7 +17,6 @@ import androidx.core.content.IntentCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
@@ -239,16 +238,13 @@ class ExamActivity : AppCompatActivity() {
             viewModel.goTo(index)
             sheet.dismiss()
         }
-        sheet.findViewById<RecyclerView>(R.id.rvExamGrid)?.apply {
-            layoutManager = GridLayoutManager(this@ExamActivity, 5)
-            this.adapter = adapter
-        }
+        sheet.findViewById<RecyclerView>(R.id.rvExamGrid)?.adapter = adapter
         sheet.findViewById<MaterialButton>(R.id.btnSheetSubmit)?.setOnClickListener {
             sheet.dismiss()
             confirmSubmit()
         }
         sheet.setOnDismissListener {
-            gridSheet = null;
+            gridSheet = null
             gridAdapter = null
         }
 

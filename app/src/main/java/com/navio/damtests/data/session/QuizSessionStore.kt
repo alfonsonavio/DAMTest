@@ -1,8 +1,10 @@
 package com.navio.damtests.data.session
 
 import android.content.Context
+import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
+import com.google.gson.JsonParseException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,7 +25,8 @@ class QuizSessionStore @Inject constructor(
         val json = prefs.getString(KEY_SESSION, null) ?: return null
         return try {
             gson.fromJson(json, QuizSession::class.java)
-        } catch (e: Exception) {
+        } catch (e: JsonParseException) {
+            Log.w(TAG, "Dropping an unreadable saved test: ${e.message}")
             clear() // corrupt or from an incompatible version: drop it
             null
         }
@@ -40,6 +43,7 @@ class QuizSessionStore @Inject constructor(
     fun importJson(json: String) = prefs.edit { putString(KEY_SESSION, json) }
 
     private companion object {
+        const val TAG = "QuizSessionStore"
         const val PREFS_NAME = "quiz_session"
         const val KEY_SESSION = "current"
     }

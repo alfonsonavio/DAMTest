@@ -33,14 +33,10 @@ class QuizActivity : AppCompatActivity() {
 
     private val viewModel: QuizViewModel by viewModels()
     private lateinit var tvQuestion: TextView
-    private lateinit var btnA: Button
-    private lateinit var btnB: Button
-    private lateinit var btnC: Button
-    private lateinit var btnD: Button
-    private lateinit var tvFeedbackA: TextView
-    private lateinit var tvFeedbackB: TextView
-    private lateinit var tvFeedbackC: TextView
-    private lateinit var tvFeedbackD: TextView
+
+    /** The four answer buttons and the AI feedback under each one, in option order (a-d). */
+    private lateinit var optionButtons: List<MaterialButton>
+    private lateinit var feedbackViews: List<TextView>
     private lateinit var tvCount: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var btnContextInfo: Button
@@ -71,21 +67,18 @@ class QuizActivity : AppCompatActivity() {
         topicId = intent.getStringExtra(EXTRA_TOPIC_ID) ?: return finish()
 
         tvQuestion = findViewById(R.id.tvQuestionText)
-        btnA = findViewById(R.id.btnOptionA)
-        btnB = findViewById(R.id.btnOptionB)
-        btnC = findViewById(R.id.btnOptionC)
-        btnD = findViewById(R.id.btnOptionD)
-        tvFeedbackA = findViewById(R.id.tvFeedbackA)
-        tvFeedbackB = findViewById(R.id.tvFeedbackB)
-        tvFeedbackC = findViewById(R.id.tvFeedbackC)
-        tvFeedbackD = findViewById(R.id.tvFeedbackD)
+        optionButtons = listOf(R.id.btnOptionA, R.id.btnOptionB, R.id.btnOptionC, R.id.btnOptionD)
+            .map { findViewById<MaterialButton>(it) }
+        feedbackViews = listOf(R.id.tvFeedbackA, R.id.tvFeedbackB, R.id.tvFeedbackC, R.id.tvFeedbackD)
+            .map { findViewById<TextView>(it) }
         tvCount = findViewById(R.id.tvQuestionCount)
         progressBar = findViewById(R.id.quizProgressBar)
         btnContextInfo = findViewById(R.id.btnContextInfo)
         btnFavorite = findViewById(R.id.btnFavorite)
         btnNext = findViewById(R.id.btnNextQuestion)
 
-        setupObservers()
+        observeQuestion()
+        observeAnswer()
         setupClickListeners()
         if (viewModel.questions.value.isEmpty()) {
             viewModel.loadQuestions(
@@ -98,7 +91,8 @@ class QuizActivity : AppCompatActivity() {
 
     // --- Observers ---
 
-    private fun setupObservers() {
+    /** The question on screen, loading, and the end of the test. */
+    private fun observeQuestion() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.currentQuestion.collect { current ->
@@ -134,7 +128,10 @@ class QuizActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
+    /** The answer given to the current question, its AI feedback and the favourite star. */
+    private fun observeAnswer() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.currentAnswerState.collect { result ->
@@ -194,10 +191,7 @@ class QuizActivity : AppCompatActivity() {
         tvQuestion.text = question.text
         // Questions without a stable id can't be saved as favourites
         btnFavorite.visibility = if (question.stableId.isBlank()) View.GONE else View.VISIBLE
-        btnA.text = current.options[0]
-        btnB.text = current.options[1]
-        btnC.text = current.options[2]
-        btnD.text = current.options[3]
+        optionButtons.forEachIndexed { index, button -> button.text = current.options[index] }
 
         val contextText = question.contextText
         if (!contextText.isNullOrEmpty()) {
@@ -210,23 +204,18 @@ class QuizActivity : AppCompatActivity() {
 
     /** Paints the answer outlines. Safe to call again after the app comes back. */
     private fun highlightAnswer(result: QuizViewModel.AnswerResult) {
-        val buttons = listOf(btnA, btnB, btnC, btnD)
         setAnswerButtonsEnabled(false)
+        val outline = resources.getDimensionPixelSize(R.dimen.answer_outline_width)
 
-        buttons.forEachIndexed { index, button ->
-            val mBtn = button as MaterialButton
+        optionButtons.forEachIndexed { index, button ->
             val isCorrectBtn = index == result.correctIndex
-            val isSelectedBtn = index == result.selectedIndex
+            val isWrongChoice = index == result.selectedIndex && !result.isCorrect
 
-            mBtn.strokeWidth = when {
-                isCorrectBtn -> 8
-                isSelectedBtn && !result.isCorrect -> 8
-                else -> 0
-            }
+            button.strokeWidth = if (isCorrectBtn || isWrongChoice) outline else 0
             if (isCorrectBtn) {
-                mBtn.setStrokeColorResource(R.color.state_success)
-            } else if (isSelectedBtn && !result.isCorrect) {
-                mBtn.setStrokeColorResource(R.color.state_error)
+                button.setStrokeColorResource(R.color.state_success)
+            } else if (isWrongChoice) {
+                button.setStrokeColorResource(R.color.state_error)
             }
         }
 
@@ -238,9 +227,8 @@ class QuizActivity : AppCompatActivity() {
         val result = viewModel.currentAnswerState.value
         if (feedback == null || result == null || result.isCorrect) return
 
-        val feedbacks = listOf(tvFeedbackA, tvFeedbackB, tvFeedbackC, tvFeedbackD)
-        val wrongView = feedbacks.getOrNull(result.selectedIndex) ?: return
-        val correctView = feedbacks.getOrNull(result.correctIndex) ?: return
+        val wrongView = feedbackViews.getOrNull(result.selectedIndex) ?: return
+        val correctView = feedbackViews.getOrNull(result.correctIndex) ?: return
 
         when (feedback) {
             QuizViewModel.AiFeedback.Loading -> {
@@ -269,11 +257,8 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun resetAnswerUI() {
-        val buttons = listOf(btnA, btnB, btnC, btnD)
-        val feedbacks = listOf(tvFeedbackA, tvFeedbackB, tvFeedbackC, tvFeedbackD)
-
-        buttons.forEach { (it as MaterialButton).strokeWidth = 0 }
-        feedbacks.forEach {
+        optionButtons.forEach { it.strokeWidth = 0 }
+        feedbackViews.forEach {
             it.visibility = View.GONE
             it.text = ""
         }
@@ -284,10 +269,7 @@ class QuizActivity : AppCompatActivity() {
     // --- Click listeners ---
 
     private fun setupClickListeners() {
-        btnA.setOnClickListener { processAnswer(0) }
-        btnB.setOnClickListener { processAnswer(1) }
-        btnC.setOnClickListener { processAnswer(2) }
-        btnD.setOnClickListener { processAnswer(3) }
+        optionButtons.forEachIndexed { index, button -> button.setOnClickListener { processAnswer(index) } }
         btnNext.setOnClickListener { viewModel.goToNextQuestion() }
         btnFavorite.setOnClickListener { viewModel.toggleFavorite() }
     }
@@ -301,7 +283,7 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun setAnswerButtonsEnabled(enabled: Boolean) {
-        listOf(btnA, btnB, btnC, btnD).forEach { it.isEnabled = enabled }
+        optionButtons.forEach { it.isEnabled = enabled }
     }
 
     // --- Dialogs ---

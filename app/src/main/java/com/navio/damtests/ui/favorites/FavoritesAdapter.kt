@@ -12,6 +12,7 @@ import com.navio.damtests.R
 import com.navio.damtests.data.catalog.SubjectCatalog
 import com.navio.damtests.data.catalog.TopicNames
 import com.navio.damtests.data.local.entity.Question
+import com.navio.damtests.data.quiz.correctOptionText
 
 /** Favourite questions with their correct answer and a star to remove them. */
 class FavoritesAdapter(
@@ -32,12 +33,7 @@ class FavoritesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val q = getItem(position)
-        val correct = when (q.correctOptionIndex) {
-            0 -> q.optionA
-            1 -> q.optionB
-            2 -> q.optionC
-            else -> q.optionD
-        }
+        val correct = q.correctOptionText
         val context = holder.itemView.context
         holder.tvSource.text = context.getString(
             R.string.subject_and_topic,

@@ -1,6 +1,8 @@
 package com.navio.damtests.ui.auth
 
 import android.os.Bundle
+import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +13,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.navio.damtests.R
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.core.suspendRunCatching
 import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.sync.UserProgressRepository
 import com.navio.damtests.ui.common.AuthError
@@ -108,58 +111,43 @@ class RegisterActivity : AppCompatActivity() {
      * Returns true if everything is valid, false otherwise (focusing the first error).
      */
     private fun validateInline(name: String, email: String, password: String, confirm: String): Boolean {
-        var valid = true
-        var firstErrorField: View? = null
-
-        if (name.isBlank()) {
-            tilName.error = getString(R.string.register_error_name)
-            firstErrorField = firstErrorField ?: etName
-            valid = false
-        }
-
-        if (email.isBlank()) {
-            tilEmail.error = getString(R.string.error_missing_email)
-            firstErrorField = firstErrorField ?: etEmail
-            valid = false
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            tilEmail.error = getString(R.string.auth_error_invalid_email)
-            firstErrorField = firstErrorField ?: etEmail
-            valid = false
-        }
-
-        val passwordError = when {
-            password.isBlank() -> getString(R.string.register_error_password_empty)
-            password.length < MIN_PASSWORD_LENGTH -> getString(
-                R.string.register_error_password_short,
-                MIN_PASSWORD_LENGTH
-            )
-            !password.any { it.isDigit() } -> getString(R.string.register_error_password_digit)
-            !password.any { it.isLetter() } -> getString(R.string.register_error_password_letter)
-            else -> null
-        }
-        if (passwordError != null) {
-            tilPassword.error = passwordError
-            firstErrorField = firstErrorField ?: etPassword
-            valid = false
-        }
-
-        if (confirm != password || confirm.isBlank()) {
-            tilPasswordConfirm.error = getString(R.string.error_passwords_no_match)
-            firstErrorField = firstErrorField ?: etPasswordConfirm
-            valid = false
-        }
-
-        firstErrorField?.requestFocus()
-        return valid
+        val errors = listOf(
+            tilName to nameError(name),
+            tilEmail to emailError(email),
+            tilPassword to passwordError(password),
+            tilPasswordConfirm to confirmError(password, confirm)
+        )
+        errors.forEach { (field, error) -> if (error != null) field.error = error }
+        errors.firstOrNull { (_, error) -> error != null }?.first?.editText?.requestFocus()
+        return errors.all { (_, error) -> error == null }
     }
+
+    private fun nameError(name: String): String? =
+        if (name.isBlank()) getString(R.string.register_error_name) else null
+
+    private fun emailError(email: String): String? = when {
+        email.isBlank() -> getString(R.string.error_missing_email)
+        !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> getString(R.string.auth_error_invalid_email)
+        else -> null
+    }
+
+    private fun passwordError(password: String): String? = when {
+        password.isBlank() -> getString(R.string.register_error_password_empty)
+        password.length < MIN_PASSWORD_LENGTH -> getString(R.string.register_error_password_short, MIN_PASSWORD_LENGTH)
+        !password.any { it.isDigit() } -> getString(R.string.register_error_password_digit)
+        !password.any { it.isLetter() } -> getString(R.string.register_error_password_letter)
+        else -> null
+    }
+
+    private fun confirmError(password: String, confirm: String): String? =
+        if (confirm != password || confirm.isBlank()) getString(R.string.error_passwords_no_match) else null
 
     private suspend fun onRegisterSuccess() {
         val uid = authManager.currentUid
         if (uid != null) {
-            try {
-                val localProgress = questionsDao.getAllProgressOnce()
-                userProgressRepository.uploadAllProgress(uid, localProgress)
-            } catch (_: Exception) { }
+            // Best effort: the account is already created, so this must not stop registering
+            suspendRunCatching { userProgressRepository.uploadAllProgress(uid, questionsDao.getAllProgressOnce()) }
+                .onFailure { Log.w(TAG, "Could not upload the local progress: ${it.message}") }
         }
 
         authManager.signOut()
@@ -173,6 +161,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private companion object {
+        const val TAG = "RegisterActivity"
         const val MIN_PASSWORD_LENGTH = 8
     }
 }

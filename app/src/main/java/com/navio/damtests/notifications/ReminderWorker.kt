@@ -1,10 +1,12 @@
 package com.navio.damtests.notifications
 
 import android.content.Context
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.navio.damtests.R
 import com.navio.damtests.core.UiText
+import com.navio.damtests.core.suspendRunCatching
 import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.streak.StreakCalculator
 import com.navio.damtests.data.streak.StreakInfo
@@ -35,12 +37,13 @@ class ReminderWorker(
     }
 
     override suspend fun doWork(): Result {
-        val streak = try {
+        val streak = suspendRunCatching {
             val dao = EntryPointAccessors
                 .fromApplication(applicationContext, ReminderEntryPoint::class.java)
                 .questionsDao()
             StreakCalculator.calculate(dao.getAttemptTimestamps(), System.currentTimeMillis())
-        } catch (e: Exception) {
+        }.getOrElse {
+            Log.w(TAG, "Could not read the streak, sending a regular reminder: ${it.message}")
             StreakInfo(0, false) // never skip the reminder because of the streak
         }
 
@@ -56,6 +59,8 @@ class ReminderWorker(
     data class ReminderMessage(val title: UiText, val body: UiText)
 
     companion object {
+        private const val TAG = "ReminderWorker"
+
         /** Everyday reminders, one picked at random (title to body). */
         private val REMINDER_MESSAGES = listOf(
             R.string.reminder_quick_test_title to R.string.reminder_quick_test_body,

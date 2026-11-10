@@ -2,12 +2,9 @@ package com.navio.damtests.ai
 
 import android.util.Log
 import com.navio.damtests.core.RemoteConfigManager
+import com.navio.damtests.core.suspendRunCatching
 import com.navio.damtests.data.local.entity.Question
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withTimeout
 
 /**
@@ -60,28 +57,19 @@ class ExplanationService(
 
     /**
      * Runs one request with the time limit. Cancellation of the caller is
-     * rethrown. The Gemini SDK wraps cancellation in its own exception, so
-     * after any error we first check whether the caller was cancelled (the
-     * dialog was closed) and, if it is still active, a wrapped cancellation
-     * can only be our own time limit.
+     * rethrown (see [suspendRunCatching]). The Gemini SDK wraps cancellation
+     * in its own exception, so once the caller is known to be still active, a
+     * cancellation anywhere in the error can only be our own time limit.
      */
     private suspend fun attempt(errorMessage: String, block: suspend () -> String): Result<String> =
-        try {
-            Result.success(withTimeout(attemptTimeoutMs) { block() })
-        } catch (e: TimeoutCancellationException) {
-            onError("$errorMessage: no answer in $attemptTimeoutMs ms", null)
-            Result.failure(e)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            currentCoroutineContext().ensureActive()
-            if (isCancellation(e)) {
-                onError("$errorMessage: no answer in $attemptTimeoutMs ms", null)
-            } else {
-                onError(errorMessage, e)
+        suspendRunCatching { withTimeout(attemptTimeoutMs) { block() } }
+            .onFailure { error ->
+                if (isCancellation(error)) {
+                    onError("$errorMessage: no answer in $attemptTimeoutMs ms", null)
+                } else {
+                    onError(errorMessage, error)
+                }
             }
-            Result.failure(e)
-        }
 
     companion object {
         private const val TAG = "ExplanationService"
@@ -89,15 +77,22 @@ class ExplanationService(
         const val RETRY_DELAY_MS = 1_500L
         private const val PRIMARY_ATTEMPTS = 2
 
+        /** How many levels of `cause` to look into when classifying an error. */
+        private const val MAX_CAUSE_DEPTH = 5
+
         /** HTTP 500/502/503 as whole numbers (not inside "15000 ms") or Google's busy texts. */
         private val BUSY = Regex("""\b50[023]\b|UNAVAILABLE|high demand|overloaded""", RegexOption.IGNORE_CASE)
 
         /** True for "server busy" errors, which usually pass in a moment. */
         fun isBusy(error: Throwable): Boolean =
-            generateSequence(error) { it.cause }.take(5).any { BUSY.containsMatchIn(it.message.orEmpty()) }
+            causes(error).any { BUSY.containsMatchIn(it.message.orEmpty()) }
 
         private fun isCancellation(error: Throwable): Boolean =
-            generateSequence(error) { it.cause }.take(5).any { it is java.util.concurrent.CancellationException }
+            causes(error).any { it is java.util.concurrent.CancellationException }
+
+        /** The error and its causes, up to [MAX_CAUSE_DEPTH] levels. */
+        private fun causes(error: Throwable): Sequence<Throwable> =
+            generateSequence(error) { it.cause }.take(MAX_CAUSE_DEPTH)
 
         /** Gemini first (when its key is configured), Groq as the fallback. */
         fun create(fastExplainer: FastExplainer): ExplanationService {

@@ -98,7 +98,7 @@ class ExplanationServiceTest {
     fun `a time limit hidden inside the Gemini SDK error goes to groq without retry`() = runTest {
         // The Gemini SDK reports our time limit as its own exception
         val result = service(primary = {
-            throw RuntimeException("Something unexpected happened.", CancellationException("Timed out"))
+            throw IllegalStateException("Something unexpected happened.", CancellationException("Timed out"))
         }).explain(question, options, 0)
 
         assertEquals("groq", result)
@@ -111,7 +111,7 @@ class ExplanationServiceTest {
             try {
                 awaitCancellation()
             } catch (e: CancellationException) {
-                throw RuntimeException("Something unexpected happened.", e)
+                throw IllegalStateException("Something unexpected happened.", e)
             }
         })
         var result: String? = "not finished"

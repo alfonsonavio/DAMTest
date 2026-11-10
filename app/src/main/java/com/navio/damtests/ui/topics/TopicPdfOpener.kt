@@ -1,6 +1,8 @@
 package com.navio.damtests.ui.topics
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -14,6 +16,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
 /**
  * Opens a topic's PDF notes: from the cache when already downloaded, or
@@ -45,13 +48,14 @@ class TopicPdfOpener(private val activity: AppCompatActivity) {
                         body.byteStream().use { input ->
                             FileOutputStream(partial).use { output -> input.copyTo(output) }
                         }
-                        if (!partial.renameTo(destination)) error("Could not save $fileName")
+                        if (!partial.renameTo(destination)) throw IOException("Could not save $fileName")
                         withContext(Dispatchers.Main) { show(destination) }
                     } else {
                         withContext(Dispatchers.Main) { toast(R.string.pdf_not_found) }
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: IOException) {
+                Log.w(TAG, "Could not download $fileName: ${e.message}")
                 partial.delete()
                 withContext(Dispatchers.Main) { toast(R.string.network_error) }
             }
@@ -67,7 +71,11 @@ class TopicPdfOpener(private val activity: AppCompatActivity) {
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
             )
-        } catch (e: Exception) {
+        } catch (e: ActivityNotFoundException) {
+            Log.w(TAG, "No app installed to open PDFs: ${e.message}")
+            toast(R.string.pdf_open_error)
+        } catch (e: IllegalArgumentException) {
+            Log.e(TAG, "The PDF is outside the shared folders: ${e.message}")
             toast(R.string.pdf_open_error)
         }
     }
@@ -75,6 +83,7 @@ class TopicPdfOpener(private val activity: AppCompatActivity) {
     private fun toast(message: Int) = Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
 
     private companion object {
+        const val TAG = "TopicPdfOpener"
         const val TEMA_PREFIX = "tema_"
         const val PARTIAL_SUFFIX = ".part"
         const val PROVIDER_SUFFIX = ".provider"

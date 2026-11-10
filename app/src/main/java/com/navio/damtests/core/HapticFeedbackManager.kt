@@ -32,13 +32,13 @@ class HapticFeedbackManager(
     }
 
     /** Soft single tick for a correct answer. */
-    fun correct() = vibrate(longArrayOf(0, 40), intArrayOf(0, 120))
+    fun correct() = vibrate(CORRECT_TIMINGS, CORRECT_AMPLITUDES)
 
     /** Stronger double buzz for a wrong answer. */
-    fun wrong() = vibrate(longArrayOf(0, 60, 80, 60), intArrayOf(0, 200, 0, 200))
+    fun wrong() = vibrate(WRONG_TIMINGS, WRONG_AMPLITUDES)
 
     /** Light tick for a neutral tap (e.g. moving to the next question). */
-    fun tick() = vibrate(longArrayOf(0, 20), intArrayOf(0, 80))
+    fun tick() = vibrate(TICK_TIMINGS, TICK_AMPLITUDES)
 
     private fun vibrate(timings: LongArray, amplitudes: IntArray) {
         if (!enabled) return
@@ -56,5 +56,13 @@ class HapticFeedbackManager(
 
     private companion object {
         const val NO_REPEAT = -1
+
+        // Waveforms: off/on durations (ms) and their strengths (0-255)
+        val CORRECT_TIMINGS = longArrayOf(0, 40)
+        val CORRECT_AMPLITUDES = intArrayOf(0, 120)
+        val WRONG_TIMINGS = longArrayOf(0, 60, 80, 60)
+        val WRONG_AMPLITUDES = intArrayOf(0, 200, 0, 200)
+        val TICK_TIMINGS = longArrayOf(0, 20)
+        val TICK_AMPLITUDES = intArrayOf(0, 80)
     }
 }

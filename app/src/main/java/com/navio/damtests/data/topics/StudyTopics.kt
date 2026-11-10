@@ -11,6 +11,12 @@ object StudyTopics {
     private const val CASO = "caso_"
     private const val REPASO = "repaso_"
 
+    /** Topics of the "first half" general test and exam. */
+    val FIRST_HALF = 1..10
+
+    /** Topics of the "second half" general test and exam. */
+    val SECOND_HALF = 11..20
+
     /** Id of topic number [number], e.g. "tema_3". */
     fun temaId(number: Int): String = "$TEMA$number"
 

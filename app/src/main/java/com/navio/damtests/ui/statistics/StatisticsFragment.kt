@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -118,21 +119,21 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
         val dataSet = LineDataSet(entries, getString(R.string.statistics_chart_label)).apply {
             color = primary
-            lineWidth = 2.5f
+            lineWidth = LINE_WIDTH_DP
             mode = LineDataSet.Mode.CUBIC_BEZIER // smooth curve
             setDrawValues(false)
             setDrawCircles(true)
             setCircleColor(primary)
-            circleRadius = 4f
+            circleRadius = POINT_RADIUS_DP
             setDrawCircleHole(true)
-            circleHoleRadius = 2f
+            circleHoleRadius = POINT_HOLE_RADIUS_DP
             // Gradient fill fading downwards
             setDrawFilled(true)
             fillDrawable = GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 intArrayOf(
-                    (primary and 0x00FFFFFF) or 0x40000000, // ~25% alpha
-                    (primary and 0x00FFFFFF) // 0% alpha
+                    ColorUtils.setAlphaComponent(primary, FILL_TOP_ALPHA),
+                    ColorUtils.setAlphaComponent(primary, 0)
                 )
             )
             highLightColor = primary
@@ -148,7 +149,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
             axisRight.isEnabled = false
             axisLeft.apply {
                 axisMinimum = 0f
-                axisMaximum = 100f
+                axisMaximum = MAX_PERCENT
                 setDrawGridLines(true)
                 gridColor = ContextCompat.getColor(requireContext(), R.color.surface_border)
                 textColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
@@ -160,7 +161,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
                 setDrawAxisLine(false)
                 setDrawLabels(false)
             }
-            animateX(600)
+            animateX(CHART_ANIMATION_MS)
             invalidate()
         }
     }
@@ -179,8 +180,8 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
             bar.progress = item.accuracy
             // Tint the percentage text by level
             val colorRes = when {
-                item.accuracy >= 70 -> R.color.state_success
-                item.accuracy >= 45 -> R.color.brand_primary
+                item.accuracy >= GOOD_ACCURACY -> R.color.state_success
+                item.accuracy >= FAIR_ACCURACY -> R.color.brand_primary
                 else -> R.color.state_error
             }
             row.findViewById<TextView>(R.id.tvSubjectPercent)
@@ -216,4 +217,18 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
     private fun subjectIdsForCourse(course: Int): List<String> =
         SubjectCatalog.all.filter { it.course == course }.map { it.id }
+
+    private companion object {
+        // Evolution chart
+        const val LINE_WIDTH_DP = 2.5f
+        const val POINT_RADIUS_DP = 4f
+        const val POINT_HOLE_RADIUS_DP = 2f
+        const val FILL_TOP_ALPHA = 0x40 // ~25 %, fading to transparent
+        const val MAX_PERCENT = 100f
+        const val CHART_ANIMATION_MS = 600
+
+        // Accuracy (%) from which a subject bar is shown as good or fair
+        const val GOOD_ACCURACY = 70
+        const val FAIR_ACCURACY = 45
+    }
 }
