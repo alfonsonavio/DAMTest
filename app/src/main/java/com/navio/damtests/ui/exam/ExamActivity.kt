@@ -153,7 +153,12 @@ class ExamActivity : AppCompatActivity() {
         tvCount.text = getString(R.string.exam_question_count, state.currentIndex + 1, state.total)
         progressBar.max = state.total
         progressBar.progress = state.answeredCount
-        tvAnswered.text = getString(R.string.exam_answered_count, state.answeredCount, state.total)
+        tvAnswered.text = resources.getQuantityString(
+            R.plurals.exam_answered_count,
+            state.total,
+            state.answeredCount,
+            state.total
+        )
         renderTimer(state.remainingSeconds)
 
         tvQuestion.text = current.question.text

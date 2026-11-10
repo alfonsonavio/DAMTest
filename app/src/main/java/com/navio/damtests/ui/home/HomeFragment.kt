@@ -108,7 +108,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun renderQuickStats(view: View, allProgress: List<TopicProgress>) {
         val average = markOf(allProgress.sumOf { it.lastScore }, allProgress.sumOf { it.totalQuestions })
         view.findViewById<TextView>(R.id.tvAvgScore).text = getString(R.string.score_one_decimal, average)
-        view.findViewById<TextView>(R.id.tvTotalTests).text = allProgress.sumOf { it.attemptsCount }.toString()
+        view.findViewById<TextView>(R.id.tvTotalTests).text =
+            getString(R.string.number, allProgress.sumOf { it.attemptsCount })
     }
 
     /** "Continue" card for the test left half-way: resumes it where it was. */

@@ -92,9 +92,9 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         contentState.isVisible = true
 
         // KPIs
-        view.findViewById<TextView>(R.id.tvAccuracy).text = "${data.globalAccuracy}%"
-        view.findViewById<TextView>(R.id.tvTotalTests).text = data.totalTests.toString()
-        view.findViewById<TextView>(R.id.tvSubjectsStudied).text = data.bySubject.size.toString()
+        view.findViewById<TextView>(R.id.tvAccuracy).text = getString(R.string.percent, data.globalAccuracy)
+        view.findViewById<TextView>(R.id.tvTotalTests).text = getString(R.string.number, data.totalTests)
+        view.findViewById<TextView>(R.id.tvSubjectsStudied).text = getString(R.string.number, data.bySubject.size)
 
         renderEvolutionChart(view, data.evolution)
         renderSubjectBars(view, data.bySubject)

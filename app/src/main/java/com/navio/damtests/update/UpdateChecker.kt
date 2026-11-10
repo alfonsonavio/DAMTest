@@ -2,8 +2,8 @@ package com.navio.damtests.update
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import com.navio.damtests.BuildConfig
 import com.navio.damtests.R
 import com.navio.damtests.core.RemoteConfigManager
@@ -53,7 +53,7 @@ object UpdateChecker {
             message = context.getString(R.string.update_message, versionText),
             confirmText = context.getString(R.string.update_download)
         ) {
-            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(DOWNLOAD_URL)))
+            context.startActivity(Intent(Intent.ACTION_VIEW, DOWNLOAD_URL.toUri()))
         }
     }
 }

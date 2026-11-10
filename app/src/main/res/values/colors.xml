@@ -10,7 +10,6 @@
     <!-- === Marca / principal (Navy medianoche) === -->
     <color name="brand_navy">#1E293B</color>
     <color name="brand_navy_light">#334155</color>
-    <color name="brand_navy_dark">#0F172A</color>
 
     <!-- === Interactivo (Periwinkle / azul-violeta) === -->
     <color name="brand_primary">#4F46E5</color>
@@ -43,32 +42,19 @@
     <!-- === Estados semánticos === -->
     <color name="state_success">#16A34A</color>
     <color name="state_success_bg">#DCFCE7</color>
-    <color name="state_success_text">#166534</color>
     <color name="state_error">#DC2626</color>
     <color name="state_error_bg">#FEE2E2</color>
     <color name="state_error_text">#991B1B</color>
 
     <!-- === Colores de asignaturas (pastel recalibrado) ===
-         Fondo (bg) + texto legible sobre ese fondo (fg) -->
+         Fondo de la tarjeta de cada asignatura -->
     <color name="subject_prog_bg">#EEF2FF</color>
-    <color name="subject_prog_fg">#3730A3</color>
     <color name="subject_db_bg">#E0F2FE</color>
-    <color name="subject_db_fg">#075985</color>
     <color name="subject_sistemas_bg">#FEF3C7</color>
-    <color name="subject_sistemas_fg">#92400E</color>
     <color name="subject_marcas_bg">#FCE7F3</color>
-    <color name="subject_marcas_fg">#9D174D</color>
     <color name="subject_entornos_bg">#F3E8FF</color>
-    <color name="subject_entornos_fg">#6B21A8</color>
     <color name="subject_digital_bg">#CCFBF1</color>
-    <color name="subject_digital_fg">#115E59</color>
     <color name="subject_ipe_bg">#FFE4E9</color>
-    <color name="subject_ipe_fg">#9F1239</color>
     <color name="subject_sostenibilidad_bg">#DCFCE7</color>
-    <color name="subject_sostenibilidad_fg">#166534</color>
-
-    <!-- === Utilidad === -->
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
 
 </resources>

@@ -5,8 +5,7 @@
     android:id="@+id/settingsRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/surface_bg">
+    android:orientation="vertical">
 
     <!-- Barra superior navy con volver (detrás de la barra de estado) -->
     <LinearLayout
