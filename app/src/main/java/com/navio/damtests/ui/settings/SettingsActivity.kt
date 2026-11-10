@@ -1,19 +1,23 @@
 package com.navio.damtests.ui.settings
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
@@ -23,6 +27,7 @@ import com.navio.damtests.R
 import com.navio.damtests.auth.AccountDeletionManager
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.LogoutManager
+import com.navio.damtests.core.Constants
 import com.navio.damtests.data.settings.SettingsManager
 import com.navio.damtests.notifications.ReminderScheduler
 import com.navio.damtests.ui.auth.LoginActivity
@@ -75,10 +80,22 @@ class SettingsActivity : AppCompatActivity() {
         setupReminders()
         setupTheme()
         setupHaptics()
+        setupPrivacyPolicy()
         setupLogout()
         setupDeleteAccount()
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+    }
+
+    private fun setupPrivacyPolicy() {
+        findViewById<LinearLayout>(R.id.rowPrivacy).setOnClickListener {
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Constants.PRIVACY_POLICY_URL.toUri()))
+            } catch (e: ActivityNotFoundException) {
+                Log.w(TAG, "No browser to open the privacy policy: ${e.message}")
+                Toast.makeText(this, R.string.settings_privacy_error, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupTheme() {
@@ -303,6 +320,7 @@ class SettingsActivity : AppCompatActivity() {
         getString(R.string.time_hh_mm, hour, minute)
 
     private companion object {
+        const val TAG = "SettingsActivity"
         const val TIME_PICKER_TAG = "reminder_time_picker"
 
         /** The reminder time row looks disabled while reminders are off. */
