@@ -37,6 +37,7 @@
     <string name="icon_vibration" translatable="false">📳</string>
     <string name="icon_trash" translatable="false">🗑️</string>
     <string name="icon_door" translatable="false">🚪</string>
+    <string name="icon_lock" translatable="false">🔒</string>
     <string name="icon_play" translatable="false">▶</string>
     <string name="icon_chevron" translatable="false">›</string>
     <string name="icon_chart" translatable="false">📊</string>
@@ -357,6 +358,10 @@
     <string name="settings_reminder_subtitle">Un aviso diario para practicar</string>
     <string name="settings_reminder_hour_label">Hora del recordatorio</string>
     <string name="settings_section_experience">EXPERIENCIA</string>
+    <string name="settings_section_info">INFORMACIÓN</string>
+    <string name="settings_privacy_title">Política de privacidad</string>
+    <string name="settings_privacy_subtitle">Qué datos usa la app y cómo borrarlos</string>
+    <string name="settings_privacy_error">No hay ningún navegador para abrir la página.</string>
     <string name="settings_theme_title">Tema</string>
     <string name="settings_theme_subtitle">Claro, oscuro o el del sistema</string>
     <!-- Order matches SettingsManager.THEME_SYSTEM, THEME_LIGHT, THEME_DARK -->

@@ -15,4 +15,7 @@ object Constants {
      */
     const val PDF_BASE_URL =
         "https://github.com/alfonsonavio/DAMTest/releases/download/v1.0.0-resources/"
+
+    /** Privacy policy, published with GitHub Pages from the repo's docs/ folder. */
+    const val PRIVACY_POLICY_URL = "https://alfonsonavio.github.io/DAMTest/privacy/"
 }
