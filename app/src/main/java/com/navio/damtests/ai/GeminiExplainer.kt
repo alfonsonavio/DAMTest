@@ -1,7 +1,7 @@
 package com.navio.damtests.ai
 
 import com.google.ai.client.generativeai.GenerativeModel
-import com.navio.damtests.RemoteConfigManager
+import com.navio.damtests.core.RemoteConfigManager
 
 /**
  * Gemini client for the review explanations. The model name is read from
@@ -9,7 +9,7 @@ import com.navio.damtests.RemoteConfigManager
  * changed without a release when a model is retired or overloaded.
  *
  * The API key is injected at construction time and sourced from
- * [com.navio.damtests.RemoteConfigManager] — never hardcoded or stored in source control.
+ * [com.navio.damtests.core.RemoteConfigManager] — never hardcoded or stored in source control.
  *
  * Errors are not handled here: [ExplanationService] decides whether to retry
  * or fall back to another provider.

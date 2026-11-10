@@ -1,7 +1,9 @@
 package com.navio.damtests.auth
 
-import com.navio.damtests.data.local.entity.QuestionsDao
+import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.data.sync.CloudUserDataRepository
+import com.navio.damtests.data.sync.StatsSyncRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder

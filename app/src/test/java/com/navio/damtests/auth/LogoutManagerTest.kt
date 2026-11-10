@@ -3,8 +3,11 @@ package com.navio.damtests.auth
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
-import com.navio.damtests.data.local.entity.QuestionsDao
+import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.data.sync.SessionBackupRepository
+import com.navio.damtests.data.sync.StatsSyncRepository
+import com.navio.damtests.data.sync.UserProgressRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
@@ -14,9 +17,9 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 

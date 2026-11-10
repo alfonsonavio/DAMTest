@@ -40,6 +40,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **Packages organised by feature** — no class is left in the root package
+  except the Application. Screens live in `ui/<feature>` (auth, main, quiz,
+  review, exam, favorites, settings, subjects, topics…), data in
+  `data/<area>` (quiz, sync, catalog, pdf, report, settings, local/dao…),
+  shared helpers in `core`, and the tests mirror the same packages. No
+  behaviour changes.
 - **Dependencies cleaned up** — every dependency and plugin is now declared in
   the version catalog (`gradle/libs.versions.toml`). Removed what the app
   never used: Jetpack Compose (no screen uses it), the Crashlytics build
