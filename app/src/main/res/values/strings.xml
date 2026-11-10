@@ -16,7 +16,6 @@
     <string name="close">Cerrar</string>
     <string name="next_question">Siguiente Pregunta</string>
     <string name="finish_test">Finalizar Test</string>
-    <string name="no_pdf_general_test">El Test General no tiene PDF asociado.</string>
     <string name="downloading_pdf">Descargando apuntes…</string>
     <string name="pdf_not_found">El PDF no está disponible en el servidor.</string>
     <string name="network_error">Error de red. Comprueba tu conexión.</string>
@@ -88,4 +87,37 @@
     <string name="settings_logout">Cerrar sesión</string>
     <string name="cancel">Cancelar</string>
 
+
+    <!-- Subject screen: practice modes and topics -->
+    <string name="practice_header">PRACTICAR</string>
+    <string name="practice_icon_exam" translatable="false">📝</string>
+    <string name="practice_icon_review" translatable="false">🎯</string>
+    <string name="practice_icon_general" translatable="false">🧪</string>
+    <string name="practice_icon_favorites" translatable="false">⭐</string>
+    <string name="practice_exam_title">Modo examen</string>
+    <string name="practice_exam_subtitle">Con tiempo y nota</string>
+    <string name="practice_review_title">Repaso inteligente</string>
+    <string name="practice_review_none">Sin fallos todavía</string>
+    <plurals name="practice_review_count">
+        <item quantity="one">%d pregunta fallada</item>
+        <item quantity="other">%d preguntas falladas</item>
+    </plurals>
+    <string name="practice_review_empty">Aún no tienes fallos que repasar en esta asignatura. Haz algún test y vuelve.</string>
+    <string name="practice_general_title">Test general</string>
+    <string name="practice_general_subtitle">Todo el temario</string>
+    <string name="practice_general_subtitle_ranges">Todo o por mitades</string>
+    <string name="practice_favorites_title">Favoritas</string>
+    <string name="practice_favorites_none">Ninguna marcada</string>
+    <plurals name="practice_favorites_count">
+        <item quantity="one">%d marcada</item>
+        <item quantity="other">%d marcadas</item>
+    </plurals>
+    <string name="practice_favorites_empty">Aún no tienes favoritas en esta asignatura. Márcalas con la estrella ★ durante un test o en la revisión.</string>
+    <string name="general_test_all">Todo el temario</string>
+    <string name="general_test_first_half">Temas 1-10</string>
+    <string name="general_test_second_half">Temas 11-20</string>
+    <string name="topics_header">TEMAS (%d)</string>
+    <string name="topic_not_done">Sin hacer</string>
+    <string name="topic_last_score">%d%%</string>
+    <string name="topic_open_pdf">Ver apuntes PDF</string>
 </resources>

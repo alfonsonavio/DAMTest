@@ -3,7 +3,7 @@ package com.navio.damtests
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.StatsSyncRepository
 import com.navio.damtests.auth.UserProgressRepository
-import com.navio.damtests.data.exam.Exam
+import com.navio.damtests.data.TopicNames
 import com.navio.damtests.data.exam.ExamRange
 import com.navio.damtests.data.favorites.Favorites
 import com.navio.damtests.data.local.entity.FavoriteQuestion
@@ -18,6 +18,8 @@ import com.navio.damtests.data.statistics.StatisticsCalculator
 import com.navio.damtests.data.statistics.StatisticsData
 import com.navio.damtests.data.streak.StreakCalculator
 import com.navio.damtests.data.streak.StreakInfo
+import com.navio.damtests.data.topics.PracticeOptions
+import com.navio.damtests.data.topics.StudyTopics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -123,47 +125,27 @@ class QuizRepository @Inject constructor(
 
     // --- Topic helpers ---
 
-    suspend fun getUniqueTopicsForSubject(
-        subjectId: String,
-        pdfTopicIds: Set<String> = emptySet()
-    ): List<Topic> {
-        val dbTopicIds  = questionsDao.getUniqueTopicIds(subjectId).toSet()
-        val allTopicIds = dbTopicIds + pdfTopicIds
+    /**
+     * Study topics of a subject: those with questions plus those that so far
+     * only have a PDF, in list order (see [StudyTopics.ORDER]).
+     */
+    suspend fun getStudyTopics(subjectId: String, pdfTopicIds: Set<String> = emptySet()): List<Topic> =
+        (questionsDao.getUniqueTopicIds(subjectId) + pdfTopicIds)
+            .distinct()
+            .sortedWith(StudyTopics.ORDER)
+            .map { id -> Topic(id, TopicNames.displayName(id), subjectId) }
 
-        val topics = allTopicIds.map { id ->
-            val title = when {
-                id.startsWith("tema_")   -> "Tema ${id.removePrefix("tema_")}"
-                id.startsWith("caso_")   -> "Caso Práctico ${id.removePrefix("caso_")}"
-                id.startsWith("repaso_") -> "Repaso Final"
-                else -> id
-            }
-            Topic(id, title, subjectId)
-        }.toMutableList()
+    /** Practice modes the subject can offer with the questions it has. */
+    suspend fun getPracticeOptions(subjectId: String): PracticeOptions =
+        PracticeOptions.from(questionsDao.getUniqueTopicIds(subjectId))
 
-        // General tests and smart review need questions: a subject with only
-        // PDFs so far lists just its topics.
-        if (dbTopicIds.isNotEmpty()) {
-            val temaNumbers = dbTopicIds
-                .filter { it.startsWith("tema_") }
-                .mapNotNull { it.removePrefix("tema_").toIntOrNull() }
-            // The 1-10 / 11-20 split only makes sense when there are questions
-            // on both sides; otherwise one of them would be empty (and the test
-            // would never load) or identical to the full general test.
-            val hasFirstHalf  = temaNumbers.any { it in 1..10 }
-            val hasSecondHalf = temaNumbers.any { it in 11..20 }
-            if (hasFirstHalf && hasSecondHalf) {
-                topics.add(Topic("-2", "TEST GENERAL (TEMAS 1-10)",  subjectId))
-                topics.add(Topic("-3", "TEST GENERAL (TEMAS 11-20)", subjectId))
-            }
-            if (temaNumbers.isNotEmpty()) {
-                topics.add(Topic("-1", "TEST GENERAL (TODO)", subjectId))
-                topics.add(Topic(Exam.TOPIC_ID, "MODO EXAMEN", subjectId))
-            }
-            topics.add(Topic("-4", "REPASO INTELIGENTE", subjectId))
-            topics.add(Topic(Favorites.TOPIC_ID, "PREGUNTAS FAVORITAS", subjectId))
-        }
-        return topics
-    }
+    /** Questions of the subject failed at least once, updated live (smart review card). */
+    fun getFailedCountFlow(subjectId: String): Flow<Int> =
+        questionsDao.countFailedQuestionsFlow(subjectId)
+
+    /** Favourite questions of the subject, updated live (favourites card). */
+    fun getFavoriteCountFlow(subjectId: String): Flow<Int> =
+        questionsDao.countFavoritesFlow(subjectId)
 
     /**
      * Records the outcome of a single answered question into QuestionStats.

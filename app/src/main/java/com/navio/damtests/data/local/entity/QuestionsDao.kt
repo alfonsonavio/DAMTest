@@ -89,6 +89,19 @@ interface QuestionsDao {
     @Query("SELECT COUNT(*) FROM question_stats WHERE subjectId = :subjectId AND timesWrong > 0")
     suspend fun countFailedQuestions(subjectId: String): Int
 
+    @Query("SELECT COUNT(*) FROM question_stats WHERE subjectId = :subjectId AND timesWrong > 0")
+    fun countFailedQuestionsFlow(subjectId: String): Flow<Int>
+
+    /** Favourites of a subject whose question is still in the local cache. */
+    @Query(
+        """
+        SELECT COUNT(DISTINCT f.stableId) FROM favorite_questions f
+        INNER JOIN questions q ON q.stableId = f.stableId
+        WHERE f.isFavorite = 1 AND q.subjectId = :subjectId
+        """
+    )
+    fun countFavoritesFlow(subjectId: String): Flow<Int>
+
     /** Questions by stable id (unordered) — used to rebuild a resumed test. */
     @Query("SELECT * FROM questions WHERE stableId IN (:stableIds)")
     suspend fun getQuestionsByStableIds(stableIds: List<String>): List<Question>

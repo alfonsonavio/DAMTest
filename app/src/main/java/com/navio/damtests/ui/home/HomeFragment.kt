@@ -15,7 +15,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.navio.damtests.QuizRepository
 import com.navio.damtests.R
-import com.navio.damtests.TopicSelectionActivity
 import com.navio.damtests.auth.AuthManager
 import com.navio.damtests.auth.AuthUiHelper
 import com.navio.damtests.auth.StatsSyncRepository
@@ -24,6 +23,7 @@ import com.navio.damtests.data.TopicNames
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.favorites.FavoritesActivity
 import com.navio.damtests.ui.QuizLauncher
+import com.navio.damtests.ui.topics.TopicSelectionActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -127,10 +127,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         tvContinueSubject.text = SubjectCatalog.nameFor(lastProgress.subjectId)
                         tvContinueDetail.text  = TopicNames.displayName(lastProgress.topicId)
                         cardContinue.setOnClickListener {
-                            startActivity(
-                                Intent(requireContext(), TopicSelectionActivity::class.java)
-                                    .putExtra("SUBJECT_ID", lastProgress.subjectId)
-                            )
+                            startActivity(TopicSelectionActivity.intent(requireContext(), lastProgress.subjectId))
                         }
                     }
                 }
