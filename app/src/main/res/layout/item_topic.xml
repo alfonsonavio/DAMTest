@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    app:cardCornerRadius="20dp"
+    android:layout_marginVertical="4dp"
+    app:cardBackgroundColor="@color/surface"
+    app:cardCornerRadius="14dp"
     app:cardElevation="0dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="@color/surface_border">
+    app:strokeColor="@color/surface_border"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="20dp"
-        android:gravity="center_vertical">
+        android:paddingVertical="10dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="4dp">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -28,31 +31,44 @@
                 android:id="@+id/tvTopicName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tema 1: Introducción"
-                android:textSize="16sp"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary" />
+                tools:text="Tema 1" />
 
-            <TextView
-                android:id="@+id/tvTopicStats"
-                android:layout_width="wrap_content"
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/topicProgress"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sin realizar todavía"
-                android:textSize="13sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="4dp" />
+                android:layout_marginTop="8dp"
+                android:importantForAccessibility="no"
+                android:max="100"
+                app:indicatorColor="@color/state_success"
+                app:trackColor="@color/surface_border"
+                app:trackCornerRadius="2dp"
+                app:trackThickness="4dp" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTopicScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="end"
+            android:minWidth="64dp"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="80%" />
 
         <ImageButton
             android:id="@+id/btnOpenPdf"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/pdf"
-            android:padding="12dp"
+            android:contentDescription="@string/topic_open_pdf"
+            android:padding="11dp"
             android:scaleType="fitCenter"
-            app:tint="@color/brand_primary"
-            android:contentDescription="Ver apuntes PDF" />
-
+            android:src="@drawable/pdf"
+            app:tint="@color/brand_primary" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

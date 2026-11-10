@@ -40,6 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **Subject screen redesigned** — the practice modes (exam, smart review,
+  general test and favourites) are now cards in a "Practicar" block at the
+  top, always in view, instead of rows at the end of the topic list. Smart
+  review and favourites show how many questions they have; the general test
+  asks for all topics or a half instead of taking three rows. Topics are
+  compact rows with their last score, a progress bar and the PDF button.
+  The screen now has a ViewModel and lives in `ui/topics`.
 - **Room database v5 with a real migration** (`MIGRATION_4_5`) adding the
   `favorite_questions` table, so updating keeps the local history instead of
   rebuilding the database.
