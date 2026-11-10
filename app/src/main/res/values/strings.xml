@@ -282,7 +282,7 @@
     <string name="statistics_accuracy">Precisión</string>
     <string name="statistics_tests">Tests</string>
     <string name="statistics_evolution">Tu evolución</string>
-    <string name="statistics_evolution_subtitle">Nota media por test</string>
+    <string name="statistics_evolution_subtitle">Porcentaje de acierto de cada test</string>
     <string name="statistics_chart_label">Nota</string>
     <string name="statistics_by_subject">Rendimiento por asignatura</string>
     <string name="statistics_weak_topics">A repasar</string>
