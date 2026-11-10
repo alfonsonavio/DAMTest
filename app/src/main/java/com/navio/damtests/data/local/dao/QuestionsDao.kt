@@ -36,23 +36,36 @@ interface QuestionsDao {
     @Query("SELECT DISTINCT topicId FROM questions WHERE subjectId = :subjectId")
     suspend fun getUniqueTopicIds(subjectId: String): List<String>
 
+    // Random questions for a test. Some questions appear in more than one topic
+    // (or twice after a content update): GROUP BY text keeps one of each before
+    // LIMIT, so a test of 20 always has 20 different questions.
+
     // Specific topic (tema_X, caso_X, repaso_X)
-    @Query("SELECT * FROM questions WHERE subjectId = :subjectId AND topicId = :topicId ORDER BY RANDOM() LIMIT :limit")
+    @Query(
+        "SELECT * FROM questions WHERE subjectId = :subjectId AND topicId = :topicId " +
+            "GROUP BY text ORDER BY RANDOM() LIMIT :limit"
+    )
     suspend fun getRandomQuestionsForTopic(subjectId: String, topicId: String, limit: Int): List<Question>
 
     // Full general test — all tema_* topics
-    @Query("SELECT * FROM questions WHERE subjectId = :subjectId AND topicId LIKE 'tema_%' ORDER BY RANDOM() LIMIT :limit")
+    @Query(
+        "SELECT * FROM questions WHERE subjectId = :subjectId AND topicId LIKE 'tema_%' " +
+            "GROUP BY text ORDER BY RANDOM() LIMIT :limit"
+    )
     suspend fun getRandomQuestionsForGeneralTest(subjectId: String, limit: Int): List<Question>
 
     // Ranged general test — e.g. tema_1..tema_10 or tema_11..tema_20
-    @Query("SELECT * FROM questions WHERE subjectId = :subjectId AND topicId IN (:topicIds) ORDER BY RANDOM() LIMIT :limit")
+    @Query(
+        "SELECT * FROM questions WHERE subjectId = :subjectId AND topicId IN (:topicIds) " +
+            "GROUP BY text ORDER BY RANDOM() LIMIT :limit"
+    )
     suspend fun getRandomQuestionsForTopicList(subjectId: String, topicIds: List<String>, limit: Int): List<Question>
 
-    // Question counts, to offer only the exam sizes a subject can fill
-    @Query("SELECT COUNT(*) FROM questions WHERE subjectId = :subjectId AND topicId LIKE 'tema_%'")
+    // Different questions available, to offer only the exam sizes a subject can fill
+    @Query("SELECT COUNT(DISTINCT text) FROM questions WHERE subjectId = :subjectId AND topicId LIKE 'tema_%'")
     suspend fun countGeneralTestQuestions(subjectId: String): Int
 
-    @Query("SELECT COUNT(*) FROM questions WHERE subjectId = :subjectId AND topicId IN (:topicIds)")
+    @Query("SELECT COUNT(DISTINCT text) FROM questions WHERE subjectId = :subjectId AND topicId IN (:topicIds)")
     suspend fun countQuestionsForTopicList(subjectId: String, topicIds: List<String>): Int
 
     // --- Progress management ---
