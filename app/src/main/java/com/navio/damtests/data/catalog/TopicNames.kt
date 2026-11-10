@@ -1,5 +1,7 @@
 package com.navio.damtests.data.catalog
 
+import com.navio.damtests.data.quiz.TestMode
+
 /**
  * Human-readable names for topic ids, shared by every screen that shows a
  * topic outside its own list (Home, Statistics…), so internal ids such as
@@ -7,18 +9,21 @@ package com.navio.damtests.data.catalog
  */
 object TopicNames {
 
-    fun displayName(topicId: String): String = when {
-        topicId == "-1" -> "Test general (todo)"
-        topicId == "-2" -> "Test general (temas 1-10)"
-        topicId == "-3" -> "Test general (temas 11-20)"
-        topicId == "-4" -> "Repaso inteligente"
-        topicId == "-5" -> "Preguntas favoritas"
-        topicId == "-6" -> "Examen (todo)"
-        topicId == "-7" -> "Examen (temas 1-10)"
-        topicId == "-8" -> "Examen (temas 11-20)"
+    fun displayName(topicId: String): String = TestMode.fromTopicId(topicId)?.let(::displayName) ?: when {
         topicId.startsWith("tema_")   -> "Tema ${topicId.removePrefix("tema_")}"
         topicId.startsWith("caso_")   -> "Caso práctico ${topicId.removePrefix("caso_")}"
         topicId.startsWith("repaso_") -> "Repaso final"
         else -> topicId
+    }
+
+    private fun displayName(mode: TestMode): String = when (mode) {
+        TestMode.GENERAL_ALL         -> "Test general (todo)"
+        TestMode.GENERAL_FIRST_HALF  -> "Test general (temas 1-10)"
+        TestMode.GENERAL_SECOND_HALF -> "Test general (temas 11-20)"
+        TestMode.SMART_REVIEW        -> "Repaso inteligente"
+        TestMode.FAVORITES           -> "Preguntas favoritas"
+        TestMode.EXAM_ALL            -> "Examen (todo)"
+        TestMode.EXAM_FIRST_HALF     -> "Examen (temas 1-10)"
+        TestMode.EXAM_SECOND_HALF    -> "Examen (temas 11-20)"
     }
 }
