@@ -8,8 +8,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
-import com.navio.damtests.LoginActivity
 import com.navio.damtests.R
+import com.navio.damtests.ui.auth.LoginActivity
 
 /**
  * Builds and shows study-reminder notifications, and owns the notification channel.

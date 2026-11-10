@@ -2,8 +2,8 @@ package com.navio.damtests
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.navio.damtests.data.settings.SettingsManager
 import com.navio.damtests.notifications.NotificationHelper
-import com.navio.damtests.settings.SettingsManager
 import dagger.hilt.android.HiltAndroidApp
 
 /**

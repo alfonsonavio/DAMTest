@@ -1,7 +1,7 @@
 package com.navio.damtests.ai
 
 import android.util.Log
-import com.navio.damtests.RemoteConfigManager
+import com.navio.damtests.core.RemoteConfigManager
 import com.navio.damtests.data.local.entity.Question
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException

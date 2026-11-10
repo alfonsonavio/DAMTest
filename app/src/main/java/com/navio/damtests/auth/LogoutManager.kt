@@ -2,8 +2,11 @@ package com.navio.damtests.auth
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.navio.damtests.data.local.entity.QuestionsDao
+import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.data.sync.SessionBackupRepository
+import com.navio.damtests.data.sync.StatsSyncRepository
+import com.navio.damtests.data.sync.UserProgressRepository
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject

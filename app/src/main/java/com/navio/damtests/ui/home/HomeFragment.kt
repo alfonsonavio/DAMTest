@@ -13,16 +13,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.navio.damtests.QuizRepository
 import com.navio.damtests.R
 import com.navio.damtests.auth.AuthManager
-import com.navio.damtests.auth.AuthUiHelper
-import com.navio.damtests.auth.StatsSyncRepository
-import com.navio.damtests.data.SubjectCatalog
-import com.navio.damtests.data.TopicNames
+import com.navio.damtests.data.catalog.SubjectCatalog
+import com.navio.damtests.data.catalog.TopicNames
+import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.session.QuizSessionStore
-import com.navio.damtests.favorites.FavoritesActivity
-import com.navio.damtests.ui.QuizLauncher
+import com.navio.damtests.data.sync.StatsSyncRepository
+import com.navio.damtests.ui.common.AuthUiHelper
+import com.navio.damtests.ui.favorites.FavoritesActivity
+import com.navio.damtests.ui.quiz.QuizLauncher
+import com.navio.damtests.ui.settings.SettingsActivity
 import com.navio.damtests.ui.topics.TopicSelectionActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -71,7 +72,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         // Settings button opens the settings screen.
         btnSettings.setOnClickListener {
-            startActivity(Intent(requireContext(), com.navio.damtests.SettingsActivity::class.java))
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
 
         // Study streak: recalculated whenever Home is shown again (e.g. after a
