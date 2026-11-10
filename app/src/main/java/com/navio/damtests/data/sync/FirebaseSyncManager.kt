@@ -3,6 +3,7 @@ package com.navio.damtests.data.sync
 import android.content.Context
 import android.util.Log
 import com.google.firebase.database.FirebaseDatabase
+import com.navio.damtests.core.suspendRunCatching
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.quiz.QuizRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,41 +31,39 @@ class FirebaseSyncManager(private val context: Context, private val repository: 
     suspend fun syncQuestions() {
         _syncing.value = true
         try {
-            val versionsSnapshot = database.child("versiones").get().await()
-
-            var downloaded = 0
-            var upToDate = 0
-
-            for (subjectSnapshot in versionsSnapshot.children) {
-                val subjectId = subjectSnapshot.key ?: continue
-                for (topicSnapshot in subjectSnapshot.children) {
-                    val topicId = topicSnapshot.key ?: continue
-                    val remoteVersion = topicSnapshot.getValue(Int::class.java) ?: 0
-                    val localVersion = prefs.getInt(prefKey(subjectId, topicId), 0)
-
-                    // Re-download if version is newer OR if the local cache is empty
-                    // (covers the case where Room was wiped but prefs survived).
-                    val needsDownload = remoteVersion > localVersion ||
-                        !repository.hasQuestions(subjectId, topicId)
-
-                    if (needsDownload) {
-                        downloadTopic(subjectId, topicId, remoteVersion)
-                        downloaded++
-                    } else {
-                        upToDate++
-                    }
-                }
-            }
-            Log.d(TAG, "Sync completed: $downloaded downloaded, $upToDate up to date.")
-        } catch (e: Exception) {
-            Log.e(TAG, "Sync failed: ${e.message}")
+            suspendRunCatching { downloadOutdatedTopics() }
+                .onFailure { Log.e(TAG, "Sync failed: ${it.message}") }
         } finally {
             _syncing.value = false
         }
     }
 
-    private suspend fun downloadTopic(subjectId: String, topicId: String, newVersion: Int) {
-        try {
+    private suspend fun downloadOutdatedTopics() {
+        val versionsSnapshot = database.child("versiones").get().await()
+        val topics = versionsSnapshot.children.flatMap { subjectSnapshot ->
+            val subjectId = subjectSnapshot.key ?: return@flatMap emptyList<RemoteTopic>()
+            subjectSnapshot.children.mapNotNull { topicSnapshot ->
+                val topicId = topicSnapshot.key ?: return@mapNotNull null
+                RemoteTopic(subjectId, topicId, version = topicSnapshot.getValue(Int::class.java) ?: 0)
+            }
+        }
+
+        val outdated = topics.filter { isOutdated(it) }
+        outdated.forEach { downloadTopic(it) }
+        Log.d(TAG, "Sync completed: ${outdated.size} downloaded, ${topics.size - outdated.size} up to date.")
+    }
+
+    /**
+     * True if the remote version is newer OR the local cache is empty (covers
+     * the case where Room was wiped but the version prefs survived).
+     */
+    private suspend fun isOutdated(topic: RemoteTopic): Boolean =
+        topic.version > prefs.getInt(prefKey(topic.subjectId, topic.topicId), 0) ||
+            !repository.hasQuestions(topic.subjectId, topic.topicId)
+
+    private suspend fun downloadTopic(topic: RemoteTopic) {
+        val (subjectId, topicId) = topic
+        suspendRunCatching {
             val questionsSnapshot = database
                 .child("preguntas")
                 .child(subjectId)
@@ -83,12 +82,13 @@ class FirebaseSyncManager(private val context: Context, private val repository: 
 
             if (questionsList.isNotEmpty()) {
                 repository.updateTopicQuestions(subjectId, topicId, questionsList)
-                prefs.edit().putInt(prefKey(subjectId, topicId), newVersion).apply()
+                prefs.edit().putInt(prefKey(subjectId, topicId), topic.version).apply()
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error downloading [$subjectId/$topicId]: ${e.message}")
-        }
+        }.onFailure { Log.e(TAG, "Error downloading [$subjectId/$topicId]: ${it.message}") }
     }
+
+    /** A topic listed under `versiones`, with its current version. */
+    private data class RemoteTopic(val subjectId: String, val topicId: String, val version: Int)
 
     private fun prefKey(subjectId: String, topicId: String) = "version_${subjectId}_$topicId"
 

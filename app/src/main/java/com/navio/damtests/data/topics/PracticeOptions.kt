@@ -25,7 +25,8 @@ data class PracticeOptions(
             return PracticeOptions(
                 hasQuestions = true,
                 hasGeneralTest = temaNumbers.isNotEmpty(),
-                hasHalves = temaNumbers.any { it in 1..10 } && temaNumbers.any { it in 11..20 }
+                hasHalves = temaNumbers.any { it in StudyTopics.FIRST_HALF } &&
+                    temaNumbers.any { it in StudyTopics.SECOND_HALF }
             )
         }
     }

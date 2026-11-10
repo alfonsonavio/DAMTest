@@ -1,5 +1,6 @@
 package com.navio.damtests.auth
 
+import com.navio.damtests.data.local.LocalUserData
 import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.sync.CloudUserDataRepository
@@ -36,7 +37,12 @@ class AccountDeletionManagerTest {
         dao = mockk(relaxed = true)
         sessionStore = mockk(relaxed = true)
         statsRepo = mockk(relaxed = true)
-        manager = AccountDeletionManager(authManager, cloudUserData, dao, sessionStore, statsRepo, googleClient)
+        manager = AccountDeletionManager(
+            authManager = authManager,
+            cloudUserData = cloudUserData,
+            localUserData = LocalUserData(dao, sessionStore, statsRepo),
+            googleCredentialClient = googleClient
+        )
 
         every { authManager.currentUid } returns "user123"
         every { authManager.lastSignInAt } returns now - 60_000L // signed in a minute ago

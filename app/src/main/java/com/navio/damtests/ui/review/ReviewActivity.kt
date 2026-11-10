@@ -113,7 +113,7 @@ class ReviewActivity : AppCompatActivity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
 
-        val width = (resources.displayMetrics.widthPixels * 0.90).toInt()
+        val width = (resources.displayMetrics.widthPixels * DIALOG_WIDTH_FRACTION).toInt()
         dialog.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         val job = lifecycleScope.launch {
@@ -159,6 +159,9 @@ class ReviewActivity : AppCompatActivity() {
     }
 
     companion object {
+        /** The explanation dialog takes 90 % of the screen width. */
+        private const val DIALOG_WIDTH_FRACTION = 0.9
+
         private const val EXTRA_SUBJECT_ID = "SUBJECT_ID"
         private const val EXTRA_TOPIC_ID = "TOPIC_ID"
         private const val EXTRA_SCORE = "SCORE"

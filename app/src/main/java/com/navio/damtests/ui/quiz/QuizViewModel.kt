@@ -3,14 +3,17 @@ package com.navio.damtests.ui.quiz
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.navio.damtests.ai.FastExplainer
+import com.navio.damtests.core.suspendRunCatching
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.TestMode
+import com.navio.damtests.data.quiz.correctOptionText
 import com.navio.damtests.data.quiz.shuffle
 import com.navio.damtests.data.session.QuizSession
 import com.navio.damtests.data.session.QuizSessionStore
 import com.navio.damtests.data.session.SavedAnswer
+import com.navio.damtests.data.topics.StudyTopics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -151,8 +154,10 @@ class QuizViewModel @Inject constructor(
 
             _questions.value = when (mode) {
                 TestMode.GENERAL_ALL -> repository.getRandomQuestionsForGeneralTest(subjectId, limit)
-                TestMode.GENERAL_FIRST_HALF -> repository.getQuestionsForRange(subjectId, 1, 10, limit)
-                TestMode.GENERAL_SECOND_HALF -> repository.getQuestionsForRange(subjectId, 11, 20, limit)
+                TestMode.GENERAL_FIRST_HALF ->
+                    repository.getQuestionsForRange(subjectId, StudyTopics.FIRST_HALF, limit)
+                TestMode.GENERAL_SECOND_HALF ->
+                    repository.getQuestionsForRange(subjectId, StudyTopics.SECOND_HALF, limit)
                 TestMode.SMART_REVIEW -> repository.getSmartReviewQuestions(subjectId, limit)
                 TestMode.FAVORITES -> repository.getFavoriteQuestions(subjectId, limit)
                 // Exams have their own screen; a regular topic loads its questions
@@ -176,12 +181,7 @@ class QuizViewModel @Inject constructor(
         // Ignore extra taps after the answer is already recorded
         if (_currentAnswerState.value != null) return null
 
-        val correctText = when (currentQuestion.correctOptionIndex) {
-            0 -> currentQuestion.optionA
-            1 -> currentQuestion.optionB
-            2 -> currentQuestion.optionC
-            else -> currentQuestion.optionD
-        }
+        val correctText = currentQuestion.correctOptionText
 
         val isCorrect = selectedText == correctText
         val uiIndex = shuffledOptions.indexOf(selectedText)
@@ -234,19 +234,18 @@ class QuizViewModel @Inject constructor(
         aiJob?.cancel()
         _aiFeedback.value = AiFeedback.Loading
         aiJob = viewModelScope.launch {
-            _aiFeedback.value = try {
-                val response = fastExplainer.explainQuickly(question, chosen, correct)
-                val parts = response.split("|")
-                if (parts.size >= 2) {
-                    AiFeedback.Ready(parts[0].trim(), parts[1].trim())
-                } else {
-                    AiFeedback.Ready(null, response.trim())
-                }
-            } catch (e: kotlinx.coroutines.CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                AiFeedback.Error
-            }
+            _aiFeedback.value = suspendRunCatching { fastExplainer.explainQuickly(question, chosen, correct) }
+                .fold(onSuccess = ::parseAiFeedback, onFailure = { AiFeedback.Error })
+        }
+    }
+
+    /** The fast model answers "why yours is wrong | why the right one is right". */
+    private fun parseAiFeedback(response: String): AiFeedback {
+        val parts = response.split("|")
+        return if (parts.size >= 2) {
+            AiFeedback.Ready(parts[0].trim(), parts[1].trim())
+        } else {
+            AiFeedback.Ready(null, response.trim())
         }
     }
 

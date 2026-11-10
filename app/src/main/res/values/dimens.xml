@@ -1,3 +1,12 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
+    <!-- Quiz: outline of the right answer and of a wrong choice -->
+    <dimen name="answer_outline_width">3dp</dimen>
+
+    <!-- Exam: question grid cells -->
+    <dimen name="exam_cell_corner_radius">12dp</dimen>
+    <dimen name="exam_cell_stroke">1dp</dimen>
+    <dimen name="exam_cell_stroke_highlighted">3dp</dimen>
+
+    <!-- Loading dialog: space between the title and the spinner -->
+    <dimen name="dialog_spinner_margin_top">16dp</dimen>
 </resources>

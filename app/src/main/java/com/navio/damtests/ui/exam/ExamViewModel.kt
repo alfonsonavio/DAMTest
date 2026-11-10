@@ -9,6 +9,7 @@ import com.navio.damtests.data.exam.ExamGrade
 import com.navio.damtests.data.exam.ExamGrader
 import com.navio.damtests.data.local.entity.Question
 import com.navio.damtests.data.quiz.QuizRepository
+import com.navio.damtests.data.quiz.correctOptionText
 import com.navio.damtests.data.quiz.shuffle
 import com.navio.damtests.ui.quiz.QuestionResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +18,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Exam mode: a timed test with no feedback until it is handed in.
@@ -40,13 +43,7 @@ class ExamViewModel @Inject constructor(
 
     /** A question with its options in the order shown, fixed for the whole exam. */
     data class ExamQuestion(val question: Question, val options: List<String>) {
-        val correctOption: String
-            get() = when (question.correctOptionIndex) {
-                0 -> question.optionA
-                1 -> question.optionB
-                2 -> question.optionC
-                else -> question.optionD
-            }
+        val correctOption: String get() = question.correctOptionText
     }
 
     data class ExamState(
@@ -99,7 +96,7 @@ class ExamViewModel @Inject constructor(
 
             // The time depends on the questions actually drawn
             val duration = Exam.durationSeconds(questions.size)
-            deadline = clock.now() + duration * 1000
+            deadline = clock.now() + duration.seconds.inWholeMilliseconds
             _state.value = ExamState(loading = false, questions = questions, remainingSeconds = duration)
         }
     }
@@ -148,7 +145,7 @@ class ExamViewModel @Inject constructor(
      */
     fun refreshTimer() {
         if (isClosed() || deadline == 0L) return
-        val remaining = ((deadline - clock.now()) / 1000).coerceAtLeast(0)
+        val remaining = (deadline - clock.now()).milliseconds.inWholeSeconds.coerceAtLeast(0)
         _state.update { it.copy(remainingSeconds = remaining) }
         if (remaining == 0L) finish(timeUp = true)
     }

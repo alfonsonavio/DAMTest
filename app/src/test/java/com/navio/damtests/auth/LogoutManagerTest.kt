@@ -3,8 +3,10 @@ package com.navio.damtests.auth
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import com.navio.damtests.data.local.LocalUserData
 import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.session.QuizSessionStore
+import com.navio.damtests.data.sync.CloudBackup
 import com.navio.damtests.data.sync.SessionBackupRepository
 import com.navio.damtests.data.sync.StatsSyncRepository
 import com.navio.damtests.data.sync.UserProgressRepository
@@ -62,7 +64,12 @@ class LogoutManagerTest {
         progressRepo = mockk(relaxed = true)
         statsRepo = mockk(relaxed = true)
         sessionBackup = mockk(relaxed = true)
-        logoutManager = LogoutManager(authManager, firestore, dao, sessionStore, progressRepo, statsRepo, sessionBackup, googleClient)
+        logoutManager = LogoutManager(
+            authManager = authManager,
+            cloudBackup = CloudBackup(firestore, dao, progressRepo, statsRepo, sessionBackup),
+            localUserData = LocalUserData(dao, sessionStore, statsRepo),
+            googleCredentialClient = googleClient
+        )
 
         every { authManager.currentUid } returns "user123"
         every { firestore.waitForPendingWrites() } returns completedTask()

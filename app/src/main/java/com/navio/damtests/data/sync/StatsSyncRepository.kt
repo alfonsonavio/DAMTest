@@ -9,6 +9,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Source
+import com.navio.damtests.core.suspendRunCatching
 import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.local.entity.FavoriteQuestion
 import com.navio.damtests.data.local.entity.QuestionStats
@@ -85,7 +86,7 @@ class StatsSyncRepository @Inject constructor(
         // make us skip its records. Merging is idempotent, so overlap is harmless.
         val since = if (isFirstSync) null else lastSync - OVERLAP_MS
 
-        try {
+        suspendRunCatching {
             val cloudAttempts = download(attempts(uid), "timestamp", since).mapNotNull { it.toTestAttempt() }
             val cloudStats = download(
                 questionStats(uid),
@@ -126,9 +127,9 @@ class StatsSyncRepository @Inject constructor(
                     "questionStats ↓${statsPlan.toLocal.size} ↑${statsPlan.toCloud.size}, " +
                     "favorites ↓${favoritesPlan.toLocal.size} ↑${favoritesPlan.toCloud.size}"
             )
-        } catch (e: Exception) {
+        }.onFailure {
             // Offline or Firestore error: keep lastSync untouched so it retries next launch.
-            Log.e(TAG, "Stats sync failed: ${e.message}")
+            Log.e(TAG, "Stats sync failed: ${it.message}")
         }
     }
 
@@ -230,22 +231,27 @@ class StatsSyncRepository @Inject constructor(
         "updatedAt" to updatedAt
     )
 
+    /** Null if a required field is missing (a document from an older or broken write). */
     private fun DocumentSnapshot.toFavorite(): FavoriteQuestion? {
-        return FavoriteQuestion(
-            stableId = id,
-            subjectId = getString("subjectId") ?: return null,
-            isFavorite = getBoolean("isFavorite") ?: return null,
-            updatedAt = getLong("updatedAt") ?: return null
-        )
+        val subjectId = getString("subjectId") ?: return null
+        val isFavorite = getBoolean("isFavorite") ?: return null
+        val updatedAt = getLong("updatedAt") ?: return null
+        return FavoriteQuestion(stableId = id, subjectId = subjectId, isFavorite = isFavorite, updatedAt = updatedAt)
     }
 
+    /** Null if a required field is missing (a document from an older or broken write). */
     private fun DocumentSnapshot.toTestAttempt(): TestAttempt? {
+        val subjectId = getString("subjectId") ?: return null
+        val topicId = getString("topicId") ?: return null
+        val score = getLong("score") ?: return null
+        val totalQuestions = getLong("totalQuestions") ?: return null
+        val timestamp = getLong("timestamp") ?: return null
         return TestAttempt(
-            subjectId = getString("subjectId") ?: return null,
-            topicId = getString("topicId") ?: return null,
-            score = getLong("score")?.toInt() ?: return null,
-            totalQuestions = getLong("totalQuestions")?.toInt() ?: return null,
-            timestamp = getLong("timestamp") ?: return null
+            subjectId = subjectId,
+            topicId = topicId,
+            score = score.toInt(),
+            totalQuestions = totalQuestions.toInt(),
+            timestamp = timestamp
         )
     }
 

@@ -62,10 +62,9 @@ class QuizRepository @Inject constructor(
     suspend fun getRandomQuestionsForGeneralTest(subjectId: String, limit: Int): List<Question> =
         questionsDao.getRandomQuestionsForGeneralTest(subjectId, limit)
 
-    suspend fun getQuestionsForRange(subjectId: String, start: Int, end: Int, limit: Int): List<Question> {
-        val topicIds = (start..end).map(StudyTopics::temaId)
-        return questionsDao.getRandomQuestionsForTopicList(subjectId, topicIds, limit)
-    }
+    /** [limit] random questions of the topics numbered [topics] ("tema_1".."tema_10"…). */
+    suspend fun getQuestionsForRange(subjectId: String, topics: IntRange, limit: Int): List<Question> =
+        questionsDao.getRandomQuestionsForTopicList(subjectId, temaIds(topics), limit)
 
     suspend fun getUniqueTopicIds(subjectId: String): List<String> =
         questionsDao.getUniqueTopicIds(subjectId)
@@ -75,19 +74,19 @@ class QuizRepository @Inject constructor(
     /** How many questions an exam of [range] can draw from. */
     suspend fun countExamQuestions(subjectId: String, range: ExamRange): Int = when (range) {
         ExamRange.ALL -> questionsDao.countGeneralTestQuestions(subjectId)
-        ExamRange.FIRST_HALF -> questionsDao.countQuestionsForTopicList(subjectId, temaIds(1, 10))
-        ExamRange.SECOND_HALF -> questionsDao.countQuestionsForTopicList(subjectId, temaIds(11, 20))
+        ExamRange.FIRST_HALF -> questionsDao.countQuestionsForTopicList(subjectId, temaIds(StudyTopics.FIRST_HALF))
+        ExamRange.SECOND_HALF -> questionsDao.countQuestionsForTopicList(subjectId, temaIds(StudyTopics.SECOND_HALF))
     }
 
     /** [count] random questions of [range], without repeated texts. */
     suspend fun getExamQuestions(subjectId: String, range: ExamRange, count: Int): List<Question> =
         when (range) {
             ExamRange.ALL -> getRandomQuestionsForGeneralTest(subjectId, count)
-            ExamRange.FIRST_HALF -> getQuestionsForRange(subjectId, 1, 10, count)
-            ExamRange.SECOND_HALF -> getQuestionsForRange(subjectId, 11, 20, count)
+            ExamRange.FIRST_HALF -> getQuestionsForRange(subjectId, StudyTopics.FIRST_HALF, count)
+            ExamRange.SECOND_HALF -> getQuestionsForRange(subjectId, StudyTopics.SECOND_HALF, count)
         }.distinctBy { it.text }
 
-    private fun temaIds(start: Int, end: Int) = (start..end).map(StudyTopics::temaId)
+    private fun temaIds(topics: IntRange) = topics.map(StudyTopics::temaId)
 
     suspend fun hasQuestions(subjectId: String, topicId: String): Boolean =
         questionsDao.getRandomQuestionsForTopic(subjectId, topicId, 1).isNotEmpty()

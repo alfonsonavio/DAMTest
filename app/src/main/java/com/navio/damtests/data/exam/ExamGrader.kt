@@ -1,5 +1,6 @@
 package com.navio.damtests.data.exam
 
+import com.navio.damtests.core.MAX_MARK
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
@@ -23,11 +24,14 @@ object ExamGrader {
     /** With penalty, each wrong answer takes away a third of a correct one. */
     const val WRONG_ANSWER_PENALTY = 1.0 / 3.0
 
+    /** Marks are rounded to two decimals. */
+    private const val HUNDREDTHS = 100.0
+
     fun grade(correct: Int, wrong: Int, blank: Int, penalized: Boolean): ExamGrade {
         val total = correct + wrong + blank
         val points = correct - if (penalized) wrong * WRONG_ANSWER_PENALTY else 0.0
-        val mark = if (total == 0) 0.0 else points.coerceAtLeast(0.0) / total * 10
-        return ExamGrade(correct, wrong, blank, penalized, (mark * 100).roundToLong() / 100.0)
+        val mark = if (total == 0) 0.0 else points.coerceAtLeast(0.0) / total * MAX_MARK
+        return ExamGrade(correct, wrong, blank, penalized, (mark * HUNDREDTHS).roundToLong() / HUNDREDTHS)
     }
 
     /** Spanish format without useless decimals: "7,25", "6,5", "10". */

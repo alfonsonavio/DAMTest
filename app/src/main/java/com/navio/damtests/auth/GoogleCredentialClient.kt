@@ -14,6 +14,7 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.navio.damtests.R
+import com.navio.damtests.core.suspendRunCatching
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -68,8 +69,10 @@ class GoogleCredentialClient @Inject constructor(
                 Result.Error(IllegalStateException("Unexpected credential type: ${credential.type}"))
             }
         } catch (e: GetCredentialCancellationException) {
+            Log.d(TAG, "Google sign-in cancelled: ${e.type}")
             Result.Cancelled
         } catch (e: NoCredentialException) {
+            Log.d(TAG, "No Google account to sign in with: ${e.type}")
             Result.NoAccount
         } catch (e: GetCredentialException) {
             Log.e(TAG, "Google sign-in failed: ${e.type}", e)
@@ -86,11 +89,8 @@ class GoogleCredentialClient @Inject constructor(
      * this must not block signing out.
      */
     suspend fun clearCredentialState() {
-        try {
-            credentialManager.clearCredentialState(ClearCredentialStateRequest())
-        } catch (e: Exception) {
-            Log.w(TAG, "Could not clear credential state: ${e.message}")
-        }
+        suspendRunCatching { credentialManager.clearCredentialState(ClearCredentialStateRequest()) }
+            .onFailure { Log.w(TAG, "Could not clear credential state: ${it.message}") }
     }
 
     private companion object {

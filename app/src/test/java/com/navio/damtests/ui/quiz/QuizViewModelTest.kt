@@ -451,7 +451,7 @@ class QuizViewModelTest {
 
     @Test
     fun `a test with no questions is reported instead of loading forever`() = runTest {
-        coEvery { repository.getQuestionsForRange(any(), any(), any(), any()) } returns emptyList()
+        coEvery { repository.getQuestionsForRange(any(), any(), any()) } returns emptyList()
 
         viewModel.loadQuestions("sistemas", TestMode.GENERAL_SECOND_HALF.topicId)
 

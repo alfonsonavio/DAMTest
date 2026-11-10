@@ -69,7 +69,7 @@ class QuizRepositoryTest {
             dao.getRandomQuestionsForTopicList("programacion", listOf("tema_1", "tema_2", "tema_3"), 20)
         } returns expected
 
-        val result = repository.getQuestionsForRange("programacion", 1, 3, 20)
+        val result = repository.getQuestionsForRange("programacion", 1..3, 20)
 
         assertEquals(expected, result)
         coVerify {

@@ -22,23 +22,26 @@ object RemoteConfigManager {
     const val KEY_LATEST_VERSION_CODE = "latest_version_code"
     const val KEY_LATEST_VERSION_NAME = "latest_version_name"
 
+    /** Remote Config values are fetched again at most once an hour. */
+    private const val FETCH_INTERVAL_SECONDS = 3600L
+
     const val DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b"
     const val DEFAULT_GEMINI_MODEL = "gemini-3.5-flash"
 
     suspend fun fetchAndActivate() {
-        try {
+        suspendRunCatching {
             val config = FirebaseRemoteConfig.getInstance()
 
             // Await the settings — this was the bug: setConfigSettingsAsync
             // was not awaited, so the interval change wasn't applied before fetch.
             config.setConfigSettingsAsync(
                 FirebaseRemoteConfigSettings.Builder()
-                    .setMinimumFetchIntervalInSeconds(3600)
+                    .setMinimumFetchIntervalInSeconds(FETCH_INTERVAL_SECONDS)
                     .build()
             ).await()
 
             // Fetch and activate separately for maximum reliability
-            config.fetch(3600).await() // force fresh fetch, ignore cache
+            config.fetch(FETCH_INTERVAL_SECONDS).await()
             val activated = config.activate().await()
 
             Log.d(TAG, "fetch+activate done. activated=$activated")
@@ -46,9 +49,7 @@ object RemoteConfigManager {
             Log.d(TAG, "gemini_api_key present: ${config.getString(KEY_GEMINI).isNotEmpty()}")
             Log.d(TAG, "groq_model: ${getStringOr(KEY_GROQ_MODEL, DEFAULT_GROQ_MODEL)}")
             Log.d(TAG, "gemini_model: ${getStringOr(KEY_GEMINI_MODEL, DEFAULT_GEMINI_MODEL)}")
-        } catch (e: Exception) {
-            Log.e(TAG, "Remote Config fetch failed: ${e.message}")
-        }
+        }.onFailure { Log.e(TAG, "Remote Config fetch failed: ${it.message}") }
     }
 
     fun getString(key: String): String =

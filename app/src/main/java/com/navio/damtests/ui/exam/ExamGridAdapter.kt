@@ -31,19 +31,18 @@ class ExamGridAdapter(
         val answered = position in state.answers
         val flagged = position in state.flagged
         val current = position == state.currentIndex
-        val density = ctx.resources.displayMetrics.density
 
         holder.cell.text = "${position + 1}"
         holder.cell.setTextColor(ctx.getColor(if (answered) R.color.text_on_dark else R.color.text_primary))
         holder.cell.background = GradientDrawable().apply {
-            cornerRadius = 12 * density
+            cornerRadius = ctx.resources.getDimension(R.dimen.exam_cell_corner_radius)
             setColor(ctx.getColor(if (answered) R.color.brand_primary else R.color.surface))
             val (width, color) = when {
-                flagged -> 3 to R.color.favorite_star
-                current -> 3 to R.color.brand_navy
-                else -> 1 to R.color.surface_border
+                flagged -> R.dimen.exam_cell_stroke_highlighted to R.color.favorite_star
+                current -> R.dimen.exam_cell_stroke_highlighted to R.color.brand_navy
+                else -> R.dimen.exam_cell_stroke to R.color.surface_border
             }
-            setStroke((width * density).toInt(), ctx.getColor(color))
+            setStroke(ctx.resources.getDimensionPixelSize(width), ctx.getColor(color))
         }
         holder.cell.contentDescription = ctx.getString(
             when {

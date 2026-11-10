@@ -1,5 +1,6 @@
 package com.navio.damtests.data.statistics
 
+import com.navio.damtests.core.percentOf
 import com.navio.damtests.data.local.entity.QuestionStats
 import com.navio.damtests.data.local.entity.TestAttempt
 
@@ -44,7 +45,7 @@ class StatisticsCalculator {
     private fun globalAccuracy(stats: List<QuestionStats>): Int {
         val seen = stats.sumOf { it.timesSeen }
         val correct = stats.sumOf { it.timesCorrect }
-        return if (seen > 0) (correct * 100) / seen else 0
+        return percentOf(correct, seen)
     }
 
     /** The last [MAX_EVOLUTION_POINTS] attempts as score-% points, chronological. */
@@ -84,7 +85,7 @@ class StatisticsCalculator {
             val seen = list.sumOf { it.timesSeen }
             val wrong = list.sumOf { it.timesWrong }
             if (seen < WEAK_TOPIC_MIN_SEEN) return@mapNotNull null
-            val failurePercent = (wrong * 100) / seen
+            val failurePercent = percentOf(wrong, seen)
             if (failurePercent < WEAK_TOPIC_MIN_FAILURE) return@mapNotNull null
             WeakTopic(subjectId, topicId, failurePercent)
         }

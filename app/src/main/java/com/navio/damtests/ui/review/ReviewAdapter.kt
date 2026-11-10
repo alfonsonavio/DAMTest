@@ -1,5 +1,6 @@
 package com.navio.damtests.ui.review
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.navio.damtests.R
+import com.navio.damtests.data.quiz.correctOptionText
 import com.navio.damtests.ui.quiz.QuestionResult
 
 class ReviewAdapter(
@@ -44,70 +46,62 @@ class ReviewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val res = results[position]
-        val q = res.question
-
-        // FIX: use the pre-computed isCorrect flag from QuizViewModel.
-        // DO NOT recalculate as (userSelectedIndex == correctOptionIndex) because
-        // userSelectedIndex is a position in the SHUFFLED list while
-        // correctOptionIndex is a position in the ORIGINAL unshuffled options —
-        // comparing them directly gives wrong results.
-        val isCorrect = res.isCorrect
-
-        holder.tvQuestion.text = "${position + 1}. ${q.text}"
+        holder.tvQuestion.text = "${position + 1}. ${res.question.text}"
+        holder.tvOptions.text = optionsText(holder.itemView.context, res)
         holder.btnReport.setOnClickListener { onReportClick(res) }
+        bindFavorite(holder, res)
+        bindVerdict(holder, res)
+    }
 
-        // Favourite star (hidden for questions without a stable id)
-        val isFavorite = q.stableId in favoriteIds
-        holder.btnFavorite.visibility = if (q.stableId.isBlank()) View.GONE else View.VISIBLE
+    /** Favourite star (hidden for questions without a stable id). */
+    private fun bindFavorite(holder: ViewHolder, res: QuestionResult) {
+        val stableId = res.question.stableId
+        val isFavorite = stableId in favoriteIds
+        holder.btnFavorite.visibility = if (stableId.isBlank()) View.GONE else View.VISIBLE
         holder.btnFavorite.setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_outline)
         holder.btnFavorite.contentDescription = holder.itemView.context.getString(
             if (isFavorite) R.string.favorite_remove else R.string.favorite_add
         )
         holder.btnFavorite.setOnClickListener { onFavoriteClick(res, !isFavorite) }
+    }
 
-        // The correct answer text (from original option order)
-        val correctText = when (q.correctOptionIndex) {
-            0 -> q.optionA
-            1 -> q.optionB
-            2 -> q.optionC
-            else -> q.optionD
-        }
-
-        // FIX: the user's selected text comes from the SHUFFLED options list,
-        // NOT from the original optionA/B/C/D indexed by userSelectedIndex.
+    /**
+     * The options in the order they were shown, marking the right one and the
+     * user's wrong choice. Options are compared by text: [QuestionResult.isCorrect]
+     * and [QuestionResult.userSelectedIndex] refer to the SHUFFLED order, while
+     * the question's correctOptionIndex refers to the original one.
+     */
+    private fun optionsText(context: Context, res: QuestionResult): String {
+        val correctText = res.question.correctOptionText
         val userSelectedText = res.shuffledOptions.getOrElse(res.userSelectedIndex) { "" }
 
-        val optionsText = StringBuilder()
-        for (i in res.shuffledOptions.indices) {
-            val optionText = res.shuffledOptions[i]
+        val lines = res.shuffledOptions.mapIndexed { i, optionText ->
             val prefix = when {
                 optionText == correctText -> CORRECT_MARK
-                optionText == userSelectedText && !isCorrect -> WRONG_MARK
+                optionText == userSelectedText && !res.isCorrect -> WRONG_MARK
                 else -> NO_MARK
             }
-            optionsText.append("$prefix ${OPTION_LETTERS[i]}) $optionText\n")
+            "$prefix ${OPTION_LETTERS[i]}) $optionText"
         }
         // Exam questions left blank: say so and show only the right answer
-        if (!res.isAnswered) {
-            optionsText.insert(0, holder.itemView.context.getString(R.string.review_not_answered) + "\n\n")
-        }
-        holder.tvOptions.text = optionsText.toString().trim()
+        val header = if (res.isAnswered) emptyList() else listOf(context.getString(R.string.review_not_answered), "")
+        return (header + lines).joinToString("\n")
+    }
 
-        if (!res.isAnswered) {
-            holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.surface))
-            holder.card.strokeColor = holder.card.context.getColor(R.color.text_muted)
-            holder.btnExplain.visibility = View.VISIBLE
-            holder.btnExplain.setOnClickListener { onExplainClick(res) }
-        } else if (isCorrect) {
-            holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.state_success_bg))
-            holder.card.strokeColor = holder.card.context.getColor(R.color.state_success)
-            holder.btnExplain.visibility = View.GONE
-        } else {
-            holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.state_error_bg))
-            holder.card.strokeColor = holder.card.context.getColor(R.color.state_error)
-            holder.btnExplain.visibility = View.VISIBLE
-            holder.btnExplain.setOnClickListener { onExplainClick(res) }
+    /** Card colours by result; unanswered and wrong questions offer an explanation. */
+    private fun bindVerdict(holder: ViewHolder, res: QuestionResult) {
+        val (background, stroke) = when {
+            !res.isAnswered -> R.color.surface to R.color.text_muted
+            res.isCorrect -> R.color.state_success_bg to R.color.state_success
+            else -> R.color.state_error_bg to R.color.state_error
         }
+        val context = holder.card.context
+        holder.card.setCardBackgroundColor(context.getColor(background))
+        holder.card.strokeColor = context.getColor(stroke)
+
+        val canExplain = !res.isAnswered || !res.isCorrect
+        holder.btnExplain.visibility = if (canExplain) View.VISIBLE else View.GONE
+        if (canExplain) holder.btnExplain.setOnClickListener { onExplainClick(res) }
     }
 
     override fun getItemCount() = results.size
