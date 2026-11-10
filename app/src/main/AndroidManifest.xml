@@ -42,7 +42,7 @@
             android:theme="@style/Theme.DAMTest" />
 
         <activity
-            android:name=".TopicSelectionActivity"
+            android:name=".ui.topics.TopicSelectionActivity"
             android:exported="false" />
 
         <activity
