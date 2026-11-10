@@ -132,21 +132,21 @@ class ReviewActivity : AppCompatActivity() {
         val comment  = view.findViewById<TextInputEditText>(R.id.etReportComment)
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("Reportar pregunta")
+            .setTitle(R.string.report_title)
             .setView(view)
-            .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Enviar") { _, _ ->
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.report_send) { _, _ ->
                 val reason = when (reasons.checkedRadioButtonId) {
-                    R.id.rbWrongAnswer -> "respuesta_incorrecta"
-                    R.id.rbTypo        -> "errata"
-                    else               -> "otro"
+                    R.id.rbWrongAnswer -> ReportRepository.Reason.WRONG_ANSWER
+                    R.id.rbTypo        -> ReportRepository.Reason.TYPO
+                    else               -> ReportRepository.Reason.OTHER
                 }
                 reportRepository.reportQuestion(
                     result.question,
                     reason,
                     comment.text?.toString()?.trim().orEmpty()
                 )
-                Toast.makeText(this, "Gracias, revisaremos la pregunta", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.report_thanks, Toast.LENGTH_SHORT).show()
             }
             .show()
     }

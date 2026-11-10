@@ -45,8 +45,8 @@ class FavoritesActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 repository.setFavorite(question, favorite = false)
                 // Removing is one tap away from a mistake: offer to undo it
-                Snackbar.make(rv, "Quitada de favoritas", Snackbar.LENGTH_LONG)
-                    .setAction("Deshacer") {
+                Snackbar.make(rv, R.string.favorites_removed, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo) {
                         lifecycleScope.launch { repository.setFavorite(question, favorite = true) }
                     }
                     .show()
@@ -67,8 +67,8 @@ class FavoritesActivity : AppCompatActivity() {
                     rv.visibility = if (empty) View.GONE else View.VISIBLE
                     emptyState.visibility = if (empty) View.VISIBLE else View.GONE
                     btnPractice.isEnabled = !empty
-                    btnPractice.text = if (empty) "PRACTICAR FAVORITAS"
-                    else "PRACTICAR FAVORITAS (${favorites.size})"
+                    btnPractice.text = if (empty) getString(R.string.favorites_practice)
+                    else getString(R.string.favorites_practice_count, favorites.size)
                 }
             }
         }

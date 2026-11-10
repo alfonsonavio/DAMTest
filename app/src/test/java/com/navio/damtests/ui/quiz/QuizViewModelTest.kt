@@ -2,7 +2,6 @@ package com.navio.damtests.ui.quiz
 
 import com.navio.damtests.ai.FastExplainer
 import com.navio.damtests.data.local.entity.Question
-import com.navio.damtests.data.local.entity.TopicProgress
 import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.quiz.TestMode
 import com.navio.damtests.data.session.QuizSession
@@ -411,24 +410,24 @@ class QuizViewModelTest {
     @Test
     fun `wrong answer asks the AI once and correct answer never does`() = runTest {
         coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
-        coEvery { fastExplainer.explicarRapido(any(), any(), any()) } returns "Mal | Bien"
+        coEvery { fastExplainer.explainQuickly(any(), any(), any()) } returns "Mal | Bien"
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("B1", listOf("A1", "B1", "C1", "D1")) // wrong
         viewModel.checkAnswer("C1", listOf("A1", "B1", "C1", "D1")) // ignored
 
-        coVerify(exactly = 1) { fastExplainer.explicarRapido("Pregunta 1", "B1", "A1") }
+        coVerify(exactly = 1) { fastExplainer.explainQuickly("Pregunta 1", "B1", "A1") }
         assertEquals(QuizViewModel.AiFeedback.Ready("Mal", "Bien"), viewModel.aiFeedback.value)
 
         viewModel.goToNextQuestion()
         viewModel.checkAnswer("A2", listOf("A2", "B2", "C2", "D2")) // correct
-        coVerify(exactly = 1) { fastExplainer.explicarRapido(any(), any(), any()) }
+        coVerify(exactly = 1) { fastExplainer.explainQuickly(any(), any(), any()) }
     }
 
     @Test
     fun `moving to the next question clears the AI feedback`() = runTest {
         coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1), question(2))
-        coEvery { fastExplainer.explicarRapido(any(), any(), any()) } returns "Mal | Bien"
+        coEvery { fastExplainer.explainQuickly(any(), any(), any()) } returns "Mal | Bien"
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("B1", listOf("A1", "B1", "C1", "D1"))
@@ -440,7 +439,7 @@ class QuizViewModelTest {
     @Test
     fun `AI failure is reported as an error state`() = runTest {
         coEvery { repository.getQuestionsByTopic(any(), any(), any()) } returns listOf(question(1))
-        coEvery { fastExplainer.explicarRapido(any(), any(), any()) } throws RuntimeException("offline")
+        coEvery { fastExplainer.explainQuickly(any(), any(), any()) } throws RuntimeException("offline")
         viewModel.loadQuestions("programacion", "tema_1")
 
         viewModel.checkAnswer("B1", listOf("A1", "B1", "C1", "D1"))

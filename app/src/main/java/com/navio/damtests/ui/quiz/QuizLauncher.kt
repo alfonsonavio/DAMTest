@@ -2,6 +2,7 @@ package com.navio.damtests.ui.quiz
 
 import android.content.Context
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.navio.damtests.R
 import com.navio.damtests.data.session.QuizSessionStore
 
 /**
@@ -19,12 +20,12 @@ object QuizLauncher {
         }
 
         MaterialAlertDialogBuilder(context)
-            .setTitle("Tienes este test a medias")
-            .setMessage("Vas por la pregunta ${session.nextQuestionNumber} de ${session.total}.")
-            .setPositiveButton("Seguir") { _, _ ->
+            .setTitle(R.string.resume_test_title)
+            .setMessage(context.getString(R.string.resume_test_message, session.nextQuestionNumber, session.total))
+            .setPositiveButton(R.string.resume_test_continue) { _, _ ->
                 start(context, subjectId, topicId, resume = true)
             }
-            .setNegativeButton("Empezar de nuevo") { _, _ ->
+            .setNegativeButton(R.string.resume_test_restart) { _, _ ->
                 sessionStore.clear()
                 start(context, subjectId, topicId, resume = false)
             }

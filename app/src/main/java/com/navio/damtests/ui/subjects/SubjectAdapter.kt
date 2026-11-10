@@ -38,12 +38,12 @@ class SubjectAdapter(
         private val card: MaterialCardView = view.findViewById(R.id.cardSubject)
 
         fun bind(subject: Subject, progress: List<TopicProgress>) {
-            name.text = subject.name
+            name.setText(subject.nameRes)
             icon.setImageResource(subject.iconRes)
             card.setCardBackgroundColor(itemView.context.getColor(subject.colorRes))
 
             if (progress.isEmpty()) {
-                stats.text = "Sin tests realizados"
+                stats.setText(R.string.subject_no_tests)
             } else {
                 val numTests = progress.sumOf { it.attemptsCount }
                 val totalScore = progress.sumOf { it.lastScore }
@@ -51,8 +51,7 @@ class SubjectAdapter(
 
                 val avg = if (totalQuestions > 0) (totalScore.toDouble() / totalQuestions * 10) else 0.0
 
-                val testsLabel = if (numTests == 1) "1 test" else "$numTests tests"
-                stats.text = "$testsLabel | ${String.format("%.1f", avg)} media"
+                stats.text = itemView.resources.getQuantityString(R.plurals.subject_stats, numTests, numTests, avg)
             }
         }
     }

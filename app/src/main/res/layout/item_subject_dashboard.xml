@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardSubject"
     android:layout_width="match_parent"
@@ -33,7 +34,7 @@
             android:textColor="@color/text_primary"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:text="Programación" />
+            tools:text="Programación" />
 
         <View
             android:layout_width="30dp"
@@ -47,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="0 tests | 0.0 media"
+            tools:text="3 tests · 7,5 de media"
             android:textColor="@color/text_secondary"
             android:textSize="11sp" />
 

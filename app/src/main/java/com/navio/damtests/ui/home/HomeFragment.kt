@@ -61,7 +61,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val btnSettings       = view.findViewById<ImageButton>(R.id.btnSettings)
 
         tvGreeting.text = greetingForTimeOfDay()
-        tvName.text     = authManager.displayName
+        tvName.text     = authManager.displayName ?: getString(R.string.default_user_name)
 
         // Smart review is per subject: ask which one, then launch it.
         cardSmartReview.setOnClickListener { pickSubjectForSmartReview() }
@@ -81,7 +81,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 statsSyncRepository.syncedAt.collect {
-                    tvStreak.text = "🔥 ${repository.getStreak().days}"
+                    tvStreak.text = getString(R.string.home_streak, repository.getStreak().days)
                 }
             }
         }
@@ -95,7 +95,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     val totalQuestions = allProgress.sumOf { it.totalQuestions }
                     val average = if (totalQuestions > 0)
                         totalScore.toDouble() / totalQuestions * 10 else 0.0
-                    tvAvgScore.text   = String.format("%.1f", average)
+                    tvAvgScore.text   = getString(R.string.score_one_decimal, average)
                     tvTotalTests.text = totalTests.toString()
 
                     // A test left half-way takes priority: the card resumes it.
@@ -103,9 +103,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     if (session != null) {
                         cardContinue.isVisible = true
                         tvContinueHeader.isVisible = true
-                        tvContinueSubject.text = SubjectCatalog.nameFor(session.subjectId)
-                        tvContinueDetail.text = "${TopicNames.displayName(session.topicId)} · " +
-                                "Pregunta ${session.nextQuestionNumber} de ${session.total}"
+                        tvContinueSubject.text = SubjectCatalog.nameFor(session.subjectId).asString(requireContext())
+                        tvContinueDetail.text = getString(
+                            R.string.home_continue_session,
+                            TopicNames.displayName(session.topicId).asString(requireContext()),
+                            session.nextQuestionNumber,
+                            session.total
+                        )
                         progressContinue.isVisible = true
                         progressContinue.max = session.total
                         progressContinue.progress = session.answeredCount
@@ -126,8 +130,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     tvContinueHeader.isVisible = hasHistory
 
                     if (lastProgress != null) {
-                        tvContinueSubject.text = SubjectCatalog.nameFor(lastProgress.subjectId)
-                        tvContinueDetail.text  = TopicNames.displayName(lastProgress.topicId)
+                        val context = requireContext()
+                        tvContinueSubject.text = SubjectCatalog.nameFor(lastProgress.subjectId).asString(context)
+                        tvContinueDetail.text  = TopicNames.displayName(lastProgress.topicId).asString(context)
                         cardContinue.setOnClickListener {
                             startActivity(TopicSelectionActivity.intent(requireContext(), lastProgress.subjectId))
                         }
@@ -148,26 +153,32 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             if (available.isEmpty()) {
                 AuthUiHelper.showInfo(
                     requireContext(),
-                    "Repaso inteligente",
-                    "Aún no tienes fallos que repasar. Haz algún test y vuelve."
+                    getString(R.string.practice_review_title),
+                    getString(R.string.home_review_empty)
                 )
                 return@launch
             }
 
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Repaso inteligente")
-                .setItems(available.map { it.name }.toTypedArray()) { _, which ->
-                    QuizLauncher.open(requireContext(), sessionStore, available[which].id, TestMode.SMART_REVIEW.topicId)
+                .setTitle(R.string.practice_review_title)
+                .setItems(available.map { getString(it.nameRes) }.toTypedArray()) { _, which ->
+                    val subjectId = available[which].id
+                    QuizLauncher.open(requireContext(), sessionStore, subjectId, TestMode.SMART_REVIEW.topicId)
                 }
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show()
         }
     }
 
     private fun greetingForTimeOfDay(): String =
         when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-            in 6..12  -> "Buenos días"
-            in 13..20 -> "Buenas tardes"
-            else      -> "Buenas noches"
+            in MORNING_HOURS   -> getString(R.string.greeting_morning)
+            in AFTERNOON_HOURS -> getString(R.string.greeting_afternoon)
+            else               -> getString(R.string.greeting_evening)
         }
+
+    private companion object {
+        val MORNING_HOURS = 6..12
+        val AFTERNOON_HOURS = 13..20
+    }
 }

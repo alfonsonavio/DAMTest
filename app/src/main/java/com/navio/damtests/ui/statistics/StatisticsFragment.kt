@@ -115,7 +115,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
         val primary = ContextCompat.getColor(requireContext(), R.color.brand_primary)
 
-        val dataSet = LineDataSet(entries, "Nota").apply {
+        val dataSet = LineDataSet(entries, getString(R.string.statistics_chart_label)).apply {
             color = primary
             lineWidth = 2.5f
             mode = LineDataSet.Mode.CUBIC_BEZIER   // smooth curve
@@ -171,8 +171,9 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
         bySubject.forEach { item ->
             val row = inflater.inflate(R.layout.item_subject_bar, container, false)
-            row.findViewById<TextView>(R.id.tvSubjectName).text = SubjectCatalog.nameFor(item.subjectId)
-            row.findViewById<TextView>(R.id.tvSubjectPercent).text = "${item.accuracy}%"
+            row.findViewById<TextView>(R.id.tvSubjectName).text =
+                SubjectCatalog.nameFor(item.subjectId).asString(requireContext())
+            row.findViewById<TextView>(R.id.tvSubjectPercent).text = getString(R.string.percent, item.accuracy)
             val bar = row.findViewById<ProgressBar>(R.id.progressSubject)
             bar.progress = item.accuracy
             // Tint the percentage text by level
@@ -201,10 +202,13 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
         weakest.forEach { topic ->
             val row = inflater.inflate(R.layout.item_weak_topic, container, false)
-            row.findViewById<TextView>(R.id.tvWeakTopic).text =
-                "${SubjectCatalog.nameFor(topic.subjectId)} · ${TopicNames.displayName(topic.topicId)}"
+            row.findViewById<TextView>(R.id.tvWeakTopic).text = getString(
+                R.string.subject_and_topic,
+                SubjectCatalog.nameFor(topic.subjectId).asString(requireContext()),
+                TopicNames.displayName(topic.topicId).asString(requireContext())
+            )
             row.findViewById<TextView>(R.id.tvWeakDetail).text =
-                "Fallas el ${topic.failurePercent}% de las preguntas"
+                getString(R.string.statistics_weak_topic_detail, topic.failurePercent)
             container.addView(row)
         }
     }

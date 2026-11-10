@@ -106,33 +106,7 @@ object AuthUiHelper {
         dialog.show()
     }
 
-    /**
-     * Translates common Firebase Auth exception messages to Spanish.
-     */
-    fun translateError(context: Context, throwable: Throwable?): String {
-        val msg = throwable?.message ?: ""
-        return when {
-            msg.contains("email address is already in use", true) ||
-                    msg.contains("already in use", true) ->
-                "Ese correo ya está registrado"
-            msg.contains("badly formatted", true) ||
-                    msg.contains("invalid email", true) ->
-                "El correo no tiene un formato válido"
-            msg.contains("password is invalid", true) ||
-                    msg.contains("INVALID_LOGIN_CREDENTIALS", true) ||
-                    msg.contains("supplied auth credential", true) ->
-                "Correo o contraseña incorrectos"
-            msg.contains("no user record", true) ||
-                    msg.contains("there is no user", true) ->
-                "No existe ninguna cuenta con ese correo"
-            msg.contains("network error", true) ->
-                "Error de red. Comprueba tu conexión"
-            msg.contains("blocked all requests", true) ||
-                    msg.contains("unusual activity", true) ->
-                "Demasiados intentos. Espera un momento e inténtalo de nuevo"
-            msg.contains("Password should be at least", true) ->
-                "La contraseña debe tener al menos 6 caracteres"
-            else -> "Algo salió mal. Inténtalo de nuevo"
-        }
-    }
+    /** User-facing explanation of a Firebase Auth failure (see [AuthError]). */
+    fun translateError(context: Context, throwable: Throwable?): String =
+        context.getString(AuthError.from(throwable).messageRes)
 }

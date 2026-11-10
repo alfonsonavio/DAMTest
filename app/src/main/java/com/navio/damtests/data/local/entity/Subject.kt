@@ -1,5 +1,9 @@
 package com.navio.damtests.data.local.entity
 
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+
 /**
  * A DAM subject shown in the Asignaturas grid.
  *
@@ -9,8 +13,8 @@ package com.navio.damtests.data.local.entity
  */
 data class Subject(
     val id: String,
-    val name: String,
-    val iconRes: Int,
-    val colorRes: Int,
+    @StringRes val nameRes: Int,
+    @DrawableRes val iconRes: Int,
+    @ColorRes val colorRes: Int,
     val course: Int = 1
 )

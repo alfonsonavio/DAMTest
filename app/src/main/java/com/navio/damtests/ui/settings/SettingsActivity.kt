@@ -27,7 +27,6 @@ import com.navio.damtests.ui.auth.LoginActivity
 import com.navio.damtests.ui.common.AuthUiHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -73,13 +72,13 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupTheme() {
-        val labels = arrayOf("Sistema", "Claro", "Oscuro")
+        val labels = resources.getStringArray(R.array.settings_theme_options)
         val tvValue = findViewById<TextView>(R.id.tvThemeValue)
         tvValue.text = labels[settings.themeMode]
 
         findViewById<LinearLayout>(R.id.rowTheme).setOnClickListener {
             MaterialAlertDialogBuilder(this)
-                .setTitle("Tema")
+                .setTitle(R.string.settings_theme_title)
                 .setSingleChoiceItems(labels, settings.themeMode) { dialog, which ->
                     settings.themeMode = which
                     tvValue.text = labels[which]
@@ -92,11 +91,10 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupProfile() {
-        val name  = authManager.displayName
+        val name = authManager.displayName ?: getString(R.string.default_user_name)
         findViewById<TextView>(R.id.tvProfileName).text = name
         findViewById<TextView>(R.id.tvProfileEmail).text = authManager.email
-        findViewById<TextView>(R.id.tvAvatar).text =
-            name.firstOrNull()?.uppercase() ?: "U"
+        findViewById<TextView>(R.id.tvAvatar).text = name.first().uppercase()
     }
 
     private fun setupReminders() {
@@ -153,9 +151,9 @@ class SettingsActivity : AppCompatActivity() {
     private fun showNotificationsBlocked() {
         AuthUiHelper.showConfirm(
             context = this,
-            title = "Notificaciones desactivadas",
-            message = "Para recibir el recordatorio diario, permite las notificaciones de DAMTest en los ajustes del sistema.",
-            confirmText = "Abrir ajustes"
+            title = getString(R.string.settings_notifications_blocked_title),
+            message = getString(R.string.settings_notifications_blocked_message),
+            confirmText = getString(R.string.settings_notifications_blocked_confirm)
         ) {
             startActivity(
                 Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
@@ -217,10 +215,9 @@ class SettingsActivity : AppCompatActivity() {
         findViewById<LinearLayout>(R.id.rowDeleteAccount).setOnClickListener {
             AuthUiHelper.showConfirm(
                 context = this,
-                title = "Eliminar cuenta",
-                message = "Se borrarán tu cuenta y todos tus datos: progreso, estadísticas " +
-                        "y el test que tengas a medias. Esta acción no se puede deshacer.",
-                confirmText = "Eliminar"
+                title = getString(R.string.delete_account_title),
+                message = getString(R.string.delete_account_message),
+                confirmText = getString(R.string.delete_account_confirm)
             ) { deleteAccount() }
         }
     }
@@ -228,8 +225,8 @@ class SettingsActivity : AppCompatActivity() {
     private fun deleteAccount() {
         val loading = AuthUiHelper.showLoading(
             this,
-            "Eliminando tu cuenta",
-            "Estamos borrando tu cuenta y todos tus datos."
+            getString(R.string.delete_account_progress_title),
+            getString(R.string.delete_account_progress_message)
         )
         lifecycleScope.launch {
             val result = accountDeletionManager.deleteAccount()
@@ -239,30 +236,27 @@ class SettingsActivity : AppCompatActivity() {
                     ReminderScheduler.cancel(this@SettingsActivity)
                     AuthUiHelper.showInfo(
                         this@SettingsActivity,
-                        "Cuenta eliminada",
-                        "Tu cuenta y todos tus datos se han borrado."
+                        getString(R.string.delete_account_done_title),
+                        getString(R.string.delete_account_done_message)
                     ) { goToLogin() }
                 }
                 AccountDeletionManager.Result.DATA_DELETED_ACCOUNT_PENDING -> {
                     ReminderScheduler.cancel(this@SettingsActivity)
                     AuthUiHelper.showInfo(
                         this@SettingsActivity,
-                        "Casi listo",
-                        "Tus datos se han borrado, pero no se ha podido eliminar la cuenta. " +
-                                "Inicia sesión de nuevo y repite la eliminación para terminar."
+                        getString(R.string.delete_account_pending_title),
+                        getString(R.string.delete_account_pending_message)
                     ) { goToLogin() }
                 }
                 AccountDeletionManager.Result.NEEDS_RECENT_LOGIN -> AuthUiHelper.showInfo(
                     this@SettingsActivity,
-                    "Vuelve a iniciar sesión",
-                    "Por seguridad, para eliminar la cuenta tienes que haber iniciado sesión " +
-                            "hace poco. Cierra sesión, vuelve a entrar y repite la eliminación. " +
-                            "No se ha borrado nada."
+                    getString(R.string.delete_account_relogin_title),
+                    getString(R.string.delete_account_relogin_message)
                 )
                 AccountDeletionManager.Result.FAILED -> AuthUiHelper.showInfo(
                     this@SettingsActivity,
-                    "No se ha podido eliminar",
-                    "No se ha borrado nada. Comprueba tu conexión e inténtalo de nuevo."
+                    getString(R.string.delete_account_failed_title),
+                    getString(R.string.delete_account_failed_message)
                 )
             }
         }
@@ -281,5 +275,5 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun formatTime(hour: Int, minute: Int): String =
-        String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
+        getString(R.string.time_hh_mm, hour, minute)
 }

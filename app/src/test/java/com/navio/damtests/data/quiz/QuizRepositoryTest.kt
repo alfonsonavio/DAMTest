@@ -1,6 +1,7 @@
 package com.navio.damtests.data.quiz
 
 import com.navio.damtests.auth.AuthManager
+import com.navio.damtests.data.catalog.TopicNames
 import com.navio.damtests.data.exam.ExamRange
 import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.local.entity.Question
@@ -138,7 +139,7 @@ class QuizRepositoryTest {
         val topics = repository.getStudyTopics("programacion", setOf("tema_2", "tema_20", "repaso_1"))
 
         assertEquals(listOf("tema_2", "tema_10", "tema_20", "caso_1", "repaso_1"), topics.map { it.id })
-        assertEquals("Tema 10", topics[1].title)
+        assertEquals(TopicNames.displayName("tema_10"), topics[1].title)
     }
 
     @Test

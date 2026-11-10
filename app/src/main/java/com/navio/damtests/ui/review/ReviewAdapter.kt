@@ -31,9 +31,9 @@ class ReviewAdapter(
         val tvQuestion: TextView = view.findViewById(R.id.tvReviewQuestion)
         val tvOptions: TextView  = view.findViewById(R.id.tvReviewOptions)
         val card: MaterialCardView = view.findViewById(R.id.cardReview)
-        val btnVerExplicacion: Button = view.findViewById(R.id.btnVerExplicacion)
-        val btnReportar: Button = view.findViewById(R.id.btnReportar)
-        val btnFavorito: ImageButton = view.findViewById(R.id.btnFavorito)
+        val btnExplain: Button = view.findViewById(R.id.btnExplain)
+        val btnReport: Button = view.findViewById(R.id.btnReport)
+        val btnFavorite: ImageButton = view.findViewById(R.id.btnFavorite)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -54,14 +54,16 @@ class ReviewAdapter(
         val isCorrect = res.isCorrect
 
         holder.tvQuestion.text = "${position + 1}. ${q.text}"
-        holder.btnReportar.setOnClickListener { onReportClick(res) }
+        holder.btnReport.setOnClickListener { onReportClick(res) }
 
         // Favourite star (hidden for questions without a stable id)
         val isFavorite = q.stableId in favoriteIds
-        holder.btnFavorito.visibility = if (q.stableId.isBlank()) View.GONE else View.VISIBLE
-        holder.btnFavorito.setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_outline)
-        holder.btnFavorito.contentDescription = if (isFavorite) "Quitar de favoritas" else "Añadir a favoritas"
-        holder.btnFavorito.setOnClickListener { onFavoriteClick(res, !isFavorite) }
+        holder.btnFavorite.visibility = if (q.stableId.isBlank()) View.GONE else View.VISIBLE
+        holder.btnFavorite.setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_outline)
+        holder.btnFavorite.contentDescription = holder.itemView.context.getString(
+            if (isFavorite) R.string.favorite_remove else R.string.favorite_add
+        )
+        holder.btnFavorite.setOnClickListener { onFavoriteClick(res, !isFavorite) }
 
         // The correct answer text (from original option order)
         val correctText = when (q.correctOptionIndex) {
@@ -75,37 +77,46 @@ class ReviewAdapter(
         // NOT from the original optionA/B/C/D indexed by userSelectedIndex.
         val userSelectedText = res.shuffledOptions.getOrElse(res.userSelectedIndex) { "" }
 
-        val labels = listOf("a", "b", "c", "d")
         val optionsText = StringBuilder()
         for (i in res.shuffledOptions.indices) {
             val optionText = res.shuffledOptions[i]
             val prefix = when {
-                optionText == correctText                       -> "✅ "
-                optionText == userSelectedText && !isCorrect   -> "❌ "
-                else                                           -> "      "
+                optionText == correctText                     -> CORRECT_MARK
+                optionText == userSelectedText && !isCorrect -> WRONG_MARK
+                else                                         -> NO_MARK
             }
-            optionsText.append("$prefix ${labels[i]}) $optionText\n")
+            optionsText.append("$prefix ${OPTION_LETTERS[i]}) $optionText\n")
         }
         // Exam questions left blank: say so and show only the right answer
-        if (!res.isAnswered) optionsText.insert(0, "⚪ Sin contestar\n\n")
+        if (!res.isAnswered) {
+            optionsText.insert(0, holder.itemView.context.getString(R.string.review_not_answered) + "\n\n")
+        }
         holder.tvOptions.text = optionsText.toString().trim()
 
         if (!res.isAnswered) {
             holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.surface))
             holder.card.strokeColor = holder.card.context.getColor(R.color.text_muted)
-            holder.btnVerExplicacion.visibility = View.VISIBLE
-            holder.btnVerExplicacion.setOnClickListener { onExplainClick(res) }
+            holder.btnExplain.visibility = View.VISIBLE
+            holder.btnExplain.setOnClickListener { onExplainClick(res) }
         } else if (isCorrect) {
             holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.state_success_bg))
             holder.card.strokeColor = holder.card.context.getColor(R.color.state_success)
-            holder.btnVerExplicacion.visibility = View.GONE
+            holder.btnExplain.visibility = View.GONE
         } else {
             holder.card.setCardBackgroundColor(holder.card.context.getColor(R.color.state_error_bg))
             holder.card.strokeColor = holder.card.context.getColor(R.color.state_error)
-            holder.btnVerExplicacion.visibility = View.VISIBLE
-            holder.btnVerExplicacion.setOnClickListener { onExplainClick(res) }
+            holder.btnExplain.visibility = View.VISIBLE
+            holder.btnExplain.setOnClickListener { onExplainClick(res) }
         }
     }
 
     override fun getItemCount() = results.size
+
+    private companion object {
+        val OPTION_LETTERS = listOf("a", "b", "c", "d")
+        // Same width for every option, so the letters stay aligned
+        const val CORRECT_MARK = "✅ "
+        const val WRONG_MARK = "❌ "
+        const val NO_MARK = "      "
+    }
 }
