@@ -40,6 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **Dependencies cleaned up** — every dependency and plugin is now declared in
+  the version catalog (`gradle/libs.versions.toml`). Removed what the app
+  never used: Jetpack Compose (no screen uses it), the Crashlytics build
+  tools (wrongly added as an app library), CardView, Turbine, the duplicated
+  Material 1.11 declaration and the template instrumented test.
+- **Unused resources removed** — two layouts, six drawables, two menus and
+  the template navigation strings.
 - **Subject screen redesigned** — the practice modes (exam, smart review,
   general test and favourites) are now cards in a "Practicar" block at the
   top, always in view, instead of rows at the end of the topic list. Smart
