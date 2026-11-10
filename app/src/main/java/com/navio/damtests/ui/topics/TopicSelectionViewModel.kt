@@ -3,9 +3,9 @@ package com.navio.damtests.ui.topics
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.navio.damtests.PdfReleaseRepository
-import com.navio.damtests.QuizRepository
 import com.navio.damtests.data.local.entity.Topic
+import com.navio.damtests.data.pdf.PdfReleaseRepository
+import com.navio.damtests.data.quiz.QuizRepository
 import com.navio.damtests.data.topics.PracticeOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
