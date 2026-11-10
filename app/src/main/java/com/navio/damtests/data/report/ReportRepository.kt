@@ -29,14 +29,14 @@ class ReportRepository @Inject constructor(
 
     fun reportQuestion(question: Question, reason: Reason, comment: String) {
         val data = mapOf(
-            "stableId"     to question.stableId,
-            "subjectId"    to question.subjectId,
-            "topicId"      to question.topicId,
+            "stableId" to question.stableId,
+            "subjectId" to question.subjectId,
+            "topicId" to question.topicId,
             "questionText" to question.text,
-            "reason"       to reason.storedValue,
-            "comment"      to comment,
-            "appVersion"   to BuildConfig.VERSION_NAME,
-            "createdAt"    to FieldValue.serverTimestamp()
+            "reason" to reason.storedValue,
+            "comment" to comment,
+            "appVersion" to BuildConfig.VERSION_NAME,
+            "createdAt" to FieldValue.serverTimestamp()
         )
         firestore.collection("reports").add(data)
             .addOnFailureListener { e -> Log.e(TAG, "Failed to send report: ${e.message}") }

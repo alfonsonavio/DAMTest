@@ -29,10 +29,13 @@ class AccountDeletionManager @Inject constructor(
     enum class Result {
         /** Account and all data deleted; the user is signed out. */
         DELETED,
+
         /** Nothing deleted: the user must sign in again first. */
         NEEDS_RECENT_LOGIN,
+
         /** Data deleted but the account itself could not be; the user is signed out. */
         DATA_DELETED_ACCOUNT_PENDING,
+
         /** Nothing deleted (no connection, server error…). */
         FAILED
     }

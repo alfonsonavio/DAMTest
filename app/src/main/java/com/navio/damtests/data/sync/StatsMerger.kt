@@ -47,7 +47,9 @@ object StatsMerger {
 
         val toCloud = if (uploadLocalOnly) {
             local.filter { attemptKey(it) !in cloudKeys }
-        } else emptyList()
+        } else {
+            emptyList()
+        }
 
         return Plan(toLocal, toCloud)
     }
@@ -78,7 +80,9 @@ object StatsMerger {
                 val c = cloudById[l.stableId]
                 c == null || l.lastSeenTimestamp > c.lastSeenTimestamp
             }
-        } else emptyList()
+        } else {
+            emptyList()
+        }
 
         return Plan(toLocal, toCloud)
     }
@@ -109,7 +113,9 @@ object StatsMerger {
                 val c = cloudById[l.stableId]
                 c == null || l.updatedAt > c.updatedAt
             }
-        } else emptyList()
+        } else {
+            emptyList()
+        }
 
         return Plan(toLocal, toCloud)
     }

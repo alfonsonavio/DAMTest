@@ -10,11 +10,11 @@ object RemoteConfigManager {
     private const val TAG = "RemoteConfigManager"
 
     const val KEY_GEMINI = "gemini_api_key"
-    const val KEY_GROQ   = "groq_api_key"
+    const val KEY_GROQ = "groq_api_key"
 
     // AI model names — editable from the Firebase console, no app update needed.
     // Defaults are used on first launch or if the fetch fails.
-    const val KEY_GROQ_MODEL   = "groq_model"
+    const val KEY_GROQ_MODEL = "groq_model"
     const val KEY_GEMINI_MODEL = "gemini_model"
 
     // Latest published version, set by hand in the Firebase console on each
@@ -22,7 +22,7 @@ object RemoteConfigManager {
     const val KEY_LATEST_VERSION_CODE = "latest_version_code"
     const val KEY_LATEST_VERSION_NAME = "latest_version_name"
 
-    const val DEFAULT_GROQ_MODEL   = "openai/gpt-oss-120b"
+    const val DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b"
     const val DEFAULT_GEMINI_MODEL = "gemini-3.5-flash"
 
     suspend fun fetchAndActivate() {
@@ -38,7 +38,7 @@ object RemoteConfigManager {
             ).await()
 
             // Fetch and activate separately for maximum reliability
-            config.fetch(3600).await()         // force fresh fetch, ignore cache
+            config.fetch(3600).await() // force fresh fetch, ignore cache
             val activated = config.activate().await()
 
             Log.d(TAG, "fetch+activate done. activated=$activated")

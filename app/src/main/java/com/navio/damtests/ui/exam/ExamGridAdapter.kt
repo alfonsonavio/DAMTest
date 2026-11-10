@@ -27,11 +27,11 @@ class ExamGridAdapter(
     )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val ctx      = holder.cell.context
+        val ctx = holder.cell.context
         val answered = position in state.answers
-        val flagged  = position in state.flagged
-        val current  = position == state.currentIndex
-        val density  = ctx.resources.displayMetrics.density
+        val flagged = position in state.flagged
+        val current = position == state.currentIndex
+        val density = ctx.resources.displayMetrics.density
 
         holder.cell.text = "${position + 1}"
         holder.cell.setTextColor(ctx.getColor(if (answered) R.color.text_on_dark else R.color.text_primary))
@@ -41,16 +41,16 @@ class ExamGridAdapter(
             val (width, color) = when {
                 flagged -> 3 to R.color.favorite_star
                 current -> 3 to R.color.brand_navy
-                else    -> 1 to R.color.surface_border
+                else -> 1 to R.color.surface_border
             }
             setStroke((width * density).toInt(), ctx.getColor(color))
         }
         holder.cell.contentDescription = ctx.getString(
             when {
                 flagged && answered -> R.string.exam_cell_answered_flagged
-                flagged             -> R.string.exam_cell_blank_flagged
-                answered            -> R.string.exam_cell_answered
-                else                -> R.string.exam_cell_blank
+                flagged -> R.string.exam_cell_blank_flagged
+                answered -> R.string.exam_cell_answered
+                else -> R.string.exam_cell_blank
             },
             position + 1
         )

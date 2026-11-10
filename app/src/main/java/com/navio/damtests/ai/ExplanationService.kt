@@ -88,6 +88,7 @@ class ExplanationService(
         const val ATTEMPT_TIMEOUT_MS = 20_000L
         const val RETRY_DELAY_MS = 1_500L
         private const val PRIMARY_ATTEMPTS = 2
+
         /** HTTP 500/502/503 as whole numbers (not inside "15000 ms") or Google's busy texts. */
         private val BUSY = Regex("""\b50[023]\b|UNAVAILABLE|high demand|overloaded""", RegexOption.IGNORE_CASE)
 
@@ -103,7 +104,7 @@ class ExplanationService(
             val geminiKey = RemoteConfigManager.getString(RemoteConfigManager.KEY_GEMINI)
             val gemini = geminiKey.takeIf { it.isNotBlank() }?.let { GeminiExplainer(it) }
             return ExplanationService(
-                primary  = gemini?.let { it::generate },
+                primary = gemini?.let { it::generate },
                 fallback = fastExplainer::generate
             )
         }

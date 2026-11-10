@@ -110,7 +110,7 @@ class SubjectsFragment : Fragment(R.layout.fragment_subjects) {
 
     private suspend fun subjectHasContent(subject: Subject): Boolean =
         repository.subjectHasContent(subject.id) ||
-                PdfReleaseRepository.getTopicIdsWithPdf(requireContext(), subject.id).isNotEmpty()
+            PdfReleaseRepository.getTopicIdsWithPdf(requireContext(), subject.id).isNotEmpty()
 
     private companion object {
         const val SYNC_WAIT_MS = 60_000L

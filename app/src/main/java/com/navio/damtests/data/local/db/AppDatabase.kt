@@ -37,11 +37,11 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
                     "CREATE TABLE IF NOT EXISTS `favorite_questions` (" +
-                            "`stableId` TEXT NOT NULL, " +
-                            "`subjectId` TEXT NOT NULL, " +
-                            "`isFavorite` INTEGER NOT NULL, " +
-                            "`updatedAt` INTEGER NOT NULL, " +
-                            "PRIMARY KEY(`stableId`))"
+                        "`stableId` TEXT NOT NULL, " +
+                        "`subjectId` TEXT NOT NULL, " +
+                        "`isFavorite` INTEGER NOT NULL, " +
+                        "`updatedAt` INTEGER NOT NULL, " +
+                        "PRIMARY KEY(`stableId`))"
                 )
             }
         }

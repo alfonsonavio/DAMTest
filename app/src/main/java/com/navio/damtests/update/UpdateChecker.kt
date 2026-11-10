@@ -41,8 +41,11 @@ object UpdateChecker {
         prefs.edit { putLong(KEY_LAST_PROMPT, now) }
 
         val versionName = RemoteConfigManager.getString(RemoteConfigManager.KEY_LATEST_VERSION_NAME)
-        val versionText = if (versionName.isNotBlank()) context.getString(R.string.update_version_named, versionName)
-        else context.getString(R.string.update_version_unnamed)
+        val versionText = if (versionName.isNotBlank()) {
+            context.getString(R.string.update_version_named, versionName)
+        } else {
+            context.getString(R.string.update_version_unnamed)
+        }
 
         AuthUiHelper.showConfirm(
             context = context,

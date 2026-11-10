@@ -183,9 +183,12 @@ class QuizRepositoryTest {
         repository.recordAnswer(q, wasCorrect = false)
 
         coVerify(exactly = 1) {
-            statsSyncRepository.saveQuestionStats("user123", match {
-                it.stableId == "programacion_tema_1_p1" && it.timesSeen == 1 && it.timesWrong == 1
-            })
+            statsSyncRepository.saveQuestionStats(
+                "user123",
+                match {
+                    it.stableId == "programacion_tema_1_p1" && it.timesSeen == 1 && it.timesWrong == 1
+                }
+            )
         }
     }
 
@@ -217,7 +220,9 @@ class QuizRepositoryTest {
         repository.setFavorite(q, favorite = true, now = 5000)
 
         coVerify(exactly = 1) {
-            dao.saveFavorite(match { it.stableId == "programacion_tema_1_p1" && it.isFavorite && it.updatedAt == 5000L })
+            dao.saveFavorite(
+                match { it.stableId == "programacion_tema_1_p1" && it.isFavorite && it.updatedAt == 5000L }
+            )
         }
         coVerify(exactly = 1) { statsSyncRepository.saveFavorite("user123", match { it.isFavorite }) }
     }
@@ -249,7 +254,7 @@ class QuizRepositoryTest {
         val secondHalf = (11..20).map { "tema_$it" }
         coEvery { dao.countQuestionsForTopicList("programacion", secondHalf) } returns 25
         coEvery { dao.getRandomQuestionsForTopicList("programacion", secondHalf, 20) } returns
-                (1..20).map { question(it) }
+            (1..20).map { question(it) }
 
         assertEquals(25, repository.countExamQuestions("programacion", ExamRange.SECOND_HALF))
         assertEquals(20, repository.getExamQuestions("programacion", ExamRange.SECOND_HALF, 20).size)

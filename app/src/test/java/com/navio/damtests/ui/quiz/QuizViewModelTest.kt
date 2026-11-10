@@ -132,8 +132,8 @@ class QuizViewModelTest {
         viewModel.loadQuestions("programacion", "tema_1")
 
         val shuffled = listOf("A1", "B1", "C1", "D1")
-        viewModel.checkAnswer("A1", shuffled)  // correct → score 1
-        viewModel.checkAnswer("A1", shuffled)  // should be ignored
+        viewModel.checkAnswer("A1", shuffled) // correct → score 1
+        viewModel.checkAnswer("A1", shuffled) // should be ignored
 
         // Score must still be 1, not 2 — double taps don't count twice
         assertEquals(1, viewModel.score.value)
@@ -315,10 +315,12 @@ class QuizViewModelTest {
         viewModel.checkAnswer("A1", listOf("A1", "B1", "C1", "D1"))
 
         verify {
-            sessionStore.save(match {
-                it.topicId == "tema_1" && it.questionIds == listOf("q1", "q2") &&
+            sessionStore.save(
+                match {
+                    it.topicId == "tema_1" && it.questionIds == listOf("q1", "q2") &&
                         it.answeredCount == 1 && it.score == 1
-            })
+                }
+            )
         }
     }
 
@@ -337,7 +339,7 @@ class QuizViewModelTest {
     fun `resume restores position, score and answers`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 2, score = 2)
         coEvery { repository.getQuestionsInOrder(listOf("q1", "q2", "q3")) } returns
-                listOf(question(1), question(2), question(3))
+            listOf(question(1), question(2), question(3))
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)
 
@@ -366,7 +368,7 @@ class QuizViewModelTest {
     fun `resume of a test with every question answered finishes it`() = runTest {
         every { sessionStore.load() } returns savedSession(answered = 3, score = 3)
         coEvery { repository.getQuestionsInOrder(any()) } returns
-                listOf(question(1), question(2), question(3))
+            listOf(question(1), question(2), question(3))
         coEvery { repository.getProgress(any(), any()) } returns null
 
         viewModel.loadQuestions("programacion", "tema_1", resume = true)

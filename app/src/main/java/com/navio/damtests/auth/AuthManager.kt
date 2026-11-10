@@ -24,6 +24,7 @@ class AuthManager @Inject constructor(
     val currentUser: FirebaseUser? get() = auth.currentUser
     val isLoggedIn: Boolean get() = auth.currentUser != null
     val currentUid: String? get() = auth.currentUser?.uid
+
     /** The user's name, or null if the account has none (the UI shows a default). */
     val displayName: String? get() = auth.currentUser?.displayName?.takeIf { it.isNotBlank() }
     val email: String get() = auth.currentUser?.email ?: ""

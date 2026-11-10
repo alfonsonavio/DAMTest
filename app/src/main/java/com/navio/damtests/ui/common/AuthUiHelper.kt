@@ -79,7 +79,10 @@ object AuthUiHelper {
         view.findViewById<TextView>(R.id.tvConfirmMessage).text = message
         view.findViewById<MaterialButton>(R.id.btnConfirmYes).apply {
             text = confirmText
-            setOnClickListener { dialog.dismiss(); onConfirm() }
+            setOnClickListener {
+                dialog.dismiss()
+                onConfirm()
+            }
         }
         view.findViewById<MaterialButton>(R.id.btnConfirmNo).setOnClickListener { dialog.dismiss() }
         dialog.show()

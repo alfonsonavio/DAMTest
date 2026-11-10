@@ -45,8 +45,8 @@ class SettingsManager @Inject constructor(
     /** Maps [themeMode] to the AppCompatDelegate night-mode flag. */
     fun nightModeFlag(): Int = when (themeMode) {
         THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
-        THEME_DARK  -> AppCompatDelegate.MODE_NIGHT_YES
-        else        -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
+        else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     }
 
     companion object {

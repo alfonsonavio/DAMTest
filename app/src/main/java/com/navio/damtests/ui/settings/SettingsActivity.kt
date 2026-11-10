@@ -42,8 +42,11 @@ import javax.inject.Inject
 class SettingsActivity : AppCompatActivity() {
 
     @Inject lateinit var settings: SettingsManager
+
     @Inject lateinit var authManager: AuthManager
+
     @Inject lateinit var logoutManager: LogoutManager
+
     @Inject lateinit var accountDeletionManager: AccountDeletionManager
 
     private lateinit var switchReminders: MaterialSwitch
@@ -162,8 +165,8 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun hasNotificationPermission(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
 
     /**
      * Explains why the reminder stayed off. If Android no longer shows the

@@ -33,9 +33,9 @@ class SmartReviewSelector(private val random: Random = Random.Default) {
 
     companion object {
         private const val BASE_WEIGHT = 1.0
-        private const val FAILURE_MULTIPLIER = 4.0   // how much failing boosts a question
-        private const val NOVELTY_WEIGHT = 2.0       // weight added for never-seen questions
-        private const val MAX_STALENESS_BONUS = 1.5  // max extra weight for old questions
+        private const val FAILURE_MULTIPLIER = 4.0 // how much failing boosts a question
+        private const val NOVELTY_WEIGHT = 2.0 // weight added for never-seen questions
+        private const val MAX_STALENESS_BONUS = 1.5 // max extra weight for old questions
         private const val STALENESS_WINDOW_MS = 7L * 24 * 60 * 60 * 1000 // 7 days
     }
 
@@ -101,7 +101,10 @@ class SmartReviewSelector(private val random: Random = Random.Default) {
             var chosenIndex = pool.lastIndex
             for (i in pool.indices) {
                 r -= weights[i]
-                if (r <= 0.0) { chosenIndex = i; break }
+                if (r <= 0.0) {
+                    chosenIndex = i
+                    break
+                }
             }
             // Remove the chosen one so it can't be picked again (no replacement)
             picked += pool.removeAt(chosenIndex)

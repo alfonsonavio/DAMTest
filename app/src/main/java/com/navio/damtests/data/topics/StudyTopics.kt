@@ -21,10 +21,10 @@ object StudyTopics {
     val ORDER: Comparator<String> = compareBy<String>(
         { id ->
             when {
-                id.startsWith(TEMA)   -> 0
-                id.startsWith(CASO)   -> 1
+                id.startsWith(TEMA) -> 0
+                id.startsWith(CASO) -> 1
                 id.startsWith(REPASO) -> 2
-                else                  -> 3
+                else -> 3
             }
         },
         { id -> id.substringAfter('_').toIntOrNull() ?: Int.MAX_VALUE },

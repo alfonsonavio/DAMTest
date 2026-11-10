@@ -22,8 +22,11 @@ import androidx.core.view.updatePadding
 fun ComponentActivity.setupEdgeToEdge(darkTop: Boolean) {
     val transparent = Color.TRANSPARENT
     enableEdgeToEdge(
-        statusBarStyle = if (darkTop) SystemBarStyle.dark(transparent)
-        else SystemBarStyle.auto(transparent, transparent)
+        statusBarStyle = if (darkTop) {
+            SystemBarStyle.dark(transparent)
+        } else {
+            SystemBarStyle.auto(transparent, transparent)
+        }
     )
 }
 

@@ -60,7 +60,7 @@ class NotificationHelper(private val context: Context) {
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
-            .setAutoCancel(true)  // dismiss when tapped
+            .setAutoCancel(true) // dismiss when tapped
             .build()
 
         notificationManager?.notify(NOTIFICATION_ID, notification)

@@ -41,29 +41,32 @@ import javax.inject.Inject
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     @Inject lateinit var repository: QuizRepository
+
     @Inject lateinit var authManager: AuthManager
+
     @Inject lateinit var sessionStore: QuizSessionStore
+
     @Inject lateinit var statsSyncRepository: StatsSyncRepository
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<View>(R.id.homeHeader).padForSystemBars(top = true)
 
-        val tvGreeting     = view.findViewById<TextView>(R.id.tvGreeting)
-        val tvName         = view.findViewById<TextView>(R.id.tvName)
-        val tvStreak       = view.findViewById<TextView>(R.id.tvStreak)
-        val tvAvgScore     = view.findViewById<TextView>(R.id.tvAvgScore)
-        val tvTotalTests   = view.findViewById<TextView>(R.id.tvTotalTests)
-        val cardContinue   = view.findViewById<MaterialCardView>(R.id.cardContinue)
-        val tvContinueHeader  = view.findViewById<TextView>(R.id.tvContinueHeader)
+        val tvGreeting = view.findViewById<TextView>(R.id.tvGreeting)
+        val tvName = view.findViewById<TextView>(R.id.tvName)
+        val tvStreak = view.findViewById<TextView>(R.id.tvStreak)
+        val tvAvgScore = view.findViewById<TextView>(R.id.tvAvgScore)
+        val tvTotalTests = view.findViewById<TextView>(R.id.tvTotalTests)
+        val cardContinue = view.findViewById<MaterialCardView>(R.id.cardContinue)
+        val tvContinueHeader = view.findViewById<TextView>(R.id.tvContinueHeader)
         val tvContinueSubject = view.findViewById<TextView>(R.id.tvContinueSubject)
-        val tvContinueDetail  = view.findViewById<TextView>(R.id.tvContinueDetail)
-        val progressContinue  = view.findViewById<LinearProgressIndicator>(R.id.progressContinue)
-        val cardSmartReview   = view.findViewById<MaterialCardView>(R.id.cardSmartReview)
-        val btnSettings       = view.findViewById<ImageButton>(R.id.btnSettings)
+        val tvContinueDetail = view.findViewById<TextView>(R.id.tvContinueDetail)
+        val progressContinue = view.findViewById<LinearProgressIndicator>(R.id.progressContinue)
+        val cardSmartReview = view.findViewById<MaterialCardView>(R.id.cardSmartReview)
+        val btnSettings = view.findViewById<ImageButton>(R.id.btnSettings)
 
         tvGreeting.text = greetingForTimeOfDay()
-        tvName.text     = authManager.displayName ?: getString(R.string.default_user_name)
+        tvName.text = authManager.displayName ?: getString(R.string.default_user_name)
 
         // Smart review is per subject: ask which one, then launch it.
         cardSmartReview.setOnClickListener { pickSubjectForSmartReview() }
@@ -92,12 +95,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 repository.getAllProgress().collect { allProgress ->
                     // Quick stats
-                    val totalTests     = allProgress.sumOf { it.attemptsCount }
-                    val totalScore     = allProgress.sumOf { it.lastScore }
+                    val totalTests = allProgress.sumOf { it.attemptsCount }
+                    val totalScore = allProgress.sumOf { it.lastScore }
                     val totalQuestions = allProgress.sumOf { it.totalQuestions }
-                    val average = if (totalQuestions > 0)
-                        totalScore.toDouble() / totalQuestions * 10 else 0.0
-                    tvAvgScore.text   = getString(R.string.score_one_decimal, average)
+                    val average = if (totalQuestions > 0) {
+                        totalScore.toDouble() / totalQuestions * 10
+                    } else {
+                        0.0
+                    }
+                    tvAvgScore.text = getString(R.string.score_one_decimal, average)
                     tvTotalTests.text = totalTests.toString()
 
                     // A test left half-way takes priority: the card resumes it.
@@ -134,7 +140,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     if (lastProgress != null) {
                         val context = requireContext()
                         tvContinueSubject.text = SubjectCatalog.nameFor(lastProgress.subjectId).asString(context)
-                        tvContinueDetail.text  = TopicNames.displayName(lastProgress.topicId).asString(context)
+                        tvContinueDetail.text = TopicNames.displayName(lastProgress.topicId).asString(context)
                         cardContinue.setOnClickListener {
                             startActivity(TopicSelectionActivity.intent(requireContext(), lastProgress.subjectId))
                         }
@@ -174,9 +180,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun greetingForTimeOfDay(): String =
         when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-            in MORNING_HOURS   -> getString(R.string.greeting_morning)
+            in MORNING_HOURS -> getString(R.string.greeting_morning)
             in AFTERNOON_HOURS -> getString(R.string.greeting_afternoon)
-            else               -> getString(R.string.greeting_evening)
+            else -> getString(R.string.greeting_evening)
         }
 
     private companion object {

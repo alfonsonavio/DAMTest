@@ -175,15 +175,15 @@ interface QuestionsDao {
     /** Favourite questions, newest first; [subjectId] null means every subject. */
     @Query(
         "SELECT q.* FROM questions q INNER JOIN favorite_questions f ON q.stableId = f.stableId " +
-                "WHERE f.isFavorite = 1 AND (:subjectId IS NULL OR q.subjectId = :subjectId) " +
-                "ORDER BY f.updatedAt DESC"
+            "WHERE f.isFavorite = 1 AND (:subjectId IS NULL OR q.subjectId = :subjectId) " +
+            "ORDER BY f.updatedAt DESC"
     )
     suspend fun getFavoriteQuestions(subjectId: String?): List<Question>
 
     /** All favourite questions, newest first, updated live (favourites screen). */
     @Query(
         "SELECT q.* FROM questions q INNER JOIN favorite_questions f ON q.stableId = f.stableId " +
-                "WHERE f.isFavorite = 1 ORDER BY f.updatedAt DESC"
+            "WHERE f.isFavorite = 1 ORDER BY f.updatedAt DESC"
     )
     fun getFavoriteQuestionsFlow(): Flow<List<Question>>
 

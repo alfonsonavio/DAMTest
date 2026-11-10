@@ -25,8 +25,8 @@ object ExamSetupDialog {
      * have questions.
      */
     fun availableRanges(counts: Map<ExamRange, Int>): Map<ExamRange, Int> {
-        val all    = counts[ExamRange.ALL] ?: 0
-        val first  = counts[ExamRange.FIRST_HALF] ?: 0
+        val all = counts[ExamRange.ALL] ?: 0
+        val first = counts[ExamRange.FIRST_HALF] ?: 0
         val second = counts[ExamRange.SECOND_HALF] ?: 0
         if (all == 0) return emptyMap()
         return if (first > 0 && second > 0) {
@@ -41,12 +41,12 @@ object ExamSetupDialog {
         ranges: Map<ExamRange, Int>,
         onStart: (range: ExamRange, size: Int, penalized: Boolean) -> Unit
     ) {
-        val view   = LayoutInflater.from(context).inflate(R.layout.dialog_exam_setup, null)
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_exam_setup, null)
         val dialog = AlertDialog.Builder(context).setView(view).create()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        val cgRange  = view.findViewById<ChipGroup>(R.id.cgExamRange)
-        val cgSize   = view.findViewById<ChipGroup>(R.id.cgExamSize)
+        val cgRange = view.findViewById<ChipGroup>(R.id.cgExamRange)
+        val cgSize = view.findViewById<ChipGroup>(R.id.cgExamSize)
         val swPenalty = view.findViewById<MaterialSwitch>(R.id.swExamPenalty)
 
         // With a single range there is nothing to choose
@@ -78,7 +78,7 @@ object ExamSetupDialog {
 
         view.findViewById<MaterialButton>(R.id.btnStartExam).setOnClickListener {
             val range = cgRange.checkedChipId.let { cgRange.findViewById<Chip>(it)?.tag as? ExamRange }
-            val size  = cgSize.checkedChipId.let { cgSize.findViewById<Chip>(it)?.tag as? Int }
+            val size = cgSize.checkedChipId.let { cgSize.findViewById<Chip>(it)?.tag as? Int }
             if (range != null && size != null) {
                 dialog.dismiss()
                 onStart(range, size, swPenalty.isChecked)
