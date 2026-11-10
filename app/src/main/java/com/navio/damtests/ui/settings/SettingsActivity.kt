@@ -17,6 +17,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.navio.damtests.R
 import com.navio.damtests.auth.AccountDeletionManager
 import com.navio.damtests.auth.AuthManager
@@ -128,18 +130,32 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         rowHour.setOnClickListener {
-            if (!settings.remindersEnabled) return@setOnClickListener
-            android.app.TimePickerDialog(
-                this,
-                { _, hour, minute ->
-                    settings.reminderHour = hour
-                    settings.reminderMinute = minute
-                    tvHour.text = formatTime(hour, minute)
-                    // Reschedule with the new time
-                    ReminderScheduler.schedule(this, hour, minute, replace = true)
-                },
-                settings.reminderHour, settings.reminderMinute, true
-            ).show()
+            if (settings.remindersEnabled) showReminderTimePicker()
+        }
+        // After a rotation the picker is restored by the system: listen to it again
+        (supportFragmentManager.findFragmentByTag(TIME_PICKER_TAG) as? MaterialTimePicker)
+            ?.let(::listenToTimePicker)
+    }
+
+    /** Material 3 clock picker, in the app's colours and always 24 h. */
+    private fun showReminderTimePicker() {
+        val picker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setHour(settings.reminderHour)
+            .setMinute(settings.reminderMinute)
+            .setTitleText(R.string.settings_reminder_hour_label)
+            .build()
+        listenToTimePicker(picker)
+        picker.show(supportFragmentManager, TIME_PICKER_TAG)
+    }
+
+    private fun listenToTimePicker(picker: MaterialTimePicker) {
+        picker.addOnPositiveButtonClickListener {
+            settings.reminderHour = picker.hour
+            settings.reminderMinute = picker.minute
+            findViewById<TextView>(R.id.tvReminderHour).text = formatTime(picker.hour, picker.minute)
+            // Reschedule with the new time
+            ReminderScheduler.schedule(this, picker.hour, picker.minute, replace = true)
         }
     }
 
@@ -281,4 +297,8 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun formatTime(hour: Int, minute: Int): String =
         getString(R.string.time_hh_mm, hour, minute)
+
+    private companion object {
+        const val TIME_PICKER_TAG = "reminder_time_picker"
+    }
 }
