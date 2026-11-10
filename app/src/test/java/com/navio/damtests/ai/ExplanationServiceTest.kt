@@ -17,8 +17,12 @@ import org.junit.Test
 class ExplanationServiceTest {
 
     private val question = Question(
-        stableId = "q1", text = "¿Qué es una clase?",
-        optionA = "Un molde", optionB = "Un objeto", optionC = "Un método", optionD = "Un paquete",
+        stableId = "q1",
+        text = "¿Qué es una clase?",
+        optionA = "Un molde",
+        optionB = "Un objeto",
+        optionC = "Un método",
+        optionD = "Un paquete",
         correctOptionIndex = 0
     )
     private val options = listOf("Un objeto", "Un molde", "Un método", "Un paquete")
@@ -28,19 +32,30 @@ class ExplanationServiceTest {
 
     private fun service(
         primary: (suspend (String) -> String)?,
-        fallback: suspend (String) -> String = { fallbackCalls++; "groq" }
+        fallback: suspend (String) -> String = {
+            fallbackCalls++
+            "groq"
+        }
     ): ExplanationService {
         // Counts the calls to the primary provider
         val countedPrimary: (suspend (String) -> String)? = primary?.let { p ->
-            val wrapped: suspend (String) -> String = { prompt -> primaryCalls++; p(prompt) }
+            val wrapped: suspend (String) -> String = { prompt ->
+                primaryCalls++
+                p(prompt)
+            }
             wrapped
         }
         return ExplanationService(
-            primary = countedPrimary, fallback = fallback, onError = { _, _ -> }, onInfo = {}
+            primary = countedPrimary,
+            fallback = fallback,
+            onError = { _, _ -> },
+            onInfo = {}
         )
     }
 
-    private val busy = IllegalStateException("""Unexpected Response: {"error": {"code": 503, "status": "UNAVAILABLE"}}""")
+    private val busy = IllegalStateException(
+        """Unexpected Response: {"error": {"code": 503, "status": "UNAVAILABLE"}}"""
+    )
 
     @Test
     fun `gemini answer is used when it works`() = runTest {

@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import com.navio.damtests.data.local.dao.QuestionsDao
 import com.navio.damtests.data.local.db.AppDatabase
-import com.navio.damtests.data.quiz.QuizRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

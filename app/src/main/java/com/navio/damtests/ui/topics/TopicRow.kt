@@ -24,9 +24,9 @@ data class TopicRow(
             val byTopic = progress.associateBy { it.topicId }
             return topics.map { topic ->
                 TopicRow(
-                    topic       = topic,
+                    topic = topic,
                     lastPercent = byTopic[topic.id]?.let(::percentOf),
-                    hasPdf      = topic.id in pdfTopicIds
+                    hasPdf = topic.id in pdfTopicIds
                 )
             }
         }

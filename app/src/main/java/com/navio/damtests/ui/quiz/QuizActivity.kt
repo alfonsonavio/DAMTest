@@ -50,6 +50,7 @@ class QuizActivity : AppCompatActivity() {
     private lateinit var haptic: HapticFeedbackManager
     private var resultsDialog: AlertDialog? = null
     private var noQuestionsShown = false
+
     /** Last question index drawn, so the slide-in animation runs once per question. */
     private var renderedIndex = -1
     private lateinit var quizContent: View
@@ -63,32 +64,33 @@ class QuizActivity : AppCompatActivity() {
         setupEdgeToEdge(darkTop = false)
         setContentView(R.layout.activity_quiz)
 
-        haptic      = HapticFeedbackManager(this, settingsManager.hapticsEnabled)
+        haptic = HapticFeedbackManager(this, settingsManager.hapticsEnabled)
         quizContent = findViewById(R.id.quizContentContainer)
 
         subjectId = intent.getStringExtra(EXTRA_SUBJECT_ID) ?: return finish()
-        topicId   = intent.getStringExtra(EXTRA_TOPIC_ID) ?: return finish()
+        topicId = intent.getStringExtra(EXTRA_TOPIC_ID) ?: return finish()
 
-        tvQuestion     = findViewById(R.id.tvQuestionText)
-        btnA           = findViewById(R.id.btnOptionA)
-        btnB           = findViewById(R.id.btnOptionB)
-        btnC           = findViewById(R.id.btnOptionC)
-        btnD           = findViewById(R.id.btnOptionD)
-        tvFeedbackA    = findViewById(R.id.tvFeedbackA)
-        tvFeedbackB    = findViewById(R.id.tvFeedbackB)
-        tvFeedbackC    = findViewById(R.id.tvFeedbackC)
-        tvFeedbackD    = findViewById(R.id.tvFeedbackD)
-        tvCount        = findViewById(R.id.tvQuestionCount)
-        progressBar    = findViewById(R.id.quizProgressBar)
+        tvQuestion = findViewById(R.id.tvQuestionText)
+        btnA = findViewById(R.id.btnOptionA)
+        btnB = findViewById(R.id.btnOptionB)
+        btnC = findViewById(R.id.btnOptionC)
+        btnD = findViewById(R.id.btnOptionD)
+        tvFeedbackA = findViewById(R.id.tvFeedbackA)
+        tvFeedbackB = findViewById(R.id.tvFeedbackB)
+        tvFeedbackC = findViewById(R.id.tvFeedbackC)
+        tvFeedbackD = findViewById(R.id.tvFeedbackD)
+        tvCount = findViewById(R.id.tvQuestionCount)
+        progressBar = findViewById(R.id.quizProgressBar)
         btnContextInfo = findViewById(R.id.btnContextInfo)
-        btnFavorite    = findViewById(R.id.btnFavorite)
-        btnNext        = findViewById(R.id.btnNextQuestion)
+        btnFavorite = findViewById(R.id.btnFavorite)
+        btnNext = findViewById(R.id.btnNextQuestion)
 
         setupObservers()
         setupClickListeners()
         if (viewModel.questions.value.isEmpty()) {
             viewModel.loadQuestions(
-                subjectId, topicId,
+                subjectId,
+                topicId,
                 resume = intent.getBooleanExtra(EXTRA_RESUME, false)
             )
         }
@@ -137,7 +139,7 @@ class QuizActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.currentAnswerState.collect { result ->
                     when {
-                        result != null                  -> highlightAnswer(result)
+                        result != null -> highlightAnswer(result)
                         !viewModel.isTestFinished.value -> resetAnswerUI()
                     }
                 }
@@ -167,13 +169,16 @@ class QuizActivity : AppCompatActivity() {
 
     private fun refreshCountAndProgress(index: Int, total: Int) {
         val pos = index + 1
-        tvCount.text         = getString(R.string.quiz_question_count, pos, total)
+        tvCount.text = getString(R.string.quiz_question_count, pos, total)
         // Set the max every time: after a rotation the bar is a new view whose
         // max would otherwise stay at the default 100.
-        progressBar.max      = total
+        progressBar.max = total
         progressBar.progress = pos
-        btnNext.text = if (pos == total) getString(R.string.finish_test)
-        else getString(R.string.next_question)
+        btnNext.text = if (pos == total) {
+            getString(R.string.finish_test)
+        } else {
+            getString(R.string.next_question)
+        }
     }
 
     private fun updateUI(current: QuizViewModel.CurrentQuestion) {
@@ -189,10 +194,10 @@ class QuizActivity : AppCompatActivity() {
         tvQuestion.text = question.text
         // Questions without a stable id can't be saved as favourites
         btnFavorite.visibility = if (question.stableId.isBlank()) View.GONE else View.VISIBLE
-        btnA.text       = current.options[0]
-        btnB.text       = current.options[1]
-        btnC.text       = current.options[2]
-        btnD.text       = current.options[3]
+        btnA.text = current.options[0]
+        btnB.text = current.options[1]
+        btnC.text = current.options[2]
+        btnD.text = current.options[3]
 
         val contextText = question.contextText
         if (!contextText.isNullOrEmpty()) {
@@ -209,14 +214,14 @@ class QuizActivity : AppCompatActivity() {
         setAnswerButtonsEnabled(false)
 
         buttons.forEachIndexed { index, button ->
-            val mBtn          = button as MaterialButton
-            val isCorrectBtn  = index == result.correctIndex
+            val mBtn = button as MaterialButton
+            val isCorrectBtn = index == result.correctIndex
             val isSelectedBtn = index == result.selectedIndex
 
             mBtn.strokeWidth = when {
-                isCorrectBtn                       -> 8
+                isCorrectBtn -> 8
                 isSelectedBtn && !result.isCorrect -> 8
-                else                               -> 0
+                else -> 0
             }
             if (isCorrectBtn) {
                 mBtn.setStrokeColorResource(R.color.state_success)
@@ -234,7 +239,7 @@ class QuizActivity : AppCompatActivity() {
         if (feedback == null || result == null || result.isCorrect) return
 
         val feedbacks = listOf(tvFeedbackA, tvFeedbackB, tvFeedbackC, tvFeedbackD)
-        val wrongView   = feedbacks.getOrNull(result.selectedIndex) ?: return
+        val wrongView = feedbacks.getOrNull(result.selectedIndex) ?: return
         val correctView = feedbacks.getOrNull(result.correctIndex) ?: return
 
         when (feedback) {
@@ -264,11 +269,14 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun resetAnswerUI() {
-        val buttons   = listOf(btnA, btnB, btnC, btnD)
+        val buttons = listOf(btnA, btnB, btnC, btnD)
         val feedbacks = listOf(tvFeedbackA, tvFeedbackB, tvFeedbackC, tvFeedbackD)
 
         buttons.forEach { (it as MaterialButton).strokeWidth = 0 }
-        feedbacks.forEach { it.visibility = View.GONE; it.text = "" }
+        feedbacks.forEach {
+            it.visibility = View.GONE
+            it.text = ""
+        }
         btnNext.visibility = View.GONE
         setAnswerButtonsEnabled(true)
     }
@@ -286,7 +294,7 @@ class QuizActivity : AppCompatActivity() {
 
     private fun processAnswer(uiIndex: Int) {
         val current = viewModel.currentQuestion.value ?: return
-        val result  = viewModel.checkAnswer(current.options[uiIndex], current.options) ?: return
+        val result = viewModel.checkAnswer(current.options[uiIndex], current.options) ?: return
         // Vibrate here, on the tap itself, so it never repeats when the
         // answer is repainted after the app comes back to the foreground.
         if (result.isCorrect) haptic.correct() else haptic.wrong()
@@ -360,6 +368,7 @@ class QuizActivity : AppCompatActivity() {
     companion object {
         private const val EXTRA_SUBJECT_ID = "SUBJECT_ID"
         private const val EXTRA_TOPIC_ID = "TOPIC_ID"
+
         /** Continue the saved test instead of starting a new one. */
         private const val EXTRA_RESUME = "RESUME"
 

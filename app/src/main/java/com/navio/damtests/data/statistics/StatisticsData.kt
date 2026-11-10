@@ -5,11 +5,11 @@ package com.navio.damtests.data.statistics
  * Produced by [StatisticsCalculator] from raw attempts and question stats.
  */
 data class StatisticsData(
-    val globalAccuracy: Int,              // % correct across all answered questions
-    val totalTests: Int,                  // number of completed tests
-    val evolution: List<EvolutionPoint>,  // score % per test over time (chronological)
+    val globalAccuracy: Int, // % correct across all answered questions
+    val totalTests: Int, // number of completed tests
+    val evolution: List<EvolutionPoint>, // score % per test over time (chronological)
     val bySubject: List<SubjectAccuracy>, // accuracy per subject
-    val weakestTopics: List<WeakTopic>    // topics with the highest failure rate
+    val weakestTopics: List<WeakTopic> // topics with the highest failure rate
 ) {
     val isEmpty: Boolean get() = totalTests == 0 && bySubject.isEmpty()
 }
@@ -23,12 +23,12 @@ data class EvolutionPoint(
 /** Accuracy for one subject. */
 data class SubjectAccuracy(
     val subjectId: String,
-    val accuracy: Int   // 0..100
+    val accuracy: Int // 0..100
 )
 
 /** A weak topic to review. */
 data class WeakTopic(
     val subjectId: String,
     val topicId: String,
-    val failurePercent: Int  // 0..100
+    val failurePercent: Int // 0..100
 )

@@ -54,7 +54,7 @@ class ExamViewModelTest {
     /** Starts an exam with [count] questions and returns how to pick the correct option. */
     private fun startExam(count: Int, penalized: Boolean = false) {
         coEvery { repository.getExamQuestions("programacion", ExamRange.ALL, count) } returns
-                (1..count).map { question(it) }
+            (1..count).map { question(it) }
         viewModel.start(ExamConfig("programacion", ExamRange.ALL, count, penalized))
     }
 
@@ -104,11 +104,11 @@ class ExamViewModelTest {
     fun `submitting grades correct, wrong and blank answers`() = runTest {
         startExam(4, penalized = true)
 
-        viewModel.selectOption(correctIndexOfCurrent())   // q1 correct
+        viewModel.selectOption(correctIndexOfCurrent()) // q1 correct
         viewModel.next()
-        viewModel.selectOption(correctIndexOfCurrent())   // q2 correct
+        viewModel.selectOption(correctIndexOfCurrent()) // q2 correct
         viewModel.next()
-        viewModel.selectOption(wrongIndexOfCurrent())     // q3 wrong, q4 blank
+        viewModel.selectOption(wrongIndexOfCurrent()) // q3 wrong, q4 blank
         viewModel.submit()
 
         val grade = viewModel.outcome.value!!.grade

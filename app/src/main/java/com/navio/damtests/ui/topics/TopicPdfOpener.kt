@@ -24,7 +24,7 @@ class TopicPdfOpener(private val activity: AppCompatActivity) {
     private val httpClient = OkHttpClient()
 
     fun open(subjectId: String, topicId: String) {
-        val fileName  = "${subjectId}_${topicId.removePrefix(TEMA_PREFIX)}.pdf"
+        val fileName = "${subjectId}_${topicId.removePrefix(TEMA_PREFIX)}.pdf"
         val localFile = File(activity.cacheDir, fileName)
 
         if (localFile.exists()) show(localFile) else downloadAndShow(fileName, localFile)

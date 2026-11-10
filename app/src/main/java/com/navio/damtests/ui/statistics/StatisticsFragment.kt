@@ -42,6 +42,7 @@ import javax.inject.Inject
 class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
     @Inject lateinit var repository: QuizRepository
+
     @Inject lateinit var statsSyncRepository: StatsSyncRepository
 
     private var selectedCourse = 1
@@ -78,7 +79,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
     }
 
     private fun render(view: View, data: StatisticsData) {
-        val emptyState   = view.findViewById<LinearLayout>(R.id.emptyState)
+        val emptyState = view.findViewById<LinearLayout>(R.id.emptyState)
         val contentState = view.findViewById<LinearLayout>(R.id.contentState)
 
         if (data.isEmpty) {
@@ -118,7 +119,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         val dataSet = LineDataSet(entries, getString(R.string.statistics_chart_label)).apply {
             color = primary
             lineWidth = 2.5f
-            mode = LineDataSet.Mode.CUBIC_BEZIER   // smooth curve
+            mode = LineDataSet.Mode.CUBIC_BEZIER // smooth curve
             setDrawValues(false)
             setDrawCircles(true)
             setCircleColor(primary)
@@ -131,7 +132,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 intArrayOf(
                     (primary and 0x00FFFFFF) or 0x40000000, // ~25% alpha
-                    (primary and 0x00FFFFFF)                 // 0% alpha
+                    (primary and 0x00FFFFFF) // 0% alpha
                 )
             )
             highLightColor = primary
@@ -180,7 +181,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
             val colorRes = when {
                 item.accuracy >= 70 -> R.color.state_success
                 item.accuracy >= 45 -> R.color.brand_primary
-                else                -> R.color.state_error
+                else -> R.color.state_error
             }
             row.findViewById<TextView>(R.id.tvSubjectPercent)
                 .setTextColor(ContextCompat.getColor(requireContext(), colorRes))

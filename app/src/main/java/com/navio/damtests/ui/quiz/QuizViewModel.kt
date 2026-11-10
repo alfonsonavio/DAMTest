@@ -95,6 +95,7 @@ class QuizViewModel @Inject constructor(
     /** Instant AI feedback for a wrong answer to the current question. */
     sealed class AiFeedback {
         object Loading : AiFeedback()
+
         /** [wrong] is null when the model did not return the two-part format. */
         data class Ready(val wrong: String?, val correct: String) : AiFeedback()
         object Error : AiFeedback()
@@ -149,14 +150,14 @@ class QuizViewModel @Inject constructor(
             val limit = if (mode != null) MODE_TEST_SIZE else TOPIC_TEST_SIZE
 
             _questions.value = when (mode) {
-                TestMode.GENERAL_ALL         -> repository.getRandomQuestionsForGeneralTest(subjectId, limit)
-                TestMode.GENERAL_FIRST_HALF  -> repository.getQuestionsForRange(subjectId, 1, 10, limit)
+                TestMode.GENERAL_ALL -> repository.getRandomQuestionsForGeneralTest(subjectId, limit)
+                TestMode.GENERAL_FIRST_HALF -> repository.getQuestionsForRange(subjectId, 1, 10, limit)
                 TestMode.GENERAL_SECOND_HALF -> repository.getQuestionsForRange(subjectId, 11, 20, limit)
-                TestMode.SMART_REVIEW        -> repository.getSmartReviewQuestions(subjectId, limit)
-                TestMode.FAVORITES           -> repository.getFavoriteQuestions(subjectId, limit)
+                TestMode.SMART_REVIEW -> repository.getSmartReviewQuestions(subjectId, limit)
+                TestMode.FAVORITES -> repository.getFavoriteQuestions(subjectId, limit)
                 // Exams have their own screen; a regular topic loads its questions
                 else -> repository.getQuestionsByTopic(subjectId, topicId, limit)
-            }.distinctBy { it.text }  // prevent duplicates if Room has stale rows
+            }.distinctBy { it.text } // prevent duplicates if Room has stale rows
 
             showQuestion(0)
             _noQuestions.value = _questions.value.isEmpty()
@@ -176,14 +177,14 @@ class QuizViewModel @Inject constructor(
         if (_currentAnswerState.value != null) return null
 
         val correctText = when (currentQuestion.correctOptionIndex) {
-            0    -> currentQuestion.optionA
-            1    -> currentQuestion.optionB
-            2    -> currentQuestion.optionC
+            0 -> currentQuestion.optionA
+            1 -> currentQuestion.optionB
+            2 -> currentQuestion.optionC
             else -> currentQuestion.optionD
         }
 
-        val isCorrect      = selectedText == correctText
-        val uiIndex        = shuffledOptions.indexOf(selectedText)
+        val isCorrect = selectedText == correctText
+        val uiIndex = shuffledOptions.indexOf(selectedText)
         val correctUiIndex = shuffledOptions.indexOf(correctText)
 
         _resultsList.add(QuestionResult(currentQuestion, uiIndex, shuffledOptions, isCorrect))
@@ -236,8 +237,11 @@ class QuizViewModel @Inject constructor(
             _aiFeedback.value = try {
                 val response = fastExplainer.explainQuickly(question, chosen, correct)
                 val parts = response.split("|")
-                if (parts.size >= 2) AiFeedback.Ready(parts[0].trim(), parts[1].trim())
-                else AiFeedback.Ready(null, response.trim())
+                if (parts.size >= 2) {
+                    AiFeedback.Ready(parts[0].trim(), parts[1].trim())
+                } else {
+                    AiFeedback.Ready(null, response.trim())
+                }
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -283,13 +287,13 @@ class QuizViewModel @Inject constructor(
 
         sessionStore.save(
             QuizSession(
-                subjectId   = currentSubjectId,
-                topicId     = currentTopicId,
+                subjectId = currentSubjectId,
+                topicId = currentTopicId,
                 questionIds = questions.map { it.stableId },
-                answers     = _resultsList.map {
+                answers = _resultsList.map {
                     SavedAnswer(it.question.stableId, it.userSelectedIndex, it.shuffledOptions, it.isCorrect)
                 },
-                score       = _score.value
+                score = _score.value
             )
         )
     }
@@ -346,17 +350,17 @@ class QuizViewModel @Inject constructor(
                 totalQuestions = _questions.value.size
             )
 
-            val previous         = repository.getProgress(subjectId, topicId)
+            val previous = repository.getProgress(subjectId, topicId)
             val newAttemptsCount = (previous?.attemptsCount ?: 0) + 1
 
             repository.updateProgress(
                 TopicProgress(
-                    subjectId             = subjectId,
-                    topicId               = topicId,
-                    lastScore             = _score.value,
-                    totalQuestions        = _questions.value.size,
-                    attemptsCount         = newAttemptsCount,
-                    lastAttemptTimestamp  = System.currentTimeMillis()
+                    subjectId = subjectId,
+                    topicId = topicId,
+                    lastScore = _score.value,
+                    totalQuestions = _questions.value.size,
+                    attemptsCount = newAttemptsCount,
+                    lastAttemptTimestamp = System.currentTimeMillis()
                 )
             )
         }

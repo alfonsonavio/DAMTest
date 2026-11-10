@@ -38,9 +38,12 @@ object Exam {
     fun durationLabel(questions: Int): UiText {
         val seconds = durationSeconds(questions)
         val minutes = seconds / SECONDS_PER_MINUTE
-        val rest    = seconds % SECONDS_PER_MINUTE
-        return if (rest == 0L) UiText.Res(R.string.exam_duration_minutes, listOf(minutes))
-        else UiText.Res(R.string.exam_duration_minutes_seconds, listOf(minutes, rest))
+        val rest = seconds % SECONDS_PER_MINUTE
+        return if (rest == 0L) {
+            UiText.Res(R.string.exam_duration_minutes, listOf(minutes))
+        } else {
+            UiText.Res(R.string.exam_duration_minutes_seconds, listOf(minutes, rest))
+        }
     }
 
     private const val SECONDS_PER_MINUTE = 60L

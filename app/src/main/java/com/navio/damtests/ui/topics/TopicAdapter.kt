@@ -18,10 +18,10 @@ class TopicAdapter(
 ) : ListAdapter<TopicRow, TopicAdapter.ViewHolder>(DIFF) {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvName: TextView                  = view.findViewById(R.id.tvTopicName)
-        val tvScore: TextView                 = view.findViewById(R.id.tvTopicScore)
+        val tvName: TextView = view.findViewById(R.id.tvTopicName)
+        val tvScore: TextView = view.findViewById(R.id.tvTopicScore)
         val progress: LinearProgressIndicator = view.findViewById(R.id.topicProgress)
-        val btnPdf: ImageButton               = view.findViewById(R.id.btnOpenPdf)
+        val btnPdf: ImageButton = view.findViewById(R.id.btnOpenPdf)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(

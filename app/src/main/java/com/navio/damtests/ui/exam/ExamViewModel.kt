@@ -42,9 +42,9 @@ class ExamViewModel @Inject constructor(
     data class ExamQuestion(val question: Question, val options: List<String>) {
         val correctOption: String
             get() = when (question.correctOptionIndex) {
-                0    -> question.optionA
-                1    -> question.optionB
-                2    -> question.optionC
+                0 -> question.optionA
+                1 -> question.optionB
+                2 -> question.optionC
                 else -> question.optionD
             }
     }
@@ -108,8 +108,11 @@ class ExamViewModel @Inject constructor(
     fun selectOption(optionIndex: Int) {
         if (isClosed()) return
         _state.update { s ->
-            val answers = if (s.answers[s.currentIndex] == optionIndex) s.answers - s.currentIndex
-            else s.answers + (s.currentIndex to optionIndex)
+            val answers = if (s.answers[s.currentIndex] == optionIndex) {
+                s.answers - s.currentIndex
+            } else {
+                s.answers + (s.currentIndex to optionIndex)
+            }
             s.copy(answers = answers)
         }
     }
@@ -118,8 +121,11 @@ class ExamViewModel @Inject constructor(
     fun toggleFlag() {
         if (isClosed()) return
         _state.update { s ->
-            val flagged = if (s.currentIndex in s.flagged) s.flagged - s.currentIndex
-            else s.flagged + s.currentIndex
+            val flagged = if (s.currentIndex in s.flagged) {
+                s.flagged - s.currentIndex
+            } else {
+                s.flagged + s.currentIndex
+            }
             s.copy(flagged = flagged)
         }
     }
@@ -158,12 +164,12 @@ class ExamViewModel @Inject constructor(
         val results = s.questions.mapIndexed { i, q ->
             val selected = s.answers[i] ?: QuestionResult.NOT_ANSWERED
             val isCorrect = selected != QuestionResult.NOT_ANSWERED &&
-                    q.options[selected] == q.correctOption
+                q.options[selected] == q.correctOption
             QuestionResult(q.question, selected, q.options, isCorrect)
         }
         val correct = results.count { it.isCorrect }
-        val blank   = results.count { !it.isAnswered }
-        val grade   = ExamGrader.grade(correct, results.size - correct - blank, blank, config.penalized)
+        val blank = results.count { !it.isAnswered }
+        val grade = ExamGrader.grade(correct, results.size - correct - blank, blank, config.penalized)
 
         _outcome.value = ExamOutcome(grade, results, timeUp)
         if (timeUp) _state.update { it.copy(remainingSeconds = 0) }

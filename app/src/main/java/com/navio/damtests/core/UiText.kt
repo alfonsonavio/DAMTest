@@ -19,8 +19,8 @@ sealed interface UiText {
     data class Raw(val text: String) : UiText
 
     fun asString(context: Context): String = when (this) {
-        is Res    -> context.getString(id, *args.toTypedArray())
+        is Res -> context.getString(id, *args.toTypedArray())
         is Plural -> context.resources.getQuantityString(id, count, *args.toTypedArray())
-        is Raw    -> text
+        is Raw -> text
     }
 }

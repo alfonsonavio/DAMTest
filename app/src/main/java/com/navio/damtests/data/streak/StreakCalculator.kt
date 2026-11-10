@@ -28,9 +28,9 @@ object StreakCalculator {
         val studiedToday = today in studyDays
 
         var day: LocalDate = when {
-            studiedToday                     -> today
-            today.minusDays(1) in studyDays  -> today.minusDays(1)
-            else                             -> return StreakInfo(0, false)
+            studiedToday -> today
+            today.minusDays(1) in studyDays -> today.minusDays(1)
+            else -> return StreakInfo(0, false)
         }
 
         var days = 0

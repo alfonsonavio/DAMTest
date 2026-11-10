@@ -8,10 +8,15 @@ import org.junit.Test
 class ExplanationPromptTest {
 
     private val question = Question(
-        stableId = "q1", text = "¿Qué es una clase?",
-        optionA = "Un molde", optionB = "Un objeto", optionC = "Un método", optionD = "Un paquete",
+        stableId = "q1",
+        text = "¿Qué es una clase?",
+        optionA = "Un molde",
+        optionB = "Un objeto",
+        optionC = "Un método",
+        optionD = "Un paquete",
         correctOptionIndex = 0
     )
+
     // As shown on screen: the correct one ("Un molde") is option b)
     private val shown = listOf("Un objeto", "Un molde", "Un método", "Un paquete")
 

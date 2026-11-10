@@ -74,16 +74,16 @@ class QuizRepository @Inject constructor(
 
     /** How many questions an exam of [range] can draw from. */
     suspend fun countExamQuestions(subjectId: String, range: ExamRange): Int = when (range) {
-        ExamRange.ALL         -> questionsDao.countGeneralTestQuestions(subjectId)
-        ExamRange.FIRST_HALF  -> questionsDao.countQuestionsForTopicList(subjectId, temaIds(1, 10))
+        ExamRange.ALL -> questionsDao.countGeneralTestQuestions(subjectId)
+        ExamRange.FIRST_HALF -> questionsDao.countQuestionsForTopicList(subjectId, temaIds(1, 10))
         ExamRange.SECOND_HALF -> questionsDao.countQuestionsForTopicList(subjectId, temaIds(11, 20))
     }
 
     /** [count] random questions of [range], without repeated texts. */
     suspend fun getExamQuestions(subjectId: String, range: ExamRange, count: Int): List<Question> =
         when (range) {
-            ExamRange.ALL         -> getRandomQuestionsForGeneralTest(subjectId, count)
-            ExamRange.FIRST_HALF  -> getQuestionsForRange(subjectId, 1, 10, count)
+            ExamRange.ALL -> getRandomQuestionsForGeneralTest(subjectId, count)
+            ExamRange.FIRST_HALF -> getQuestionsForRange(subjectId, 1, 10, count)
             ExamRange.SECOND_HALF -> getQuestionsForRange(subjectId, 11, 20, count)
         }.distinctBy { it.text }
 
@@ -152,23 +152,23 @@ class QuizRepository @Inject constructor(
      * data stays complete. Uses the question's stableId as the key.
      */
     suspend fun recordAnswer(question: Question, wasCorrect: Boolean) {
-        if (question.stableId.isBlank()) return  // safety: skip un-synced questions
+        if (question.stableId.isBlank()) return // safety: skip un-synced questions
 
         val existing = questionsDao.getQuestionStats(question.stableId)
         val updated = if (existing == null) {
             QuestionStats(
-                stableId          = question.stableId,
-                subjectId         = question.subjectId,
-                timesSeen         = 1,
-                timesCorrect      = if (wasCorrect) 1 else 0,
-                timesWrong        = if (wasCorrect) 0 else 1,
+                stableId = question.stableId,
+                subjectId = question.subjectId,
+                timesSeen = 1,
+                timesCorrect = if (wasCorrect) 1 else 0,
+                timesWrong = if (wasCorrect) 0 else 1,
                 lastSeenTimestamp = System.currentTimeMillis()
             )
         } else {
             existing.copy(
-                timesSeen         = existing.timesSeen + 1,
-                timesCorrect      = existing.timesCorrect + if (wasCorrect) 1 else 0,
-                timesWrong        = existing.timesWrong + if (wasCorrect) 0 else 1,
+                timesSeen = existing.timesSeen + 1,
+                timesCorrect = existing.timesCorrect + if (wasCorrect) 1 else 0,
+                timesWrong = existing.timesWrong + if (wasCorrect) 0 else 1,
                 lastSeenTimestamp = System.currentTimeMillis()
             )
         }
@@ -277,7 +277,7 @@ class QuizRepository @Inject constructor(
      */
     suspend fun getStatistics(subjectIds: List<String>): StatisticsData {
         val attempts = questionsDao.getAttemptsForSubjects(subjectIds)
-        val stats    = questionsDao.getAllQuestionStats()
+        val stats = questionsDao.getAllQuestionStats()
             .filter { it.subjectId in subjectIds }
         // Same "tests done" figure as Home and Subjects (topic progress)
         val completedTests = questionsDao.getAllProgressOnce()

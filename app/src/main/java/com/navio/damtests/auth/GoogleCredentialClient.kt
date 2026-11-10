@@ -34,8 +34,10 @@ class GoogleCredentialClient @Inject constructor(
 
     sealed class Result {
         data class Success(val idToken: String) : Result()
+
         /** The user closed the account picker: not an error, show nothing. */
         object Cancelled : Result()
+
         /** There is no Google account the user can pick on this device. */
         object NoAccount : Result()
         data class Error(val cause: Throwable) : Result()

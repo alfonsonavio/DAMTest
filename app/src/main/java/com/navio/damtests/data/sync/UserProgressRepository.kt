@@ -90,21 +90,21 @@ class UserProgressRepository @Inject constructor(
         firestore.collection("users").document(uid).collection("progress")
 
     private fun TopicProgress.toMap() = mapOf(
-        "subjectId"            to subjectId,
-        "topicId"              to topicId,
-        "lastScore"            to lastScore,
-        "totalQuestions"       to totalQuestions,
-        "attemptsCount"        to attemptsCount,
+        "subjectId" to subjectId,
+        "topicId" to topicId,
+        "lastScore" to lastScore,
+        "totalQuestions" to totalQuestions,
+        "attemptsCount" to attemptsCount,
         "lastAttemptTimestamp" to lastAttemptTimestamp
     )
 
     private fun DocumentSnapshot.toTopicProgress(): TopicProgress? {
         return TopicProgress(
-            subjectId            = getString("subjectId") ?: return null,
-            topicId              = getString("topicId") ?: return null,
-            lastScore            = (getLong("lastScore") ?: 0).toInt(),
-            totalQuestions       = (getLong("totalQuestions") ?: 0).toInt(),
-            attemptsCount        = (getLong("attemptsCount") ?: 0).toInt(),
+            subjectId = getString("subjectId") ?: return null,
+            topicId = getString("topicId") ?: return null,
+            lastScore = (getLong("lastScore") ?: 0).toInt(),
+            totalQuestions = (getLong("totalQuestions") ?: 0).toInt(),
+            attemptsCount = (getLong("attemptsCount") ?: 0).toInt(),
             lastAttemptTimestamp = getLong("lastAttemptTimestamp") ?: 0L
         )
     }

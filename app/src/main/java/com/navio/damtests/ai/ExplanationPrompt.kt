@@ -55,7 +55,9 @@ object ExplanationPrompt {
                 appendLine("2. Qué distingue a las otras opciones de la correcta.")
             }
             appendLine()
-            appendLine("Cuando nombres una opción, usa siempre su letra (a, b, c o d) tal y como aparece arriba; nunca uses números.")
+            appendLine(
+                "Cuando nombres una opción, usa siempre su letra (a, b, c o d) tal y como aparece arriba; nunca uses números."
+            )
             appendLine("Sé pedagógico y conciso. No uses listas con guiones ni formato Markdown, solo texto plano.")
             append("Termina con una frase de ánimo breve.")
         }

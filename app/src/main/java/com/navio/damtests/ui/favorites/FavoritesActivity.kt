@@ -31,6 +31,7 @@ import javax.inject.Inject
 class FavoritesActivity : AppCompatActivity() {
 
     @Inject lateinit var repository: QuizRepository
+
     @Inject lateinit var sessionStore: QuizSessionStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +41,8 @@ class FavoritesActivity : AppCompatActivity() {
         findViewById<View>(R.id.favoritesHeader).padForSystemBars(top = true)
         findViewById<View>(R.id.favoritesBottomBar).padForSystemBars(bottom = true)
 
-        val rv          = findViewById<RecyclerView>(R.id.rvFavorites)
-        val emptyState  = findViewById<View>(R.id.emptyFavorites)
+        val rv = findViewById<RecyclerView>(R.id.rvFavorites)
+        val emptyState = findViewById<View>(R.id.emptyFavorites)
         val btnPractice = findViewById<MaterialButton>(R.id.btnPracticeFavorites)
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
@@ -72,8 +73,11 @@ class FavoritesActivity : AppCompatActivity() {
                     rv.visibility = if (empty) View.GONE else View.VISIBLE
                     emptyState.visibility = if (empty) View.VISIBLE else View.GONE
                     btnPractice.isEnabled = !empty
-                    btnPractice.text = if (empty) getString(R.string.favorites_practice)
-                    else getString(R.string.favorites_practice_count, favorites.size)
+                    btnPractice.text = if (empty) {
+                        getString(R.string.favorites_practice)
+                    } else {
+                        getString(R.string.favorites_practice_count, favorites.size)
+                    }
                 }
             }
         }

@@ -45,7 +45,7 @@ class FirebaseSyncManager(private val context: Context, private val repository: 
                     // Re-download if version is newer OR if the local cache is empty
                     // (covers the case where Room was wiped but prefs survived).
                     val needsDownload = remoteVersion > localVersion ||
-                            !repository.hasQuestions(subjectId, topicId)
+                        !repository.hasQuestions(subjectId, topicId)
 
                     if (needsDownload) {
                         downloadTopic(subjectId, topicId, remoteVersion)

@@ -87,7 +87,11 @@ class StatsSyncRepository @Inject constructor(
 
         try {
             val cloudAttempts = download(attempts(uid), "timestamp", since).mapNotNull { it.toTestAttempt() }
-            val cloudStats    = download(questionStats(uid), "lastSeenTimestamp", since).mapNotNull { it.toQuestionStats() }
+            val cloudStats = download(
+                questionStats(uid),
+                "lastSeenTimestamp",
+                since
+            ).mapNotNull { it.toQuestionStats() }
             val cloudFavorites = download(favorites(uid), "updatedAt", since).mapNotNull { it.toFavorite() }
 
             val attemptsPlan = StatsMerger.mergeAttempts(
@@ -116,10 +120,11 @@ class StatsSyncRepository @Inject constructor(
             prefs.edit { putLong(lastSyncKey(uid), syncStartedAt) }
             _syncedAt.value = System.currentTimeMillis()
             Log.d(
-                TAG, "Stats sync (${if (isFirstSync) "full" else "incremental"}) done: " +
-                        "attempts ↓${attemptsPlan.toLocal.size} ↑${attemptsPlan.toCloud.size}, " +
-                        "questionStats ↓${statsPlan.toLocal.size} ↑${statsPlan.toCloud.size}, " +
-                        "favorites ↓${favoritesPlan.toLocal.size} ↑${favoritesPlan.toCloud.size}"
+                TAG,
+                "Stats sync (${if (isFirstSync) "full" else "incremental"}) done: " +
+                    "attempts ↓${attemptsPlan.toLocal.size} ↑${attemptsPlan.toCloud.size}, " +
+                    "questionStats ↓${statsPlan.toLocal.size} ↑${statsPlan.toCloud.size}, " +
+                    "favorites ↓${favoritesPlan.toLocal.size} ↑${favoritesPlan.toCloud.size}"
             )
         } catch (e: Exception) {
             // Offline or Firestore error: keep lastSync untouched so it retries next launch.
@@ -137,8 +142,11 @@ class StatsSyncRepository @Inject constructor(
         timestampField: String,
         since: Long?
     ): List<DocumentSnapshot> {
-        val query: Query = if (since == null) collection
-        else collection.whereGreaterThan(timestampField, since)
+        val query: Query = if (since == null) {
+            collection
+        } else {
+            collection.whereGreaterThan(timestampField, since)
+        }
         return query.get(Source.SERVER).await().documents
     }
 
@@ -149,23 +157,30 @@ class StatsSyncRepository @Inject constructor(
      */
     suspend fun pushAll(uid: String) {
         val cloudAttempts = download(attempts(uid), "timestamp", null).mapNotNull { it.toTestAttempt() }
-        val cloudStats    = download(questionStats(uid), "lastSeenTimestamp", null).mapNotNull { it.toQuestionStats() }
+        val cloudStats = download(questionStats(uid), "lastSeenTimestamp", null).mapNotNull { it.toQuestionStats() }
         val cloudFavorites = download(favorites(uid), "updatedAt", null).mapNotNull { it.toFavorite() }
 
         val attemptsToUpload = StatsMerger.mergeAttempts(
-            questionsDao.getAllAttempts(), cloudAttempts, uploadLocalOnly = true
+            questionsDao.getAllAttempts(),
+            cloudAttempts,
+            uploadLocalOnly = true
         ).toCloud
         val statsToUpload = StatsMerger.mergeQuestionStats(
-            questionsDao.getAllQuestionStats(), cloudStats, uploadLocalNewer = true
+            questionsDao.getAllQuestionStats(),
+            cloudStats,
+            uploadLocalNewer = true
         ).toCloud
         val favoritesToUpload = StatsMerger.mergeFavorites(
-            questionsDao.getAllFavoriteRecords(), cloudFavorites, uploadLocalNewer = true
+            questionsDao.getAllFavoriteRecords(),
+            cloudFavorites,
+            uploadLocalNewer = true
         ).toCloud
 
         uploadInBatches(uid, attemptsToUpload, statsToUpload, favoritesToUpload).forEach { it.await() }
         Log.d(
-            TAG, "Stats backup confirmed: attempts ↑${attemptsToUpload.size}, " +
-                    "questionStats ↑${statsToUpload.size}, favorites ↑${favoritesToUpload.size}"
+            TAG,
+            "Stats backup confirmed: attempts ↑${attemptsToUpload.size}, " +
+                "questionStats ↑${statsToUpload.size}, favorites ↑${favoritesToUpload.size}"
         )
     }
 
@@ -179,8 +194,8 @@ class StatsSyncRepository @Inject constructor(
         favoritesToUpload: List<FavoriteQuestion>
     ): List<Task<Void>> {
         val writes = attemptsToUpload.map { a -> attempts(uid).document(StatsMerger.attemptKey(a)) to a.toMap() } +
-                statsToUpload.map { s -> questionStats(uid).document(s.stableId) to s.toMap() } +
-                favoritesToUpload.map { f -> favorites(uid).document(f.stableId) to f.toMap() }
+            statsToUpload.map { s -> questionStats(uid).document(s.stableId) to s.toMap() } +
+            favoritesToUpload.map { f -> favorites(uid).document(f.stableId) to f.toMap() }
 
         return writes.chunked(MAX_BATCH_WRITES).map { chunk ->
             val batch = firestore.batch()
@@ -194,53 +209,53 @@ class StatsSyncRepository @Inject constructor(
     // --- Mapping ---
 
     private fun TestAttempt.toMap() = mapOf(
-        "subjectId"      to subjectId,
-        "topicId"        to topicId,
-        "score"          to score,
+        "subjectId" to subjectId,
+        "topicId" to topicId,
+        "score" to score,
         "totalQuestions" to totalQuestions,
-        "timestamp"      to timestamp
+        "timestamp" to timestamp
     )
 
     private fun QuestionStats.toMap() = mapOf(
-        "subjectId"         to subjectId,
-        "timesSeen"         to timesSeen,
-        "timesCorrect"      to timesCorrect,
-        "timesWrong"        to timesWrong,
+        "subjectId" to subjectId,
+        "timesSeen" to timesSeen,
+        "timesCorrect" to timesCorrect,
+        "timesWrong" to timesWrong,
         "lastSeenTimestamp" to lastSeenTimestamp
     )
 
     private fun FavoriteQuestion.toMap() = mapOf(
-        "subjectId"  to subjectId,
+        "subjectId" to subjectId,
         "isFavorite" to isFavorite,
-        "updatedAt"  to updatedAt
+        "updatedAt" to updatedAt
     )
 
     private fun DocumentSnapshot.toFavorite(): FavoriteQuestion? {
         return FavoriteQuestion(
-            stableId   = id,
-            subjectId  = getString("subjectId") ?: return null,
+            stableId = id,
+            subjectId = getString("subjectId") ?: return null,
             isFavorite = getBoolean("isFavorite") ?: return null,
-            updatedAt  = getLong("updatedAt") ?: return null
+            updatedAt = getLong("updatedAt") ?: return null
         )
     }
 
     private fun DocumentSnapshot.toTestAttempt(): TestAttempt? {
         return TestAttempt(
-            subjectId      = getString("subjectId") ?: return null,
-            topicId        = getString("topicId") ?: return null,
-            score          = getLong("score")?.toInt() ?: return null,
+            subjectId = getString("subjectId") ?: return null,
+            topicId = getString("topicId") ?: return null,
+            score = getLong("score")?.toInt() ?: return null,
             totalQuestions = getLong("totalQuestions")?.toInt() ?: return null,
-            timestamp      = getLong("timestamp") ?: return null
+            timestamp = getLong("timestamp") ?: return null
         )
     }
 
     private fun DocumentSnapshot.toQuestionStats(): QuestionStats? {
         return QuestionStats(
-            stableId          = id,
-            subjectId         = getString("subjectId") ?: return null,
-            timesSeen         = getLong("timesSeen")?.toInt() ?: 0,
-            timesCorrect      = getLong("timesCorrect")?.toInt() ?: 0,
-            timesWrong        = getLong("timesWrong")?.toInt() ?: 0,
+            stableId = id,
+            subjectId = getString("subjectId") ?: return null,
+            timesSeen = getLong("timesSeen")?.toInt() ?: 0,
+            timesCorrect = getLong("timesCorrect")?.toInt() ?: 0,
+            timesWrong = getLong("timesWrong")?.toInt() ?: 0,
             lastSeenTimestamp = getLong("lastSeenTimestamp") ?: 0L
         )
     }

@@ -29,7 +29,7 @@ class ReviewAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvQuestion: TextView = view.findViewById(R.id.tvReviewQuestion)
-        val tvOptions: TextView  = view.findViewById(R.id.tvReviewOptions)
+        val tvOptions: TextView = view.findViewById(R.id.tvReviewOptions)
         val card: MaterialCardView = view.findViewById(R.id.cardReview)
         val btnExplain: Button = view.findViewById(R.id.btnExplain)
         val btnReport: Button = view.findViewById(R.id.btnReport)
@@ -44,7 +44,7 @@ class ReviewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val res = results[position]
-        val q   = res.question
+        val q = res.question
 
         // FIX: use the pre-computed isCorrect flag from QuizViewModel.
         // DO NOT recalculate as (userSelectedIndex == correctOptionIndex) because
@@ -67,9 +67,9 @@ class ReviewAdapter(
 
         // The correct answer text (from original option order)
         val correctText = when (q.correctOptionIndex) {
-            0    -> q.optionA
-            1    -> q.optionB
-            2    -> q.optionC
+            0 -> q.optionA
+            1 -> q.optionB
+            2 -> q.optionC
             else -> q.optionD
         }
 
@@ -81,9 +81,9 @@ class ReviewAdapter(
         for (i in res.shuffledOptions.indices) {
             val optionText = res.shuffledOptions[i]
             val prefix = when {
-                optionText == correctText                     -> CORRECT_MARK
+                optionText == correctText -> CORRECT_MARK
                 optionText == userSelectedText && !isCorrect -> WRONG_MARK
-                else                                         -> NO_MARK
+                else -> NO_MARK
             }
             optionsText.append("$prefix ${OPTION_LETTERS[i]}) $optionText\n")
         }
@@ -114,6 +114,7 @@ class ReviewAdapter(
 
     private companion object {
         val OPTION_LETTERS = listOf("a", "b", "c", "d")
+
         // Same width for every option, so the letters stay aligned
         const val CORRECT_MARK = "✅ "
         const val WRONG_MARK = "❌ "

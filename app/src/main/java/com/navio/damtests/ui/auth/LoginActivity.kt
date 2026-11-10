@@ -26,10 +26,15 @@ import javax.inject.Inject
 class LoginActivity : AppCompatActivity() {
 
     @Inject lateinit var authManager: AuthManager
+
     @Inject lateinit var userProgressRepository: UserProgressRepository
+
     @Inject lateinit var questionsDao: QuestionsDao
+
     @Inject lateinit var statsSyncRepository: StatsSyncRepository
+
     @Inject lateinit var sessionBackupRepository: SessionBackupRepository
+
     @Inject lateinit var googleCredentialClient: GoogleCredentialClient
 
     private lateinit var etEmail: TextInputEditText
@@ -45,7 +50,9 @@ class LoginActivity : AppCompatActivity() {
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             AuthUiHelper.showInfo(
-                this, getString(R.string.register_success_title), getString(R.string.register_success_message)
+                this,
+                getString(R.string.register_success_title),
+                getString(R.string.register_success_message)
             )
         }
     }
@@ -61,13 +68,13 @@ class LoginActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_login)
 
-        etEmail          = findViewById(R.id.etEmail)
-        etPassword       = findViewById(R.id.etPassword)
-        btnLogin         = findViewById(R.id.btnLogin)
-        btnGoogle        = findViewById(R.id.btnGoogle)
+        etEmail = findViewById(R.id.etEmail)
+        etPassword = findViewById(R.id.etPassword)
+        btnLogin = findViewById(R.id.btnLogin)
+        btnGoogle = findViewById(R.id.btnGoogle)
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
-        tvRegister       = findViewById(R.id.tvRegister)
-        progressOverlay  = findViewById(R.id.progressOverlay)
+        tvRegister = findViewById(R.id.tvRegister)
+        progressOverlay = findViewById(R.id.progressOverlay)
 
         btnLogin.setOnClickListener { attemptEmailLogin() }
         btnGoogle.setOnClickListener { startGoogleSignIn() }
@@ -78,12 +85,14 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun attemptEmailLogin() {
-        val email    = etEmail.text?.toString()?.trim() ?: ""
+        val email = etEmail.text?.toString()?.trim() ?: ""
         val password = etPassword.text?.toString() ?: ""
 
         if (email.isBlank() || password.isBlank()) {
             AuthUiHelper.showInfo(
-                this, getString(R.string.error_missing_data_title), getString(R.string.error_fields_required)
+                this,
+                getString(R.string.error_missing_data_title),
+                getString(R.string.error_fields_required)
             )
             return
         }
@@ -121,7 +130,9 @@ class LoginActivity : AppCompatActivity() {
                     getString(R.string.error_google_no_account)
                 )
                 is GoogleCredentialClient.Result.Error -> AuthUiHelper.showInfo(
-                    this@LoginActivity, getString(R.string.error_title), getString(R.string.error_google_signin)
+                    this@LoginActivity,
+                    getString(R.string.error_title),
+                    getString(R.string.error_google_signin)
                 )
             }
         }
@@ -136,7 +147,9 @@ class LoginActivity : AppCompatActivity() {
         AuthUiHelper.showForgotPassword(this, prefill) { email, dialog ->
             if (email.isBlank()) {
                 AuthUiHelper.showInfo(
-                    this, getString(R.string.error_missing_email_title), getString(R.string.error_missing_email)
+                    this,
+                    getString(R.string.error_missing_email_title),
+                    getString(R.string.error_missing_email)
                 )
                 return@showForgotPassword
             }
@@ -166,7 +179,7 @@ class LoginActivity : AppCompatActivity() {
             try {
                 val localProgress = questionsDao.getAllProgressOnce()
                 val cloudProgress = userProgressRepository.downloadAllProgress(uid)
-                val merged        = userProgressRepository.mergeProgress(localProgress, cloudProgress)
+                val merged = userProgressRepository.mergeProgress(localProgress, cloudProgress)
                 merged.forEach { questionsDao.saveProgress(it) }
             } catch (_: Exception) {
                 // Sync failure shouldn't block login
@@ -187,7 +200,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setLoading(loading: Boolean) {
         progressOverlay.visibility = if (loading) View.VISIBLE else View.GONE
-        btnLogin.isEnabled  = !loading
+        btnLogin.isEnabled = !loading
         btnGoogle.isEnabled = !loading
     }
 }

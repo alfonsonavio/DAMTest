@@ -57,11 +57,11 @@ class TopicSelectionViewModel @Inject constructor(
                 repository.getFavoriteCountFlow(loaded.subjectId)
             ) { progress, failed, favorites ->
                 UiState(
-                    loading       = false,
-                    practice      = loaded.practice,
-                    failedCount   = failed,
+                    loading = false,
+                    practice = loaded.practice,
+                    failedCount = failed,
                     favoriteCount = favorites,
-                    topics        = TopicRow.build(loaded.topics, progress, loaded.pdfTopicIds)
+                    topics = TopicRow.build(loaded.topics, progress, loaded.pdfTopicIds)
                 )
             }
         }
@@ -73,10 +73,10 @@ class TopicSelectionViewModel @Inject constructor(
         viewModelScope.launch {
             val pdfTopicIds = PdfReleaseRepository.getTopicIdsWithPdf(appContext, subjectId)
             content.value = Content(
-                subjectId   = subjectId,
-                topics      = repository.getStudyTopics(subjectId, pdfTopicIds),
+                subjectId = subjectId,
+                topics = repository.getStudyTopics(subjectId, pdfTopicIds),
                 pdfTopicIds = pdfTopicIds,
-                practice    = repository.getPracticeOptions(subjectId)
+                practice = repository.getPracticeOptions(subjectId)
             )
         }
     }

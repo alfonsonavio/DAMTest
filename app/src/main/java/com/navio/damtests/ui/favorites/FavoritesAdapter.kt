@@ -19,9 +19,9 @@ class FavoritesAdapter(
 ) : ListAdapter<Question, FavoritesAdapter.ViewHolder>(DIFF) {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvSource: TextView    = view.findViewById(R.id.tvFavoriteSource)
-        val tvQuestion: TextView  = view.findViewById(R.id.tvFavoriteQuestion)
-        val tvAnswer: TextView    = view.findViewById(R.id.tvFavoriteAnswer)
+        val tvSource: TextView = view.findViewById(R.id.tvFavoriteSource)
+        val tvQuestion: TextView = view.findViewById(R.id.tvFavoriteQuestion)
+        val tvAnswer: TextView = view.findViewById(R.id.tvFavoriteAnswer)
         val btnRemove: ImageButton = view.findViewById(R.id.btnRemoveFavorite)
     }
 
@@ -33,19 +33,19 @@ class FavoritesAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val q = getItem(position)
         val correct = when (q.correctOptionIndex) {
-            0    -> q.optionA
-            1    -> q.optionB
-            2    -> q.optionC
+            0 -> q.optionA
+            1 -> q.optionB
+            2 -> q.optionC
             else -> q.optionD
         }
         val context = holder.itemView.context
-        holder.tvSource.text   = context.getString(
+        holder.tvSource.text = context.getString(
             R.string.subject_and_topic,
             SubjectCatalog.nameFor(q.subjectId).asString(context),
             TopicNames.displayName(q.topicId).asString(context)
         )
         holder.tvQuestion.text = q.text
-        holder.tvAnswer.text   = context.getString(R.string.favorites_correct_answer, correct)
+        holder.tvAnswer.text = context.getString(R.string.favorites_correct_answer, correct)
         holder.btnRemove.setOnClickListener { onRemoveClick(q) }
     }
 
