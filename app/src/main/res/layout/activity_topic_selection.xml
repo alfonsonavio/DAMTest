@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/surface_bg"
-    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
+    <!-- The toolbar reaches up behind the status bar; the code adds its height on top -->
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_topics"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
         android:background="@color/brand_navy"
+        app:navigationIconTint="@color/text_on_dark"
         app:titleTextColor="@color/text_on_dark" />
 
     <!-- Practicar: always in view, above the topics -->

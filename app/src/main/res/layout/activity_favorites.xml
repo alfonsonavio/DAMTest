@@ -8,6 +8,7 @@
 
     <!-- Barra superior navy con volver (como Ajustes) -->
     <LinearLayout
+        android:id="@+id/favoritesHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -15,7 +16,7 @@
         android:background="@color/brand_navy"
         android:paddingStart="12dp"
         android:paddingEnd="20dp"
-        android:paddingTop="44dp"
+        android:paddingTop="16dp"
         android:paddingBottom="16dp">
 
         <ImageButton
@@ -79,8 +80,9 @@
             android:textAppearance="@style/TextAppearance.DAMTest.Secondary" />
     </LinearLayout>
 
-    <!-- Practicar todas, anclado abajo -->
+    <!-- Practicar todas, anclado abajo (por encima de la barra de navegación) -->
     <LinearLayout
+        android:id="@+id/favoritesBottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
