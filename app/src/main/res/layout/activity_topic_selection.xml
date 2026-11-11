@@ -41,9 +41,12 @@
                 android:id="@+id/cardExam"
                 layout="@layout/view_practice_card" />
 
+            <!-- match_parent like the cards: a horizontal LinearLayout only gives its
+                 children the tallest child's height when ALL of them use match_parent;
+                 with a single fixed-height child the row measures 0 and hides the cards. -->
             <Space
                 android:layout_width="8dp"
-                android:layout_height="0dp" />
+                android:layout_height="match_parent" />
 
             <include
                 android:id="@+id/cardSmartReview"
@@ -60,9 +63,12 @@
                 android:id="@+id/cardGeneralTest"
                 layout="@layout/view_practice_card" />
 
+            <!-- match_parent like the cards: a horizontal LinearLayout only gives its
+                 children the tallest child's height when ALL of them use match_parent;
+                 with a single fixed-height child the row measures 0 and hides the cards. -->
             <Space
                 android:layout_width="8dp"
-                android:layout_height="0dp" />
+                android:layout_height="match_parent" />
 
             <include
                 android:id="@+id/cardFavorites"
