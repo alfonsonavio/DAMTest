@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A practice mode of the subject screen; icon, title and subtitle are set in code.
-     Fills the height of its row, so both cards of a row match when one text wraps. -->
+<!-- A practice mode of the subject screen; icon, title and subtitle are set in code. -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="0dp"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_weight="1"
     app:cardBackgroundColor="@color/surface"
     app:cardCornerRadius="16dp"
@@ -14,7 +13,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:minHeight="72dp"
         android:orientation="horizontal"

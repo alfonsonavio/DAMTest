@@ -146,8 +146,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Texts that didn't fit on narrow phones** — the exam's "Anterior" and
   "Siguiente" buttons split into two lines, and the practice cards of a subject
   cut titles such as "Repaso inteligente". Buttons now stay on one line and
-  shrink their text if needed; cards use up to two lines, and both cards of a
-  row keep the same height.
+  shrink their text if needed; cards use up to two lines.
 - **Readable options after answering** — once a question was answered, the
   disabled option buttons showed dark, faded text on the indigo background;
   the text now stays white.
