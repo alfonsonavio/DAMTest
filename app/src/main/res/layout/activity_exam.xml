@@ -197,6 +197,7 @@
     </ScrollView>
 
     <!-- Navegación -->
+    <!-- Navigation bar: one line per button even on narrow phones (360dp) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -213,6 +214,11 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:text="@string/exam_previous"
+            android:maxLines="1"
+            android:paddingHorizontal="12dp"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeMinTextSize="11sp"
+            app:autoSizeTextType="uniform"
             app:cornerRadius="16dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -222,6 +228,8 @@
             android:layout_height="56dp"
             android:layout_marginHorizontal="8dp"
             android:text="@string/exam_questions_grid"
+            android:maxLines="1"
+            android:paddingHorizontal="12dp"
             app:cornerRadius="16dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -231,7 +239,12 @@
             android:layout_weight="1"
             android:text="@string/exam_next"
             android:textColor="@color/text_on_dark"
+            android:maxLines="1"
+            android:paddingHorizontal="12dp"
             app:backgroundTint="@color/brand_navy"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeMinTextSize="11sp"
+            app:autoSizeTextType="uniform"
             app:cornerRadius="16dp" />
     </LinearLayout>
 </LinearLayout>
