@@ -51,6 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   saves no topic progress.
 
 ### Changed
+- **Release build ready for Google Play** — R8 shrinks and obfuscates the
+  release build, which is signed with an upload key read from a local
+  `keystore.properties` that never goes to the repo. The privacy policy has a
+  section to request account deletion without the app, as Play requires.
 - **No Firebase Analytics** — it was included but never used, and it still
   collected usage data on its own. Removed, so the app sends nothing it
   doesn't need.
